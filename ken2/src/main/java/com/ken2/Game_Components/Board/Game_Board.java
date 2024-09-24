@@ -1,4 +1,4 @@
-package Game_Components.Board;
+package com.ken2.Game_Components.Board;
 
 /**
  * The class that builds the board object for the game
@@ -15,6 +15,10 @@ public class Game_Board {
         the_Board = new Vertex[19][11];
     }
 
+    public Vertex[][] getBoard(){
+        return the_Board;
+    }
+
     /**
      * Fills the vertices according to the shape of the board
      */
@@ -23,7 +27,7 @@ public class Game_Board {
             int k=0;
             if (i%2!=0)k++;
             for (int j=k; j < the_Board[0].length-k; j+=2) {
-                the_Board[i][j]=new Vertex();
+                the_Board[i][j]=new Vertex(i, j);
             }
         }
         for (int i=0; i<blanks.length; i++){                // defines the shape of the board by eliminating the 'blanks' spaces

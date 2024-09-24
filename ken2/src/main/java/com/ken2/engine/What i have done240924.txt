@@ -1,0 +1,5 @@
+Diagonal.java - represents a diagonal that can take any direction from Direction.java enum and simulate a walk along it (To DO : implement logic for the walk)
+Direction.java - enum that contains 6 directions and it delta with respect to x&y
+GameSimulation.java - main class for simulation, itteratively goes through each diagonal and records all possible moves(check startSimulation)
+Move.java - just a class to create objects with possible move (check getters) 
+

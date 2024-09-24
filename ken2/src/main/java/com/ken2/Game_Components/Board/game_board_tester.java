@@ -1,4 +1,6 @@
-package Game_Components.Board;
+package com.ken2.Game_Components.Board;
+
+import com.ken2.engine.GameSimulation;
 
 /**
  * This is a sample of how to run the game board in practice
@@ -12,7 +14,9 @@ public class game_board_tester {
         Game_Board gb1 = new Game_Board();
 
         gb1.fillBoard();
-
+        GameSimulation gs = new GameSimulation();
+        gs.startSimulation(gb1, 5,5);
+        System.out.println(gs.getAllPossibleMoves());
 
         String h = gb1.strMaker();
         System.out.println(h);

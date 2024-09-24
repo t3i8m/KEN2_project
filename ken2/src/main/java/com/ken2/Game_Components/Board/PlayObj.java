@@ -1,4 +1,4 @@
-package Game_Components.Board;
+package com.ken2.Game_Components.Board;
 
 // THIS IS TEMPORARY !! DELETE ONCE THE PLAYER OBJECT INTERFACE IS CREATED !!
 
