@@ -64,7 +64,11 @@ public class Diagonal {
                 System.out.println("Found null at: (" + newX + ", " + newY + ")");
 
                 break; 
+            } else{
+
             }
+
+
 
 
             possibleMoves.add(new Move(newX, newY));
