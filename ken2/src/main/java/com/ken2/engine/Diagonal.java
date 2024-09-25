@@ -10,9 +10,9 @@ import com.ken2.Game_Components.Board.Vertex;
  * class for each diagonal 
  */
 public class Diagonal {
-    private ArrayList<Move> possibleMoves = new ArrayList<Move>();
     private int[] diskPosition = new int[2];
     private Direction direction; //enum object with direction params
+    private ArrayList<Move> possibleMoves = new ArrayList<Move>();
     private ArrayList<Coin>coinFlip = new ArrayList<Coin>();
 
 
@@ -52,14 +52,14 @@ public class Diagonal {
         int deltaY = direction.getDeltaY();
 
         boolean ringPassesCoin = false;
-        while(true){
-            int newX = currentX+deltaX;
-            int newY = currentY+deltaY;
+        while (true) {
+            int newX = currentX + deltaX;
+            int newY = currentY + deltaY;
 
             if (newX < 0 || newX >= board.length || newY < 0 || newY >= board[0].length) {
                 System.out.println("Out of bounds: (" + newX + ", " + newY + ")");
 
-                break; 
+                break;
             }
 
             System.out.println("Checking position: (" + newX + ", " + newY + ")");
@@ -68,32 +68,29 @@ public class Diagonal {
                 System.out.println("Found null at: (" + newX + ", " + newY + ")");
                 break;
 
-            }
-               else{
-                   if(board[newX][newY].getPlayObject()[0]!=null){ // check for the ring
+            } else {
+                if (board[newX][newY].getPlayObject()[0] != null) { // check for the ring
                     break;
-                } else if (board[newX][newY].getPlayObject()[1]!=null){ // check for the coin
-                       Coin coin = (Coin)board[newX][newY].getPlayObject()[1];
-                       coinFlip.add(coin);
-                       ringPassesCoin = true;//ring passes coin, we flip them
+                } else if (board[newX][newY].getPlayObject()[1] != null) { // check for the coin
+                    Coin coin = (Coin) board[newX][newY].getPlayObject()[1];
+                    coinFlip.add(coin);
+                    ringPassesCoin = true;//ring passes coin, we flip them
 
-                } else{//empty position
-                       if(ringPassesCoin) {
-                           possibleMoves.add(new Move(newX,newY, new ArrayList<Coin>(coinFlip)));//move to empty space
-                           break;
-                       }else {//ring didnt pass the coin
-                           possibleMoves.add(new Move(newX, newY));
-                       }
-                   }
+
+                } else {//empty position
+                    if (ringPassesCoin) {
+                        possibleMoves.add(new Move(newX, newY, new ArrayList<Coin>(coinFlip)));//move to empty space
+                        break;
+                    } else {//ring didnt pass the coin
+                        possibleMoves.add(new Move(newX, newY));
+                    }
+                }
 
             }
-
-
             currentX = newX;
             currentY = newY;
         }
-        return this.possibleMoves;
 
+        return possibleMoves;
+       }
     }
-
-}
