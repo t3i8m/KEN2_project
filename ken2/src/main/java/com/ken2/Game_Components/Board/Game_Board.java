@@ -64,9 +64,9 @@ public class Game_Board {
             s+=i+"\t\t";
             for (int j = 0; j < the_Board[i].length; j++) {
                 if (the_Board[i][j]==null){
-                    s+="   ";
+                    s+="     ";
                 }else {
-                    s+=" x ";
+                    s+="  x  ";
                 }
             }
             s+="\n";
