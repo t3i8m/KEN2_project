@@ -1,19 +1,35 @@
 package com.ken2.engine;
 
+/**
+ * class to store all of the moves
+ */
 public class Move {
-    private int startPoint;
-    private int endPoint;
+    private int xPosition;
+    private int yPosition;
 
+    /**
+     * constructor 
+     * @param start
+     * @param end
+     */
     public Move(int start, int end){
-        this.startPoint = start;
-        this.endPoint = end;
+        this.xPosition = start;
+        this.yPosition = end;
     }
 
-    public int getStart(){
-        return this.startPoint;
+    /**
+     * to get x position of the move 
+     * @return
+     */
+    public int getXposition(){
+        return this.xPosition;
     }
 
-    public int getEnd(){
-        return this.endPoint;
+    /**
+     * to get y position of the move 
+     * @return
+     */
+    public int getYposition(){
+        return this.yPosition;
     }
 }
