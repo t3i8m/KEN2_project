@@ -2,6 +2,9 @@ package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Vertex;
 
+/**
+ * enum data structure to store all of the possible diagonal directions
+ */
 public enum Direction {
     UP(-2,0),
     DOWN(2,0),
@@ -20,14 +23,30 @@ public enum Direction {
         this.deltaY = deltaY;
     }
 
+    /**
+     * change on the x 
+     * @return int change on the x axis
+     */
     public int getDeltaX(){
         return deltaX;
     }
 
+    /**
+     * change on the y
+     * @return int change on the y axis
+     */
     public int getDeltaY(){
         return deltaY;
     }
 
+    /**
+     * checks if the next move fits on the board
+     * 
+     * @param board 
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean isValidMove(Vertex[][] board, int x, int y) {
         int newX = x + deltaX;
         int newY = y + deltaY;
