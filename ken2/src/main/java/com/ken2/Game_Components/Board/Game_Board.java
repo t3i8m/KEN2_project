@@ -1,4 +1,5 @@
 package com.ken2.Game_Components.Board;
+import com.ken2.engine.Move;
 
 /**
  * The class that builds the board object for the game
@@ -38,6 +39,18 @@ public class Game_Board {
             }
         }
     }
+    public boolean moves(int x1, int x2, int y1,int y2){
+        if (the_Board[x1][y1]==null){
+            return false;
+        }
+        if (the_Board[x2][y2]==null && the_Board[x1][y1] !=null){
+            the_Board[x2][y2] = the_Board[x1][y1];
+        }
+
+
+        return true;
+    }
+
 
     /**
      * Makes a printable string of the game board
