@@ -71,13 +71,11 @@ public class Diagonal {
                 } else if (board[newX][newY].getPlayObject()[1]!=null){ // check for the coin
 
                 } else{
-
+                    possibleMoves.add(new Move(newX, newY));
+                    currentX = newX;
+                    currentY = newY;
                 }
             }
-
-            possibleMoves.add(new Move(newX, newY));
-            currentX = newX;
-            currentY = newY;
         }
         return this.possibleMoves;
 
