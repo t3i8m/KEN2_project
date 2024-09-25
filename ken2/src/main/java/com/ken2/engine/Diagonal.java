@@ -75,14 +75,12 @@ public class Diagonal {
                     Coin coin = (Coin) board[newX][newY].getPlayObject()[1];
                     coinFlip.add(coin);
                     ringPassesCoin = true;//ring passes coin, we flip them
-
-
                 } else {//empty position
                     if (ringPassesCoin) {
-                        possibleMoves.add(new Move(newX, newY, new ArrayList<Coin>(coinFlip)));//move to empty space
+                        possibleMoves.add(new Move(newX, newY, new ArrayList<Coin>(coinFlip), direction));//move to empty space
                         break;
                     } else {//ring didnt pass the coin
-                        possibleMoves.add(new Move(newX, newY));
+                        possibleMoves.add(new Move(newX, newY, direction));
                     }
                 }
 

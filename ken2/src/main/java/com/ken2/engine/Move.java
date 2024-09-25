@@ -11,23 +11,36 @@ public class Move {
     private final ArrayList<Coin> coinFlip;
     private int xPosition;
     private int yPosition;
+    private Direction direction; //enum object with direction params
+
 
     /**
      * constructor
      * @param start
      * @param end
      */
-    public Move(int start, int end, ArrayList<Coin>coinFlip){
+    public Move(int start, int end, ArrayList<Coin>coinFlip, Direction direction){
         this.xPosition = start;
         this.yPosition = end;
         this.coinFlip = coinFlip;
+        this.direction = direction;
     }
 
     // Overloaded constructor for moves without coins to flip
-    public Move(int xPosition, int yPosition) {
+    public Move(int xPosition, int yPosition, Direction direction) {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.coinFlip = new ArrayList<>(); // Initialize as empty list
+        this.direction = direction;
+
+    }
+
+    /**
+     * getter for a direction
+     * @return
+     */
+    public Direction getDirection() {
+        return direction;
     }
 
     /**
