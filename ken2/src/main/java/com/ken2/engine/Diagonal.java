@@ -68,9 +68,6 @@ public class Diagonal {
 
             }
 
-
-
-
             possibleMoves.add(new Move(newX, newY));
             currentX = newX;
             currentY = newY;
