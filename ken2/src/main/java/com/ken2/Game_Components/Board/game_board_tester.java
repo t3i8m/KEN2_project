@@ -15,7 +15,7 @@ public class game_board_tester {
 
         gb1.fillBoard();
         GameSimulation gs = new GameSimulation();
-        gs.startSimulation(gb1, 5,5);
+        gs.startSimulation(gb1.getBoard(), 5,5);
         System.out.println(gs.getAllPossibleMoves());
 
         String h = gb1.strMaker();
