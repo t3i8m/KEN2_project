@@ -9,7 +9,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("Hello, JavaFX!"); 
         primaryStage.setWidth(400);              
         primaryStage.setHeight(300);             
-        primaryStage.show();                     
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
