@@ -66,6 +66,13 @@ public class Diagonal {
                 break; 
             } else{
 
+                if(board[newX][newY].getPlayObject()[0]!=null){ // check for the ring
+                    break;
+                } else if (board[newX][newY].getPlayObject()[1]!=null){ // check for the coin
+
+                } else{
+
+                }
             }
 
             possibleMoves.add(new Move(newX, newY));
