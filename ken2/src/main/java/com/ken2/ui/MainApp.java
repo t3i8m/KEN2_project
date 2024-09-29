@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
@@ -15,8 +16,10 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
     int fieldDimension = 470;
     int chipsRemaining = 0;
-
-
+    Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
+    Color activeScoreRingColor = Color.rgb(90, 150, 220);
+    int[][] vertexCoordinates;
+    
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Compare Players with Yinsh"); 
@@ -32,7 +35,7 @@ public class MainApp extends Application {
         Scene scene = new Scene(root, 800, 600, Color.GRAY);
 
         // game field elements
-        Rectangle fieldPlaceHolder = new Rectangle();
+        Canvas fieldPlaceHolder = new Canvas();
         fieldPlaceHolder.setWidth(fieldDimension);
         fieldPlaceHolder.setHeight(fieldDimension);
 
@@ -88,12 +91,13 @@ public class MainApp extends Application {
 
     private Circle makeScoreCircle(){
         Circle circle = new Circle(35);
-        circle.setStroke(Color.rgb(200, 200, 200));
+        circle.setStroke(inactiveScoreRingColor);
         circle.setFill(null);
         circle.setStrokeWidth(10);
 
         return circle;
     }
+    
 
     public static void main(String[] args) {
         launch(args); 
