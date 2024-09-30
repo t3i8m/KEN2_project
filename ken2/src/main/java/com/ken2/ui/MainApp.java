@@ -1,7 +1,6 @@
 package com.ken2.ui;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -9,7 +8,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -41,12 +39,14 @@ public class MainApp extends Application {
 
         // info elements
         ComboBox whitePlayerComboBox = new ComboBox<>();
-        whitePlayerComboBox.getItems().add("W Human Player");
-        whitePlayerComboBox.getItems().add("W AI Player");
+        whitePlayerComboBox.getItems().add("Human Player");
+        whitePlayerComboBox.getItems().add("AI Player");
+        whitePlayerComboBox.getSelectionModel().selectFirst();
 
         ComboBox blackPlayerComboBox = new ComboBox<>();
-        blackPlayerComboBox.getItems().add("B Human Player");
-        blackPlayerComboBox.getItems().add("B AI Player");
+        blackPlayerComboBox.getItems().add("Human Player");
+        blackPlayerComboBox.getItems().add("AI Player");
+        blackPlayerComboBox.getSelectionModel().selectFirst();
 
         Text whitePlayerLabel = new Text();
         whitePlayerLabel.setText("White");
@@ -58,6 +58,7 @@ public class MainApp extends Application {
         chipsRemainText.setText("Chips Remaining: " + chipsRemaining);
 
         Button resetButton = new Button("Reset");
+        resetButton.setOnAction(e -> resetBoard());
         
 
         // score elements
@@ -97,7 +98,11 @@ public class MainApp extends Application {
 
         return circle;
     }
-    
+
+    private void resetBoard(){
+        // this is where the combobox changes will take affect
+        //stub
+    }
 
     public static void main(String[] args) {
         launch(args); 
