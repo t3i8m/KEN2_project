@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -17,6 +19,15 @@ public class MainApp extends Application {
     Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     Color activeScoreRingColor = Color.rgb(90, 150, 220);
     int[][] vertexCoordinates;
+
+    // array with the black and white ring image
+    private final String[] imagePaths = {
+        getClass().getResource("/ken2/assets/white ring.png").toExternalForm(),
+        getClass().getResource("/ken2/assets/black ring.png").toExternalForm()
+    };
+    
+    // current image
+    private int currentImageIndex = 0; 
     
     @Override
     public void start(Stage primaryStage) {
@@ -83,11 +94,48 @@ public class MainApp extends Application {
         root.add(scoreRingeB3, 7, 4);
         root.add(resetButton, 0 , 7);
 
-        
+         // initial image (white ring)
+        ImageView imageView = new ImageView(new Image(imagePaths[currentImageIndex]));
+        imageView.setFitWidth(50); 
+        imageView.setFitHeight(50);
+        imageView.setLayoutX(100); 
+        imageView.setLayoutY(100);
+        root.getChildren().add(imageView); 
+
+        // makes image draggable/placeable
+        makeDraggable(imageView);
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
 
+    }
+
+    private void makeDraggable(ImageView imageView) {
+        final double[] initialX = new double[1];
+        final double[] initialY = new double[1];
+        final double[] mouseX = new double[1];
+        final double[] mouseY = new double[1];
+
+        imageView.setOnMousePressed(event -> {
+            initialX[0] = imageView.getLayoutX();
+            initialY[0] = imageView.getLayoutY();
+            mouseX[0] = event.getSceneX();
+            mouseY[0] = event.getSceneY();
+        });
+
+        imageView.setOnMouseDragged(event -> {
+            double offsetX = event.getSceneX() - mouseX[0];
+            double offsetY = event.getSceneY() - mouseY[0];
+            imageView.setLayoutX(initialX[0] + offsetX);
+            imageView.setLayoutY(initialY[0] + offsetY);
+        });
+
+        // alternates black and white rings when released
+        imageView.setOnMouseReleased(event -> {
+            currentImageIndex = (currentImageIndex + 1) % imagePaths.length; 
+            imageView.setImage(new Image(imagePaths[currentImageIndex])); 
+        });
     }
 
     private Circle makeScoreCircle(){
