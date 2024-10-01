@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -29,6 +30,8 @@ public class MainApp extends Application {
     private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     private Color activeScoreRingColor = Color.rgb(90, 150, 220);
     private int[][] vertexCoordinates = new int[85][2];
+    private ComboBox whitePlayerComboBox;
+    private ComboBox blackPlayerComboBox;
     
     @Override
     public void start(Stage primaryStage) {
@@ -52,17 +55,22 @@ public class MainApp extends Application {
         GraphicsContext gc = fieldPlaceHolder.getGraphicsContext2D();
 
         initialiseVertex();
-
         drawBoard(gc);
+
+        fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
+            double x = e.getX();
+            double y = e.getY();
+            findClosestVertex(x,y);
+        });
 
 
         // info elements
-        ComboBox whitePlayerComboBox = new ComboBox<>();
+        whitePlayerComboBox = new ComboBox<>();
         whitePlayerComboBox.getItems().add("Human Player");
         whitePlayerComboBox.getItems().add("AI Player");
         whitePlayerComboBox.getSelectionModel().selectFirst();
 
-        ComboBox blackPlayerComboBox = new ComboBox<>();
+        blackPlayerComboBox = new ComboBox<>();
         blackPlayerComboBox.getItems().add("Human Player");
         blackPlayerComboBox.getItems().add("AI Player");
         blackPlayerComboBox.getSelectionModel().selectFirst();
@@ -107,6 +115,24 @@ public class MainApp extends Application {
         primaryStage.show();
 
 
+    }
+
+    private void findClosestVertex(double x, double y){
+
+        System.out.println();
+
+        for(int i = 0 ; i < 85; i++){
+            double vX = vertexCoordinates[i][0] + 18;
+            double vY = vertexCoordinates[i][1] + 18;
+
+            double xDist = Math.abs(x - vX);
+            double yDist = Math.abs(y - vY);
+
+            if(xDist<=10 && yDist <=10){
+                System.out.println("Vertex Clicled: " + i);
+                break;
+            }
+        }
     }
 
     private void initialiseVertex() {
@@ -169,7 +195,7 @@ public class MainApp extends Application {
     }
 
     private void drawBoard(GraphicsContext gc) {
-        gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
+        //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
 
         
         gc.setStroke(Color.NAVY);
@@ -284,6 +310,18 @@ public class MainApp extends Application {
         gc.drawImage(chipBImage, vertexCoordinates[43][0], vertexCoordinates[43][1], pieceDimension, pieceDimension);
         gc.drawImage(chipWImage, vertexCoordinates[41][0], vertexCoordinates[41][1], pieceDimension, pieceDimension);
 
+        //hit box
+        gc.setStroke(Color.RED);
+        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10, 
+        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10);
+        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+
+
     }
 
     private Circle makeScoreCircle() {
@@ -296,8 +334,10 @@ public class MainApp extends Application {
     }
 
     private void resetBoard() {
-        // this is where the combobox changes will take affect
-        // stub
+        System.out.println();
+        System.out.println(whitePlayerComboBox.getValue());
+        System.out.println(blackPlayerComboBox.getValue());
+        System.out.println("Reset!");
     }
 
     public static void main(String[] args) {
