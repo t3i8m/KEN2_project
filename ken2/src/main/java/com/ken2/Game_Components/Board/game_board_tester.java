@@ -13,7 +13,6 @@ public class game_board_tester {
     public static void main(String[] args) {
         Game_Board gb1 = new Game_Board();
 
-        gb1.fillBoard();
         GameSimulation gs = new GameSimulation();
         gs.startSimulation(gb1.getBoard(), 5,5);
         System.out.println(gs.getAllPossibleMoves());
