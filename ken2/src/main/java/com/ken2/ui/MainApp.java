@@ -139,22 +139,22 @@ public class MainApp extends Application {
         int index = 0;
         // a
         for (int i = 0; i < 4; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 42 * 4, (i * 44) + 19 + 88 + 44 };
+            vertexCoordinates[index] = new int[] { 175 - 38 * 4, (i * 44) + 19 + 44*3 };
             index++;
         }
         // b
         for (int i = 0; i < 7; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 42 * 3, (i * 44) + 19 + 66 };
+            vertexCoordinates[index] = new int[] { 175 - 38 * 3, (i * 44) + 19 + 66 };
             index++;
         }
         // c
         for (int i = 0; i < 8; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 43 * 2, ((i * 44) + 19 + 44) };
+            vertexCoordinates[index] = new int[] { 175 - 38 * 2, ((i * 44) + 19 + 44) };
             index++;
         }
         // d
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 131, ((i * 44) + 19 + 22) };
+            vertexCoordinates[index] = new int[] { 175 - 38, ((i * 44) + 19 + 22) };
             index++;
         }
         // e
@@ -164,32 +164,32 @@ public class MainApp extends Application {
         }
         // f
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 174 + 44, (i * 44) + 19 + 22 };
+            vertexCoordinates[index] = new int[] { 175 + 38, (i * 44) + 19 + 22 };
             index++;
         }
         // g
         for (int i = 0; i < 10; i++) {
-            vertexCoordinates[index] = new int[] { 170 + 88, (i * 44) + 19 };
+            vertexCoordinates[index] = new int[] { 175 + 38*2, (i * 44) + 19 };
             index++;
         }
         // h
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 170 + 44 * 3, (i * 44) + 19 + 22 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 3, (i * 44) + 19 + 22 };
             index++;
         }
         // i
         for (int i = 0; i < 8; i++) {
-            vertexCoordinates[index] = new int[] { 166 + 44 * 4, (i * 44) + 19 + 44 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 4, (i * 44) + 19 + 44 };
             index++;
         }
         // j
         for (int i = 0; i < 7; i++) {
-            vertexCoordinates[index] = new int[] { 170 + 43 * 5, (i * 44) + 19 + 66 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 5, (i * 44) + 19 + 66 };
             index++;
         }
         // k
         for (int i = 0; i < 4; i++) {
-            vertexCoordinates[index] = new int[] { 168 + 43 * 6, (i * 44) + 19 + 44 * 3 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 6, (i * 44) + 19 + 44 * 3 };
             index++;
         }
     }
@@ -311,7 +311,7 @@ public class MainApp extends Application {
         gc.drawImage(chipWImage, vertexCoordinates[41][0], vertexCoordinates[41][1], pieceDimension, pieceDimension);
 
         //hit box
-        gc.setStroke(Color.RED);
+        gc.setStroke(Color.MAGENTA);
         gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10, 
         vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
         gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
@@ -320,6 +320,12 @@ public class MainApp extends Application {
         vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
         gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
         vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+
+        //vertex numbers 
+        for (int i = 0 ; i < 85 ; i++){
+            gc.setFill(Color.GREEN);
+            gc.fillText(""+i, vertexCoordinates[i][0] + 10 + pieceDimension/2, vertexCoordinates[i][1] + 5 + pieceDimension/2);
+        }
 
 
     }
