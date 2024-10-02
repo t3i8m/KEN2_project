@@ -19,11 +19,11 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     
-    private Image boardImage = new Image("file:KEN2_project\\ken2\\assets\\temp-board-image.jpg");
-    private Image ringBImage = new Image("file:KEN2_project\\ken2\\assets\\black ring.png");
-    private Image chipBImage = new Image("file:KEN2_project\\ken2\\assets\\black chip.png");
-    private Image ringWImage = new Image("file:KEN2_project\\ken2\\assets\\white ring.png");
-    private Image chipWImage = new Image("file:KEN2_project\\ken2\\assets\\white chip.png");
+    private Image boardImage = new Image("file:ken2\\assets\\temp-board-image.jpg");
+    private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
+    private Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
+    private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
+    private Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
     private int fieldDimension = 470;
     private int pieceDimension = 37;
     private int chipsRemaining = 0;
@@ -32,6 +32,8 @@ public class MainApp extends Application {
     private int[][] vertexCoordinates = new int[85][2];
     private ComboBox whitePlayerComboBox;
     private ComboBox blackPlayerComboBox;
+    private int ringsPlaced;
+    private boolean isWhiteTurn;
     
     @Override
     public void start(Stage primaryStage) {
@@ -48,6 +50,8 @@ public class MainApp extends Application {
         Scene scene = new Scene(root, 800, 600, Color.GRAY);
 
         // game field elements
+        isWhiteTurn = true;
+        ringsPlaced = 0;
         Canvas fieldPlaceHolder = new Canvas();
         fieldPlaceHolder.setWidth(fieldDimension);
         fieldPlaceHolder.setHeight(fieldDimension);
@@ -60,7 +64,11 @@ public class MainApp extends Application {
         fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
             double x = e.getX();
             double y = e.getY();
-            findClosestVertex(x,y);
+            int vertex = findClosestVertex(x,y);
+            
+            if ((ringsPlaced < 10) && (vertex >= 0)){
+                placeStartingRing(vertex, gc);
+            }
         });
 
 
@@ -117,7 +125,28 @@ public class MainApp extends Application {
 
     }
 
-    private void findClosestVertex(double x, double y){
+    private void placeStartingRing(int vertex, GraphicsContext gc){
+        
+        System.out.println("placeStartingRing called");
+
+        Image currentImage;
+
+        if(isWhiteTurn){
+            currentImage = ringWImage;
+            System.out.println("current image is white ring");
+        } else {
+            currentImage = ringBImage;
+            
+            System.out.println("current image is white ring");
+        }
+
+        gc.drawImage(currentImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
+        isWhiteTurn = !isWhiteTurn;
+        ringsPlaced++;
+
+    }
+
+    private int findClosestVertex(double x, double y){
 
         System.out.println();
 
@@ -130,16 +159,18 @@ public class MainApp extends Application {
 
             if(xDist<=10 && yDist <=10){
                 System.out.println("Vertex Clicled: " + i);
-                break;
+                return i;
             }
         }
+
+        return -1;
     }
 
     private void initialiseVertex() {
         int index = 0;
         // a
         for (int i = 0; i < 4; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 38 * 4, (i * 44) + 19 + 44*3 };
+            vertexCoordinates[index] = new int[] { 175 - 38 * 4, (i * 44) + 19 + 44*3};
             index++;
         }
         // b
@@ -149,12 +180,12 @@ public class MainApp extends Application {
         }
         // c
         for (int i = 0; i < 8; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 38 * 2, ((i * 44) + 19 + 44) };
+            vertexCoordinates[index] = new int[] { 175 - 38 * 2, ((i * 44) + 19 + 44)};
             index++;
         }
         // d
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 175 - 38, ((i * 44) + 19 + 22) };
+            vertexCoordinates[index] = new int[] { 175 - 38, ((i * 44) + 19 + 22)};
             index++;
         }
         // e
@@ -164,32 +195,32 @@ public class MainApp extends Application {
         }
         // f
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38, (i * 44) + 19 + 22 };
+            vertexCoordinates[index] = new int[] { 175 + 38, (i * 44) + 19 + 22};
             index++;
         }
         // g
         for (int i = 0; i < 10; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38*2, (i * 44) + 19 };
+            vertexCoordinates[index] = new int[] { 175 + 38*2, (i * 44) + 19};
             index++;
         }
         // h
         for (int i = 0; i < 9; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38 * 3, (i * 44) + 19 + 22 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 3, (i * 44) + 19 + 22};
             index++;
         }
         // i
         for (int i = 0; i < 8; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38 * 4, (i * 44) + 19 + 44 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 4, (i * 44) + 19 + 44};
             index++;
         }
         // j
         for (int i = 0; i < 7; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38 * 5, (i * 44) + 19 + 66 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 5, (i * 44) + 19 + 66};
             index++;
         }
         // k
         for (int i = 0; i < 4; i++) {
-            vertexCoordinates[index] = new int[] { 175 + 38 * 6, (i * 44) + 19 + 44 * 3 };
+            vertexCoordinates[index] = new int[] { 175 + 38 * 6, (i * 44) + 19 + 44 * 3};
             index++;
         }
     }
@@ -304,22 +335,22 @@ public class MainApp extends Application {
         gc.strokeLine(vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2, 
         vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
-        // for demo
-        gc.drawImage(ringBImage, vertexCoordinates[39][0], vertexCoordinates[39][1], pieceDimension, pieceDimension);
-        gc.drawImage(ringWImage, vertexCoordinates[61][0], vertexCoordinates[61][1], pieceDimension, pieceDimension);
-        gc.drawImage(chipBImage, vertexCoordinates[43][0], vertexCoordinates[43][1], pieceDimension, pieceDimension);
-        gc.drawImage(chipWImage, vertexCoordinates[41][0], vertexCoordinates[41][1], pieceDimension, pieceDimension);
+        // // for demo
+        // gc.drawImage(ringBImage, vertexCoordinates[39][0], vertexCoordinates[39][1], pieceDimension, pieceDimension);
+        // gc.drawImage(ringWImage, vertexCoordinates[61][0], vertexCoordinates[61][1], pieceDimension, pieceDimension);
+        // gc.drawImage(chipBImage, vertexCoordinates[43][0], vertexCoordinates[43][1], pieceDimension, pieceDimension);
+        // gc.drawImage(chipWImage, vertexCoordinates[41][0], vertexCoordinates[41][1], pieceDimension, pieceDimension);
 
-        //hit box
-        gc.setStroke(Color.MAGENTA);
-        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10, 
-        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
-        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
-        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10);
-        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
-        vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
-        gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
-        vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+        // //hit box
+        // gc.setStroke(Color.MAGENTA);
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10, 
+        // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10);
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
 
         //vertex numbers 
         for (int i = 0 ; i < 85 ; i++){
