@@ -18,6 +18,7 @@ public class Coin implements PlayObj{
     public void setColour(String colour){
         this.colour = colour;
     }
+
     public void flipCoin(){
         if(this.colour.equalsIgnoreCase("black")){
             this.colour = "white";

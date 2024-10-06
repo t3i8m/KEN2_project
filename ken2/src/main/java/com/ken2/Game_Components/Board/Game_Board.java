@@ -11,7 +11,7 @@ public class Game_Board {
 
     private int[][] blanks = {{0,1,2,8,9,10},{0,1,9,10},{0,10},{0,10},{0,10}};  // blank spaces to shape the board
 
-    Dictionary<Integer,int[]> GUIVertex = new Hashtable<Integer,int[]>();
+    private Dictionary<Integer,int[]> GUIVertex = new Hashtable<Integer,int[]>();
 
     /**
      * Game Board Object constructor
@@ -132,6 +132,7 @@ public class Game_Board {
             if (i%2!=0)k++;
             for (int j=k; j < the_Board[0].length-k; j+=2) {
                 the_Board[i][j]=new Vertex(i, j);
+
             }
         }
         for (int i=0; i<blanks.length; i++){                // defines the shape of the board by eliminating the 'blanks' spaces
@@ -195,5 +196,14 @@ public class Game_Board {
         the_Board[currentPosition[0]][currentPosition[1]].setPlayObject(playObject);
     }
 
+    /**
+     * Returns the playobjects from the current vertex
+     * @param vertexNumber key to lookup coordinates on board
+     * @return array of playobjects on current vertex
+     */
+    public PlayObj[] getPlayObject(int vertexNumber){
+        int[] curentPosition = GUIVertex.get(vertexNumber);
+        return the_Board[curentPosition[0]][curentPosition[1]].getPlayObject();
+    }
 }
 

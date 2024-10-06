@@ -10,7 +10,7 @@ public class Vertex {
     private int yIndex;
 
     public Vertex(int xIndex, int yIndex){
-        playObjects = new PlayObj[2];
+        playObjects = new PlayObj[]{null,null};
         this.xIndex = xIndex;
         this.yIndex = yIndex;
     }
