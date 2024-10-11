@@ -94,8 +94,6 @@ public class MainApp extends Application {
                      }else System.out.println("Its Whites turn!!!");
                  }
             }
-
-
         });
 
 
@@ -148,8 +146,6 @@ public class MainApp extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
     }
 
     private void placeStartingRing(int vertex, GraphicsContext gc){
