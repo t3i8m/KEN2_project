@@ -157,24 +157,25 @@ public class Game_Board {
                 }else {
                     PlayObj[] playObjs = the_Board[i][j].getPlayObject();
                     s+=" |";
-                    if(playObjs[0]!=null){
+                    if(playObjs[0]!=null || playObjs[1]!=null){
                         s+="R";
-                        if (playObjs[0].getColour().equals("White")){
-                            s+="W";
+                        if(playObjs[0]!=null){
+                            if (playObjs[0].getColour().toLowerCase().equals("white")){
+                                s+="W";
+                            }
+                            else if (playObjs[0].getColour().toLowerCase().equals("black")){
+                                s+="B";
+                            }
                         }
-                        else if (playObjs[0].getColour().equals("Black")){
-                            s+="B";
-                        }
-                    }else {
-                        s+="__";
-                    }
-                    if (playObjs[1]!=null) {
-                        s+="C";
-                        if (playObjs[1].getColour().equals("White")){
-                            s+="W";
-                        }
-                        else if (playObjs[1].getColour().equals("Black")){
-                            s+="B";
+                    
+                        if (playObjs[1]!=null) {
+                            s+="C";
+                            if (playObjs[1].getColour().equals("White")){
+                                s+="W";
+                            }
+                            else if (playObjs[1].getColour().equals("Black")){
+                                s+="B";
+                            }
                         }
                     }else {
                         s+="__";
@@ -194,6 +195,7 @@ public class Game_Board {
         int[] currentPosition = GUIVertex.get(vertexNumber);
         the_Board[currentPosition[0]][currentPosition[1]].setPlayObject(playObject);
     }
+
 
 }
 

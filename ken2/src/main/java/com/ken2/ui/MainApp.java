@@ -1,4 +1,9 @@
 package com.ken2.ui;
+import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.PlayObj;
+import com.ken2.Game_Components.Board.Ring;
+import com.ken2.Game_Components.Board.Vertex;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -34,13 +39,17 @@ public class MainApp extends Application {
     private ComboBox blackPlayerComboBox;
     private int ringsPlaced;
     private boolean isWhiteTurn;
+    private Game_Board gameBoard;
     
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Compare Players with Yinsh"); 
         primaryStage.setWidth(800);              
         primaryStage.setHeight(600); 
-        primaryStage.setResizable(false);            
+        primaryStage.setResizable(false);    
+        
+        // we create a game board obj here 
+        this.gameBoard = new Game_Board();
         
         GridPane root = new GridPane();
         root.setPadding(new Insets(5, 5, 5, 5)); 
@@ -131,19 +140,27 @@ public class MainApp extends Application {
 
         Image currentImage;
 
+        PlayObj currentRing = new Ring("");
         if(isWhiteTurn){
             currentImage = ringWImage;
             System.out.println("current image is white ring");
+            currentRing.setColour("White");
         } else {
             currentImage = ringBImage;
-            
+            currentRing.setColour("Black");
+
             System.out.println("current image is white ring");
         }
+        System.out.println(this.gameBoard.strMaker());
 
+        System.out.println("Current ring colour is: "+currentRing.getColour());
+        System.out.println(vertex);
+        this.gameBoard.updateBoard(vertex, currentRing);
+        System.out.println("The board was updated");
         gc.drawImage(currentImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
         isWhiteTurn = !isWhiteTurn;
         ringsPlaced++;
-
+        System.out.println(this.gameBoard.strMaker());
     }
 
     private int findClosestVertex(double x, double y){
