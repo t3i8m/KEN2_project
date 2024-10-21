@@ -151,7 +151,6 @@ public class MainApp extends Application {
 
             System.out.println("current image is white ring");
         }
-        System.out.println(this.gameBoard.strMaker());
 
         System.out.println("Current ring colour is: "+currentRing.getColour());
         System.out.println(vertex);
