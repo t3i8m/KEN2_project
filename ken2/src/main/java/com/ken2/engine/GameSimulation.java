@@ -47,4 +47,26 @@ public class GameSimulation {
     public ArrayList<ArrayList> getAllPossibleMoves(){
         return allPossibleMoves;
     }
+
+    /**
+     * method to find all available places to put a ring
+     * @param board
+     * @return
+     */
+    public ArrayList<Vertex> getAllPossibleStartingRingPlaces(Vertex[][] board){
+        ArrayList<Vertex> allPossibleStartingPlaces = new ArrayList<>();
+        for(int i = 0; i<board.length;i++){
+            for(int j = 0; j<board[i].length;j++){
+                if(board[i][j]!=null){
+                    if(board[i][j].getPlayObject()[0]==null){
+                        allPossibleStartingPlaces.add(board[i][j]);
+                    } else{
+                        allPossibleStartingPlaces.add(null);
+                    }
+
+                }
+            }
+        }
+        return allPossibleStartingPlaces;
+    }
 }

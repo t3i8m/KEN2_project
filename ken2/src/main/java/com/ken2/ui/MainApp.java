@@ -1,8 +1,11 @@
 package com.ken2.ui;
+import java.util.ArrayList;
+
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.engine.GameSimulation;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -14,6 +17,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -40,6 +44,9 @@ public class MainApp extends Application {
     private int ringsPlaced;
     private boolean isWhiteTurn;
     private Game_Board gameBoard;
+    private GameSimulation gameSimulation;
+    private GridPane root;
+    private Pane fieldPane;
     
     @Override
     public void start(Stage primaryStage) {
@@ -50,8 +57,10 @@ public class MainApp extends Application {
         
         // we create a game board obj here 
         this.gameBoard = new Game_Board();
+        this.gameSimulation = new GameSimulation();
+
         
-        GridPane root = new GridPane();
+        root = new GridPane();
         root.setPadding(new Insets(5, 5, 5, 5)); 
         root.setVgap(10); 
         root.setHgap(10); 
@@ -69,7 +78,7 @@ public class MainApp extends Application {
 
         initialiseVertex();
         drawBoard(gc);
-
+        
         fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
             double x = e.getX();
             double y = e.getY();
@@ -77,6 +86,7 @@ public class MainApp extends Application {
             
             if ((ringsPlaced < 10) && (vertex >= 0)){
                 placeStartingRing(vertex, gc);
+                displayAvailablePlacesForStartingRings(vertex);
             }
         });
 
@@ -103,7 +113,10 @@ public class MainApp extends Application {
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> resetBoard());
-        
+        fieldPane = new Pane();
+        fieldPane.setPrefSize(fieldDimension, fieldDimension);
+        root.add(fieldPane, 1, 1, 5, 5); 
+
 
         // score elements
         Circle scoreRingeW1 = makeScoreCircle();
@@ -130,9 +143,35 @@ public class MainApp extends Application {
         
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
+        displayAvailablePlacesForStartingRings(0);
     }
+
+    private void displayAvailablePlacesForStartingRings(int vertex) {
+        Vertex[][] board = this.gameBoard.getBoard();
+        ArrayList<Vertex> availablePlaces = this.gameSimulation.getAllPossibleStartingRingPlaces(board);
+    
+        for (Vertex v : availablePlaces) {
+           
+            if (v != null) {
+                Circle availableCircle = new Circle();
+                availableCircle.setCenterX(vertexCoordinates[v.getVertextNumber()][0] + pieceDimension / 2);
+                availableCircle.setCenterY(vertexCoordinates[v.getVertextNumber()][1] + pieceDimension / 2);
+                availableCircle.setRadius(7);
+                availableCircle.setFill(Color.LIGHTGREEN);
+                fieldPane.getChildren().add(availableCircle);
+            } else{
+                Circle unAvailableCircle = new Circle();
+                unAvailableCircle.setCenterX(vertexCoordinates[vertex][0] + pieceDimension / 2);
+                unAvailableCircle.setCenterY(vertexCoordinates[vertex][1] + pieceDimension / 2);
+                unAvailableCircle.setRadius(7);
+                unAvailableCircle.setFill(Color.RED);
+                fieldPane.getChildren().add(unAvailableCircle);
+
+            }
+        }
+    }
+    
+
 
     private void placeStartingRing(int vertex, GraphicsContext gc){
         
@@ -245,7 +284,7 @@ public class MainApp extends Application {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
 
         
-        gc.setStroke(Color.NAVY);
+        gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
 
 

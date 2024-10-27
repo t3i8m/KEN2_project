@@ -34,6 +34,7 @@ public class Vertex {
 
 
     /** Returns the play object currently at the vertex
+     * 0 - Ring, 1 - Coin
      * @return the play object
      */
     public PlayObj[] getPlayObject() {
