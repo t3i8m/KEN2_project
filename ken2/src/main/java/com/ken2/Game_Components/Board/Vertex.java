@@ -8,11 +8,20 @@ public class Vertex {
     private PlayObj[] playObjects; // the current player object, either ring or tile
     private int xIndex;
     private int yIndex;
+    private int vertexNumber;
 
     public Vertex(int xIndex, int yIndex){
         playObjects = new PlayObj[2];
         this.xIndex = xIndex;
         this.yIndex = yIndex;
+    }
+
+    public void setVertexNumber(int vertexNumber){
+        this.vertexNumber = vertexNumber;
+    }
+
+    public int getVertextNumber(){
+        return this.vertexNumber;
     }
 
     public int getXposition(){
