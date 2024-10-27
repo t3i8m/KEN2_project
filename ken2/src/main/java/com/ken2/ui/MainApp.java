@@ -87,7 +87,10 @@ public class MainApp extends Application {
             if ((ringsPlaced < 10) && (vertex >= 0)){
                 placeStartingRing(vertex, gc);
                 displayAvailablePlacesForStartingRings(vertex);
+            } else if (ringsPlaced>=10){
+                removeCircleIndicators();
             }
+
         });
 
 
@@ -144,6 +147,10 @@ public class MainApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         displayAvailablePlacesForStartingRings(0);
+    }
+
+    private void removeCircleIndicators(){
+        fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
 
     private void displayAvailablePlacesForStartingRings(int vertex) {
@@ -409,7 +416,7 @@ public class MainApp extends Application {
 
         //vertex numbers 
         for (int i = 0 ; i < 85 ; i++){
-            gc.setFill(Color.GREEN);
+            gc.setFill(Color.BLACK);
             gc.fillText(""+i, vertexCoordinates[i][0] + 10 + pieceDimension/2, vertexCoordinates[i][1] + 5 + pieceDimension/2);
         }
 
