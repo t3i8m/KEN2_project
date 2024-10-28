@@ -6,6 +6,7 @@ import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.GameSimulation;
+import com.ken2.engine.Move;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -47,6 +48,7 @@ public class MainApp extends Application {
     private GameSimulation gameSimulation;
     private GridPane root;
     private Pane fieldPane;
+    private ArrayList<Integer> ringVertexNumbers;
     
     @Override
     public void start(Stage primaryStage) {
@@ -58,6 +60,7 @@ public class MainApp extends Application {
         // we create a game board obj here 
         this.gameBoard = new Game_Board();
         this.gameSimulation = new GameSimulation();
+        this.ringVertexNumbers = new ArrayList<>();
 
         
         root = new GridPane();
@@ -89,6 +92,17 @@ public class MainApp extends Application {
                 displayAvailablePlacesForStartingRings(vertex);
             } else if (ringsPlaced>=10){
                 removeCircleIndicators();
+
+                if(this.ringVertexNumbers.contains(vertex)){
+                    System.out.println("CONTAINS");
+                }
+
+                int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
+                System.out.println(vertexPosition[0]);
+                Vertex[][] board = this.gameBoard.getBoard();
+                this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
+                ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
+                displayPossibleMoves(allPossibleMoves);
             }
 
         });
@@ -149,6 +163,29 @@ public class MainApp extends Application {
         displayAvailablePlacesForStartingRings(0);
     }
 
+    private void displayPossibleMoves(ArrayList<ArrayList<Move>> allPossibleMoves){
+        Vertex[][] board = this.gameBoard.getBoard();
+        for(ArrayList<Move> currentDirectionMoves: allPossibleMoves){
+            if(!currentDirectionMoves.isEmpty()){
+                for(Move currentMove: currentDirectionMoves){
+                    int[] currentMovesCoordinates = {currentMove.getXposition(), currentMove.getYposition()};
+                    int vertexNumber = board[currentMovesCoordinates[0]][currentMovesCoordinates[1]].getVertextNumber();
+                    // System.out.println(currentMove.getXposition());
+                    // System.out.println(currentMove.getYposition());
+                    // System.out.println("Vertex number: "+Integer.toString(board[currentMovesCoordinates[0]][currentMovesCoordinates[1]].getVertextNumber()));
+                    Circle availableCircle = new Circle();
+                    availableCircle.setCenterX(vertexCoordinates[vertexNumber][0] + pieceDimension / 2);
+                    availableCircle.setCenterY(vertexCoordinates[vertexNumber][1] + pieceDimension / 2);
+                    availableCircle.setRadius(7);
+                    availableCircle.setFill(Color.LIGHTGREEN);
+                    fieldPane.getChildren().add(availableCircle);
+                }
+
+            }
+        }
+
+    }
+
     private void removeCircleIndicators(){
         fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
@@ -206,6 +243,7 @@ public class MainApp extends Application {
         isWhiteTurn = !isWhiteTurn;
         ringsPlaced++;
         System.out.println(this.gameBoard.strMaker());
+        this.ringVertexNumbers.add(vertex);
     }
 
     private int findClosestVertex(double x, double y){

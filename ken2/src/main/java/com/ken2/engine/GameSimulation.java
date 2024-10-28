@@ -11,13 +11,13 @@ import com.ken2.engine.Diagonal;
  */
 public class GameSimulation {
 
-    private ArrayList<ArrayList> allPossibleMoves;
+    private ArrayList<ArrayList<Move>> allPossibleMoves;
 
     /**
      * Initializing GameSimulation class
      */
     public GameSimulation(){
-        allPossibleMoves= new ArrayList<ArrayList>();
+        allPossibleMoves= new ArrayList<ArrayList<Move>>();
     }
 
     /**
@@ -30,7 +30,7 @@ public class GameSimulation {
 
     // instead of the x&y distances we will use disk obj and its atributes
     public void startSimulation(Vertex[][] board, int xDiskPosition, int yDiskPosition){
-
+        allPossibleMoves.clear();
         int[] diskPositions= {xDiskPosition, yDiskPosition};
 
         for (Direction direction : Direction.values()) {
@@ -44,7 +44,7 @@ public class GameSimulation {
      * 
      * @return ArrayList with all of the possible moves
      */
-    public ArrayList<ArrayList> getAllPossibleMoves(){
+    public ArrayList<ArrayList<Move>> getAllPossibleMoves(){
         return allPossibleMoves;
     }
 

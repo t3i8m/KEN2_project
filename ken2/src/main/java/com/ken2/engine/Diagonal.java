@@ -45,6 +45,9 @@ public class Diagonal {
     
     // implement logic to check rules
     public ArrayList<Move> moveAlongDiagonal(Vertex[][] board) {
+        possibleMoves.clear();
+        coinFlip.clear();
+        
         int currentX = diskPosition[0];
         int currentY = diskPosition[1];
 
@@ -69,10 +72,12 @@ public class Diagonal {
                 break;
 
             } else {
-                if (board[newX][newY].getPlayObject()[0] != null) { // check for the ring
+                Vertex currentVertex = board[newX][newY];
+                if (currentVertex.getPlayObject()[0] != null) { // check for the ring
+                    System.out.println("Ring encountered: (" + newX + ", " + newY + ")");
                     break;
-                } else if (board[newX][newY].getPlayObject()[1] != null) { // check for the coin
-                    Coin coin = (Coin) board[newX][newY].getPlayObject()[1];
+                } else if (currentVertex.getPlayObject()[1] != null) { // check for the coin
+                    Coin coin = (Coin) currentVertex.getPlayObject()[1];
                     coinFlip.add(coin);
                     ringPassesCoin = true;//ring passes coin, we flip them
                 } else {//empty position
