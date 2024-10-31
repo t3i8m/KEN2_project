@@ -33,6 +33,9 @@ public class Vertex {
     }
 
     public void setRing(PlayObj newRing) {
+        // if(newRing==null){
+        //     this.playObjects = = new PlayObj[2]{,playObjects[1]};
+        // }
         this.playObjects[0] = newRing;
     }
 

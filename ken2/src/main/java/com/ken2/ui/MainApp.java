@@ -248,6 +248,7 @@ public class MainApp extends Application {
             // Toggle the turn and switch to chip placement phase
             isWhiteTurn = !isWhiteTurn;
             chipPlacement = true;
+            this.gameBoard.replaceRing(fromVertex, toVertex);
         } else {
             showAlert("Invalid Move", "The selected position is not valid for movement.");
         }
