@@ -3,6 +3,17 @@
 
 
 This project is a Yinsh board game implemented with JavaFX. Yinsh is an abstract strategy board game, released in 2003, it is an example of a variation on the classic Connection subcategory of board games. The ultimate goal is to form uninterrupted lines of their chips. This project includes a custom UI to represent the board and game pieces.
+
+## Group 2 Members
+- Atieh, Rayan
+- Brune, David
+- Gardner, Eira (LAS)
+- Jerčaks, Tim
+- Kadavill, Nikhil
+- Krumplevskaja, Lera
+- Mert, Bilge
+- Ozcitak, Yasemin
+
 ## Prerequisites
 This project requires;
 
@@ -65,3 +76,9 @@ The game is played in turns. Players take turns performing the following steps:
 - **Move Restrictions**: You cannot move a ring if it would land on another ring. The movement must end on an empty intersection.
 - **Double Rows**: If creating a row of five simultaneously creates more rows, you must first complete the actions for the primary row before handling the additional rows.
 - **Tie Handling**: If both players remove the third ring during the same turn, the game results in a **tie**.
+
+## What is already done
+
+## What needs to be completed
+
+## Licensing 
