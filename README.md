@@ -36,9 +36,13 @@ git clone https://github.com/t3i8m/KEN2_project.git
 ```bash
 cd <PATH-TO-PROJECT-FOLDER>
 ```
-2. To run the game using Maven use the following command
+2. To run the game using Maven first run
 ```bash
-mvn clean
+cd <PROJECT_FOLDER>/ken2
+```
+and then run
+```bash
+mvn clean javafx:run
 ```
 
 ### Through an IDE
