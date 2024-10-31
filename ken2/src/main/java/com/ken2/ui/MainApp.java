@@ -27,11 +27,10 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     
-    private Image boardImage = new Image("file:ken2\\assets\\temp-board-image.jpg");
-    private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
-    private Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
-    private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
-    private Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
+    private Image ringBImage = new Image("file:KEN2_project\\ken2\\assets\\black ring.png");
+    private Image chipBImage = new Image("file:KEN2_project\\ken2\\assets\\black chip.png");
+    private Image ringWImage = new Image("file:KEN2_project\\ken2\\assets\\white ring.png");
+    private Image chipWImage = new Image("file:KEN2_project\\ken2\\assets\\white chip.png");
     private int fieldDimension = 470;
     private int pieceDimension = 37;
     private int chipsRemaining = 51;
@@ -79,40 +78,46 @@ public class MainApp extends Application {
         // game field elements
         isWhiteTurn = true;
         ringsPlaced = 0;
-        Canvas fieldPlaceHolder = new Canvas();
-        fieldPlaceHolder.setWidth(fieldDimension);
-        fieldPlaceHolder.setHeight(fieldDimension);
+        Canvas gameBoardCanvas = new Canvas();
+        gameBoardCanvas.setWidth(fieldDimension);
+        gameBoardCanvas.setHeight(fieldDimension);
 
-        GraphicsContext gc = fieldPlaceHolder.getGraphicsContext2D();
+        
+        Canvas playObjectCanvas = new Canvas();
+        playObjectCanvas.setWidth(fieldDimension);
+        playObjectCanvas.setHeight(fieldDimension);
+
+        GraphicsContext gcB = gameBoardCanvas.getGraphicsContext2D();
+        GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
 
         initialiseVertex();
-        drawBoard(gc);
+        drawBoard(gcB);
 
-        fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
-            double x = e.getX();
-            double y = e.getY();
-            int vertex = findClosestVertex(x,y);
+        // gameBoardCanvas.setOnMouseClicked((MouseEvent e) -> {
+        //     double x = e.getX();
+        //     double y = e.getY();
+        //     int vertex = findClosestVertex(x,y);
 
-            if ((ringsPlaced < 10) && (vertex >= 0)){
-                placeStartingRing(vertex, gc);
-                displayAvailablePlacesForStartingRings(vertex);
-            } else if (ringsPlaced>=10){
-                removeCircleIndicators();
+        //     if ((ringsPlaced < 10) && (vertex >= 0)){
+        //         placeStartingRing(vertex, gcP);
+        //         displayAvailablePlacesForStartingRings(vertex);
+        //     } else if (ringsPlaced>=10){
+        //         removeCircleIndicators();
 
-                if(this.ringVertexNumbers.contains(vertex)){
-                    System.out.println("CONTAINS");
-                }
+        //         if(this.ringVertexNumbers.contains(vertex)){
+        //             System.out.println("CONTAINS");
+        //         }
 
-                int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
-                System.out.println(vertexPosition[0]);
-                Vertex[][] board = this.gameBoard.getBoard();
-                this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
-                ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
-                displayPossibleMoves(allPossibleMoves);
-            }
+        //         int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
+        //         System.out.println(vertexPosition[0]);
+        //         Vertex[][] board = this.gameBoard.getBoard();
+        //         this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
+        //         ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
+        //         displayPossibleMoves(allPossibleMoves);
+        //     }
 
-        });
-        fieldPlaceHolder.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gc));
+        // });
+        playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
 
 
         // info elements
@@ -159,7 +164,8 @@ public class MainApp extends Application {
         root.add(blackPlayerLabel, 7, 0);
         root.add(whitePlayerComboBox, 0, 1);
         root.add(blackPlayerComboBox, 7, 1);
-        root.add(fieldPlaceHolder, 1, 1, 5, 5);
+        root.add(gameBoardCanvas, 1, 1, 5, 5);
+        root.add(playObjectCanvas, 1, 1, 5, 5);
         root.add(chipsRemainText, 3, 0);
         root.add(ringBlackRemainingText, 5,0);
         root.add(ringWhiteRemainingText, 1,0);
@@ -207,7 +213,6 @@ public class MainApp extends Application {
                 }
             }
         }
-        
     }
     private void selectRingForMovement(int vertex) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
@@ -387,7 +392,7 @@ public class MainApp extends Application {
         if (boardVertex != null && !boardVertex.hasRing()) {
             String ringColor = isWhiteTurn ? "White" : "Black";
             Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
-            PlayObj newRing = new Ring(ringColor);
+            Ring newRing = new Ring(ringColor);
 
             boardVertex.setPlayObject(newRing);
             gc.drawImage(ringImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
@@ -404,8 +409,7 @@ public class MainApp extends Application {
                 chipPlacement = true;
             }
             isWhiteTurn = !isWhiteTurn;  // Switch to the other player’s turn
-            // this.gameBoard.updateBoard(vertex, newRing);
-            System.out.println(this.gameBoard.strMaker());
+
         } else {
             showAlert("Warning", "Cannot place a ring on top of another ring!");
             System.out.println("Attempted to place a ring on an occupied vertex.");
