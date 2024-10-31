@@ -27,7 +27,6 @@ public class GameSimulation {
      * @param xDiskPosition x position of the disk
      * @param yDiskPosition y position of the disk
      */
-
     // instead of the x&y distances we will use disk obj and its atributes
     public void startSimulation(Vertex[][] board, int xDiskPosition, int yDiskPosition){
         allPossibleMoves.clear();

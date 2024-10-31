@@ -273,6 +273,10 @@ public class MainApp extends Application {
         }
     }
 
+    /**
+     * This for the start of the game to show the vertexes to store the rings
+     * @param boardVertex
+     */
     private void displayPossibleMovesForRing(Vertex boardVertex) {
         int[] ringPosition = {boardVertex.getXposition(), boardVertex.getYposition()};
         Vertex[][] board = this.gameBoard.getBoard();
@@ -345,7 +349,6 @@ public class MainApp extends Application {
                     availableCircle.setFill(Color.LIGHTGREEN);
                     fieldPane.getChildren().add(availableCircle);
                 }
-
             }
         }
 
@@ -409,6 +412,7 @@ public class MainApp extends Application {
             System.out.println("Attempted to place a ring on an occupied vertex.");
         }
     }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
