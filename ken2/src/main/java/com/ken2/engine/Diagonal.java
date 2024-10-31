@@ -47,53 +47,53 @@ public class Diagonal {
     public ArrayList<Move> moveAlongDiagonal(Vertex[][] board) {
         possibleMoves.clear();
         coinFlip.clear();
-        
+
         int currentX = diskPosition[0];
         int currentY = diskPosition[1];
-
         int deltaX = direction.getDeltaX();
         int deltaY = direction.getDeltaY();
+        boolean hasPassedMarker = false;
 
-        boolean ringPassesCoin = false;
         while (true) {
             int newX = currentX + deltaX;
             int newY = currentY + deltaY;
 
+            // Check if the new coordinates are within bounds
             if (newX < 0 || newX >= board.length || newY < 0 || newY >= board[0].length) {
-                System.out.println("Out of bounds: (" + newX + ", " + newY + ")");
-
                 break;
             }
 
-            System.out.println("Checking position: (" + newX + ", " + newY + ")");
+            Vertex currentVertex = board[newX][newY];
 
-            if (board[newX][newY] == null) {
-                System.out.println("Found null at: (" + newX + ", " + newY + ")");
+            // Stop if there's a ring in the path
+            if (currentVertex != null && currentVertex.hasRing()) {
                 break;
+            }
 
+            // If there’s a coin, mark it for flipping and continue
+            if (currentVertex != null && currentVertex.hasCoin()) {
+                coinFlip.add((Coin) currentVertex.getPlayObject()[1]);
+                hasPassedMarker = true;
             } else {
-                Vertex currentVertex = board[newX][newY];
-                if (currentVertex.getPlayObject()[0] != null) { // check for the ring
-                    System.out.println("Ring encountered: (" + newX + ", " + newY + ")");
-                    break;
-                } else if (currentVertex.getPlayObject()[1] != null) { // check for the coin
-                    Coin coin = (Coin) currentVertex.getPlayObject()[1];
-                    coinFlip.add(coin);
-                    ringPassesCoin = true;//ring passes coin, we flip them
-                } else {//empty position
-                    if (ringPassesCoin) {
-                        possibleMoves.add(new Move(newX, newY, new ArrayList<Coin>(coinFlip), direction));//move to empty space
-                        break;
-                    } else {//ring didnt pass the coin
-                        possibleMoves.add(new Move(newX, newY, direction));
-                    }
+                // If we’ve passed markers and now find an empty spot, mark this as a possible move
+                if (hasPassedMarker) {
+                    possibleMoves.add(new Move(newX, newY, new ArrayList<>(coinFlip), direction));
+                    break; // Stop after reaching the first empty cell after passing markers
+                } else {
+                    // Add empty cell as a possible move if we haven’t passed any markers
+                    possibleMoves.add(new Move(newX, newY, direction));
                 }
-
             }
+
+            // Update position to continue along the direction
             currentX = newX;
             currentY = newY;
         }
 
         return possibleMoves;
-       }
     }
+
+
+
+
+}

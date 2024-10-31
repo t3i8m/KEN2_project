@@ -41,6 +41,18 @@ public class Vertex {
         return playObjects;
     }
 
+    public PlayObj getRing(){
+        return playObjects[0];
+    }
+    public PlayObj getCoin() {
+        return playObjects[1];
+    }
+    public boolean hasRing(){
+        return playObjects[0]!=null;
+    }
+    public boolean hasCoin(){
+        return playObjects[1]!=null;
+    }
     /** Sets the play object currently held in it
      * @param playObject the player object we want to place in a vertex
      */

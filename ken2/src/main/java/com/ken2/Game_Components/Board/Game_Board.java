@@ -222,15 +222,43 @@ public class Game_Board {
         return null;
     }
 
+    public int getVertexNumberFromPosition(int x, int y) {
+        if (x >= 0 && x < the_Board.length && y >= 0 && y < the_Board[0].length) {
+            Vertex vertex = the_Board[x][y];
+            if (vertex != null) {
+                return vertex.getVertextNumber();
+            }
+        }
+        return -1;
+    }
     /**
      * Update the board during the game
      */
-    public void updateBoard(int vertexNumber,PlayObj playObject){
-        // int[] currentPosition = GUIVertex.get(vertexNumber);
-        int[] currentPosition = this.getVertexPositionByNumber(vertexNumber);
-        the_Board[currentPosition[0]][currentPosition[1]].setPlayObject(playObject);
+//    public void updateBoard(int vertexNumber,PlayObj playObject){
+//        // int[] currentPosition = GUIVertex.get(vertexNumber);
+//        int[] currentPosition = this.getVertexPositionByNumber(vertexNumber);
+//        the_Board[currentPosition[0]][currentPosition[1]].setPlayObject(playObject);
+//    }
+
+    public Vertex getVertex(int vertexNumber) {
+        for (int i = 0; i < this.the_Board.length; i++) {
+            for (int j = 0; j < this.the_Board[i].length; j++) {
+                if (the_Board[i][j] != null && the_Board[i][j].getVertextNumber() == vertexNumber) {
+                    return the_Board[i][j];
+                }
+            }
+        }
+        return null;  // Return null if no vertex with that number exists
     }
 
+    public void updateBoard(int vertexNumber, PlayObj playObject) {
+        Vertex vertex = getVertex(vertexNumber);
+        if (vertex != null) {
+            vertex.setPlayObject(playObject);  // Directly set the play object on the vertex
+        } else {
+            System.out.println("Vertex not found for vertex number: " + vertexNumber);
+        }
+    }
 
 }
 

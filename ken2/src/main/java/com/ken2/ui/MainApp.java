@@ -1,10 +1,7 @@
 package com.ken2.ui;
 import java.util.ArrayList;
 
-import com.ken2.Game_Components.Board.Game_Board;
-import com.ken2.Game_Components.Board.PlayObj;
-import com.ken2.Game_Components.Board.Ring;
-import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.Game_Components.Board.*;
 import com.ken2.engine.GameSimulation;
 import com.ken2.engine.Move;
 
@@ -13,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
@@ -36,7 +34,9 @@ public class MainApp extends Application {
     private Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
     private int fieldDimension = 470;
     private int pieceDimension = 37;
-    private int chipsRemaining = 0;
+    private int chipsRemaining = 51;
+    private int ringBlack = 5;
+    private int ringWhite = 5;
     private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     private Color activeScoreRingColor = Color.rgb(90, 150, 220);
     private int[][] vertexCoordinates = new int[85][2];
@@ -49,24 +49,30 @@ public class MainApp extends Application {
     private GridPane root;
     private Pane fieldPane;
     private ArrayList<Integer> ringVertexNumbers;
-    
+    private Text chipsRemainText;
+    private Text ringWhiteRemainingText;
+    private Text ringBlackRemainingText;
+
+    private boolean chipPlacement = false;
+    private ArrayList<Integer> chipNumber = new ArrayList<>();
+
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Compare Players with Yinsh"); 
-        primaryStage.setWidth(800);              
-        primaryStage.setHeight(600); 
-        primaryStage.setResizable(false);    
-        
-        // we create a game board obj here 
+        primaryStage.setTitle("Compare Players with Yinsh");
+        primaryStage.setWidth(800);
+        primaryStage.setHeight(600);
+        primaryStage.setResizable(false);
+
+        // we create a game board obj here
         this.gameBoard = new Game_Board();
         this.gameSimulation = new GameSimulation();
         this.ringVertexNumbers = new ArrayList<>();
 
-        
+
         root = new GridPane();
-        root.setPadding(new Insets(5, 5, 5, 5)); 
-        root.setVgap(10); 
-        root.setHgap(10); 
+        root.setPadding(new Insets(5, 5, 5, 5));
+        root.setVgap(10);
+        root.setHgap(10);
 
         Scene scene = new Scene(root, 800, 600, Color.GRAY);
 
@@ -81,12 +87,12 @@ public class MainApp extends Application {
 
         initialiseVertex();
         drawBoard(gc);
-        
+
         fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
             double x = e.getX();
             double y = e.getY();
             int vertex = findClosestVertex(x,y);
-            
+
             if ((ringsPlaced < 10) && (vertex >= 0)){
                 placeStartingRing(vertex, gc);
                 displayAvailablePlacesForStartingRings(vertex);
@@ -106,6 +112,7 @@ public class MainApp extends Application {
             }
 
         });
+        fieldPlaceHolder.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gc));
 
 
         // info elements
@@ -121,19 +128,24 @@ public class MainApp extends Application {
 
         Text whitePlayerLabel = new Text();
         whitePlayerLabel.setText("White");
-        
+
         Text blackPlayerLabel = new Text();
         blackPlayerLabel.setText("Black");
 
-        Text chipsRemainText = new Text();
+        chipsRemainText = new Text();
         chipsRemainText.setText("Chips Remaining: " + chipsRemaining);
+
+        ringBlackRemainingText = new Text();
+        ringBlackRemainingText.setText("Black Rings Remaining: " + ringBlack);
+
+        ringWhiteRemainingText = new Text();
+        ringWhiteRemainingText.setText("White Rings Remaining: " + ringWhite);
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> resetBoard());
         fieldPane = new Pane();
         fieldPane.setPrefSize(fieldDimension, fieldDimension);
-        root.add(fieldPane, 1, 1, 5, 5); 
-
+        root.add(fieldPane, 1, 1, 5, 5);
 
         // score elements
         Circle scoreRingeW1 = makeScoreCircle();
@@ -148,7 +160,9 @@ public class MainApp extends Application {
         root.add(whitePlayerComboBox, 0, 1);
         root.add(blackPlayerComboBox, 7, 1);
         root.add(fieldPlaceHolder, 1, 1, 5, 5);
-        root.add(chipsRemainText, 1, 0);
+        root.add(chipsRemainText, 3, 0);
+        root.add(ringBlackRemainingText, 5,0);
+        root.add(ringWhiteRemainingText, 1,0);
         root.add(scoreRingeW1, 0, 2);
         root.add(scoreRingeW2, 0, 3);
         root.add(scoreRingeW3, 0, 4);
@@ -157,13 +171,164 @@ public class MainApp extends Application {
         root.add(scoreRingeB3, 7, 4);
         root.add(resetButton, 0 , 7);
 
-        
+
         primaryStage.setScene(scene);
         primaryStage.show();
         displayAvailablePlacesForStartingRings(0);
     }
+    private int selectedRingVertex = -1; // To track the ring selected for movement
+
+
+    private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
+        double x = e.getX();
+        double y = e.getY();
+        int vertex = findClosestVertex(x, y);
+
+        if (vertex >= 0) {
+            if (ringsPlaced < 10) {
+                // Ring placement phase
+                placeStartingRing(vertex, gc);
+                displayAvailablePlacesForStartingRings(vertex);
+            } else {
+                removeCircleIndicators();
+
+                if (chipPlacement) {
+                    placeChip(vertex, gc);  // Place chip and remain in place
+                } else {
+                    // Handle selecting and moving a ring
+                    if (selectedRingVertex == -1) {
+                        // First click: select the ring to move
+                        selectRingForMovement(vertex);
+                    } else {
+                        // Second click: attempt to move the selected ring to the new vertex
+                        moveRing(selectedRingVertex, vertex, gc);
+                        selectedRingVertex = -1; // Reset selection after moving
+                    }
+                }
+            }
+        }
+    }
+    private void selectRingForMovement(int vertex) {
+        Vertex boardVertex = this.gameBoard.getVertex(vertex);
+
+        // Check if the selected vertex has a ring and is of the correct turn color
+        if (boardVertex != null && boardVertex.hasRing() && boardVertex.getRing().getColour().equals(isWhiteTurn ? "White" : "Black")) {
+            selectedRingVertex = vertex; // Track the selected ring's location
+            displayPossibleMovesForRing(boardVertex); // Display possible moves for selected ring
+        } else {
+            showAlert("Invalid Selection", "Please select a valid ring to move.");
+        }
+    }
+
+    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc) {
+        Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
+        Vertex targetVertex = this.gameBoard.getVertex(toVertex);
+
+        // Ensure the target position is unoccupied and does not contain a chip
+        if (targetVertex != null && !targetVertex.hasRing() && !chipNumber.contains(toVertex)) {
+            // Clear the original ring position on the canvas
+            gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
+
+            // Move the ring to the new target vertex
+            Ring ringToMove = (Ring) sourceVertex.getRing();
+            targetVertex.setPlayObject(ringToMove); // Place ring in target vertex
+            sourceVertex.setPlayObject(null); // Clear ring from original position
+
+            // Draw ring at the new position
+            Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
+            gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+
+            // Toggle the turn and switch to chip placement phase
+            isWhiteTurn = !isWhiteTurn;
+            chipPlacement = true;
+        } else {
+            showAlert("Invalid Move", "The selected position is not valid for movement.");
+        }
+    }
+
+    // Method to place chips on the board
+    private void placeChip(int vertex, GraphicsContext gc) {
+        Vertex boardVertex = this.gameBoard.getVertex(vertex);
+        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
+            String chipColor = isWhiteTurn ? "White" : "Black";
+            Image chipImage = isWhiteTurn ? chipWImage : chipBImage;
+
+            Coin newChip = new Coin(chipColor);
+            boardVertex.setPlayObject(newChip);
+
+
+            gc.drawImage(chipImage, vertexCoordinates[vertex][0] + pieceDimension / 4,
+                    vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+
+            chipNumber.add(vertex);
+            updateChipsRemaining();
+            chipPlacement = false;
+            displayPossibleMovesForRing(boardVertex);
+
+            //isWhiteTurn = !isWhiteTurn;
+
+        } else {
+            showAlert("Warning", "Cannot place a chip on top of another chip or an empty space!");
+            System.out.println("Attempted to place a chip on an invalid vertex " + vertex);  // Debug statement
+        }
+    }
+
+    private void displayPossibleMovesForRing(Vertex boardVertex) {
+        int[] ringPosition = {boardVertex.getXposition(), boardVertex.getYposition()};
+        Vertex[][] board = this.gameBoard.getBoard();
+
+        // Start simulation to find eligible moves
+        this.gameSimulation.startSimulation(board, ringPosition[0], ringPosition[1]);
+        ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
+
+        // Indicate possible moves
+        for (ArrayList<Move> directionMoves : allPossibleMoves) {
+            for (Move move : directionMoves) {
+                int x = move.getXposition();
+                int y = move.getYposition();
+                int moveVertexNumber = this.gameBoard.getVertexNumberFromPosition(x, y);
+
+                // Only proceed if moveVertexNumber is valid
+                if (moveVertexNumber != -1 && !chipNumber.contains(moveVertexNumber)) {
+                    int pixelX = vertexCoordinates[moveVertexNumber][0];
+                    int pixelY = vertexCoordinates[moveVertexNumber][1];
+
+                    Circle possibleMoveIndicator = new Circle();
+                    possibleMoveIndicator.setCenterX(pixelX + pieceDimension / 2);
+                    possibleMoveIndicator.setCenterY(pixelY + pieceDimension / 2);
+                    possibleMoveIndicator.setRadius(7);
+                    possibleMoveIndicator.setFill(Color.GREEN);
+
+                    fieldPane.getChildren().add(possibleMoveIndicator);
+                }
+            }
+        }
+    }
+    private void checkWinningPosition(int vertex) {
+        ///five in a row
+    }
+    private void updateChipsRemaining() {
+        if (chipsRemaining > 0) {
+            chipsRemaining--;  // Decrement chips remaining
+            chipsRemainText.setText("Chips Remaining: " + chipsRemaining);  // Update display text
+        }
+    }
+    private void updateBlackRing(){
+        if(ringBlack >0){
+            ringBlack--;
+            ringBlackRemainingText.setText("Black Ring Remaining: " + ringBlack);
+        }
+    }
+    private void updateWhiteRing(){
+        if(ringWhite >0){
+            ringWhite--;
+            ringWhiteRemainingText.setText("White Ring Remaining: " + ringWhite);
+        }
+
+    }
 
     private void displayPossibleMoves(ArrayList<ArrayList<Move>> allPossibleMoves){
+        removeCircleIndicators();
         Vertex[][] board = this.gameBoard.getBoard();
         for(ArrayList<Move> currentDirectionMoves: allPossibleMoves){
             if(!currentDirectionMoves.isEmpty()){
@@ -214,36 +379,41 @@ public class MainApp extends Application {
             }
         }
     }
-    
 
+    private void placeStartingRing(int vertex, GraphicsContext gc) {
+        Vertex boardVertex = this.gameBoard.getVertex(vertex);
 
-    private void placeStartingRing(int vertex, GraphicsContext gc){
-        
-        System.out.println("placeStartingRing called");
+        if (boardVertex != null && !boardVertex.hasRing()) {
+            String ringColor = isWhiteTurn ? "White" : "Black";
+            Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
+            Ring newRing = new Ring(ringColor);
 
-        Image currentImage;
+            boardVertex.setPlayObject(newRing);
+            gc.drawImage(ringImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
 
-        PlayObj currentRing = new Ring("");
-        if(isWhiteTurn){
-            currentImage = ringWImage;
-            System.out.println("current image is white ring");
-            currentRing.setColour("White");
+            ringsPlaced++;
+            ringVertexNumbers.add(vertex);
+            //update rings count
+            if ("White".equals(ringColor)) {
+                updateWhiteRing();
+            } else {
+                updateBlackRing();
+            }
+            if(ringsPlaced>=10){
+                chipPlacement = true;
+            }
+            isWhiteTurn = !isWhiteTurn;  // Switch to the other player’s turn
+
         } else {
-            currentImage = ringBImage;
-            currentRing.setColour("Black");
-
-            System.out.println("current image is white ring");
+            showAlert("Warning", "Cannot place a ring on top of another ring!");
+            System.out.println("Attempted to place a ring on an occupied vertex.");
         }
-
-        System.out.println("Current ring colour is: "+currentRing.getColour());
-        System.out.println(vertex);
-        this.gameBoard.updateBoard(vertex, currentRing);
-        System.out.println("The board was updated");
-        gc.drawImage(currentImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
-        isWhiteTurn = !isWhiteTurn;
-        ringsPlaced++;
-        System.out.println(this.gameBoard.strMaker());
-        this.ringVertexNumbers.add(vertex);
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private int findClosestVertex(double x, double y){
@@ -457,8 +627,6 @@ public class MainApp extends Application {
             gc.setFill(Color.BLACK);
             gc.fillText(""+i, vertexCoordinates[i][0] + 10 + pieceDimension/2, vertexCoordinates[i][1] + 5 + pieceDimension/2);
         }
-
-
     }
 
     private Circle makeScoreCircle() {
@@ -477,7 +645,7 @@ public class MainApp extends Application {
         System.out.println("Reset!");
     }
 
-    public static void main(String[] args) {
+        public static void main(String[] args) {
         launch(args);
     }
 }
