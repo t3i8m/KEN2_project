@@ -27,10 +27,10 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     
-    private Image ringBImage = new Image("file:KEN2_project\\ken2\\assets\\black ring.png");
-    private Image chipBImage = new Image("file:KEN2_project\\ken2\\assets\\black chip.png");
-    private Image ringWImage = new Image("file:KEN2_project\\ken2\\assets\\white ring.png");
-    private Image chipWImage = new Image("file:KEN2_project\\ken2\\assets\\white chip.png");
+    private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
+    private Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
+    private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
+    private Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
     private int fieldDimension = 470;
     private int pieceDimension = 37;
     private int chipsRemaining = 51;
@@ -213,6 +213,7 @@ public class MainApp extends Application {
                 }
             }
         }
+        System.out.println(this.gameBoard.strMaker());
     }
     private void selectRingForMovement(int vertex) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);

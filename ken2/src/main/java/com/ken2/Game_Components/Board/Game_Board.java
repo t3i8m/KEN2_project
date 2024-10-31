@@ -154,6 +154,16 @@ public class Game_Board {
         }
     }
 
+    public void replaceRing(int prevVertexNumber,int newVertexNumber) {
+        Vertex pVertex = getVertex(prevVertexNumber);
+        Vertex nVertex = getVertex(newVertexNumber);
+        PlayObj choosenRing = pVertex.getRing();
+        if (choosenRing != null) {
+            pVertex.setRing(null);
+            nVertex.setRing(choosenRing);
+        } 
+    }
+
     public ArrayList<Vertex> getAllFreeVertexes(){
         ArrayList<Vertex> takenPositions = new ArrayList<Vertex>();
         for (int i = 0; i < this.the_Board.length; i++) {

@@ -32,6 +32,14 @@ public class Vertex {
         return yIndex;
     }
 
+    public void setRing(PlayObj newRing) {
+        this.playObjects[0] = newRing;
+    }
+
+    public void setCoin(PlayObj newCoin) {
+        this.playObjects[1] = newCoin;
+    }
+
 
     /** Returns the play object currently at the vertex
      * 0 - Ring, 1 - Coin
