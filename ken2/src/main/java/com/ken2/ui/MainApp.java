@@ -207,6 +207,7 @@ public class MainApp extends Application {
                 }
             }
         }
+        
     }
     private void selectRingForMovement(int vertex) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
@@ -386,7 +387,7 @@ public class MainApp extends Application {
         if (boardVertex != null && !boardVertex.hasRing()) {
             String ringColor = isWhiteTurn ? "White" : "Black";
             Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
-            Ring newRing = new Ring(ringColor);
+            PlayObj newRing = new Ring(ringColor);
 
             boardVertex.setPlayObject(newRing);
             gc.drawImage(ringImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
@@ -403,7 +404,8 @@ public class MainApp extends Application {
                 chipPlacement = true;
             }
             isWhiteTurn = !isWhiteTurn;  // Switch to the other player’s turn
-
+            // this.gameBoard.updateBoard(vertex, newRing);
+            System.out.println(this.gameBoard.strMaker());
         } else {
             showAlert("Warning", "Cannot place a ring on top of another ring!");
             System.out.println("Attempted to place a ring on an occupied vertex.");
