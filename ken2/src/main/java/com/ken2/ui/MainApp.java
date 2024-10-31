@@ -26,8 +26,7 @@ import javafx.stage.Stage;
 //on every mouse event call update board
 
 public class MainApp extends Application {
-    
-    private Image boardImage = new Image("file:ken2\\assets\\temp-board-image.jpg");
+
     private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
     private Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
     private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
@@ -55,6 +54,11 @@ public class MainApp extends Application {
 
     private boolean chipPlacement = false;
     private ArrayList<Integer> chipNumber = new ArrayList<>();
+    private int selectedRingVertex = -1;
+    private int selectedChipVertex = -1;
+    private boolean chipPlaced = false;
+    private boolean isFirstClick = true;
+    private int chipRingVertex = -1;
 
     @Override
     public void start(Stage primaryStage) {
@@ -79,42 +83,46 @@ public class MainApp extends Application {
         // game field elements
         isWhiteTurn = true;
         ringsPlaced = 0;
-        Canvas fieldPlaceHolder = new Canvas();
-        fieldPlaceHolder.setWidth(fieldDimension);
-        fieldPlaceHolder.setHeight(fieldDimension);
+        Canvas gameBoardCanvas = new Canvas();
+        gameBoardCanvas.setWidth(fieldDimension);
+        gameBoardCanvas.setHeight(fieldDimension);
 
-        GraphicsContext gc = fieldPlaceHolder.getGraphicsContext2D();
+
+        Canvas playObjectCanvas = new Canvas();
+        playObjectCanvas.setWidth(fieldDimension);
+        playObjectCanvas.setHeight(fieldDimension);
+
+        GraphicsContext gcB = gameBoardCanvas.getGraphicsContext2D();
+        GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
 
         initialiseVertex();
-        drawBoard(gc);
+        drawBoard(gcB);
 
-        fieldPlaceHolder.setOnMouseClicked((MouseEvent e) -> {
-            double x = e.getX();
-            double y = e.getY();
-            int vertex = findClosestVertex(x,y);
+        // gameBoardCanvas.setOnMouseClicked((MouseEvent e) -> {
+        //     double x = e.getX();
+        //     double y = e.getY();
+        //     int vertex = findClosestVertex(x,y);
 
-            if ((ringsPlaced < 10) && (vertex >= 0)){
-                placeStartingRing(vertex, gc);
-                displayAvailablePlacesForStartingRings(vertex);
-            } else if (ringsPlaced>=10){
-                removeCircleIndicators();
+        //     if ((ringsPlaced < 10) && (vertex >= 0)){
+        //         placeStartingRing(vertex, gcP);
+        //         displayAvailablePlacesForStartingRings(vertex);
+        //     } else if (ringsPlaced>=10){
+        //         removeCircleIndicators();
 
-                if(this.ringVertexNumbers.contains(vertex)){
-                    System.out.println("CONTAINS");
-                }
+        //         if(this.ringVertexNumbers.contains(vertex)){
+        //             System.out.println("CONTAINS");
+        //         }
 
-                int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
-                System.out.println(vertexPosition[0]);
-                Vertex[][] board = this.gameBoard.getBoard();
-                this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
-                ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
-                displayPossibleMoves(allPossibleMoves);
-            }
+        //         int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
+        //         System.out.println(vertexPosition[0]);
+        //         Vertex[][] board = this.gameBoard.getBoard();
+        //         this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
+        //         ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
+        //         displayPossibleMoves(allPossibleMoves);
+        //     }
 
-        });
-        fieldPlaceHolder.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gc));
-
-
+        // });
+        playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
         // info elements
         whitePlayerComboBox = new ComboBox<>();
         whitePlayerComboBox.getItems().add("Human Player");
@@ -159,7 +167,8 @@ public class MainApp extends Application {
         root.add(blackPlayerLabel, 7, 0);
         root.add(whitePlayerComboBox, 0, 1);
         root.add(blackPlayerComboBox, 7, 1);
-        root.add(fieldPlaceHolder, 1, 1, 5, 5);
+        root.add(gameBoardCanvas, 1, 1, 5, 5);
+        root.add(playObjectCanvas, 1, 1, 5, 5);
         root.add(chipsRemainText, 3, 0);
         root.add(ringBlackRemainingText, 5,0);
         root.add(ringWhiteRemainingText, 1,0);
@@ -170,129 +179,144 @@ public class MainApp extends Application {
         root.add(scoreRingeB2, 7, 3);
         root.add(scoreRingeB3, 7, 4);
         root.add(resetButton, 0 , 7);
-
-
         primaryStage.setScene(scene);
         primaryStage.show();
         displayAvailablePlacesForStartingRings(0);
     }
-    private int selectedRingVertex = -1; // To track the ring selected for movement
 
+private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
+    int vertex = findClosestVertex(e.getX(), e.getY());
+    if (vertex < 0) return;
 
-    private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
-        double x = e.getX();
-        double y = e.getY();
-        int vertex = findClosestVertex(x, y);
-
-        if (vertex >= 0) {
-            if (ringsPlaced < 10) {
-                // Ring placement phase
-                placeStartingRing(vertex, gc);
-                displayAvailablePlacesForStartingRings(vertex);
+    if (ringsPlaced < 10) {
+        placeStartingRing(vertex, gc);
+        displayAvailablePlacesForStartingRings(vertex);
+         } else {
+        handleChipAndRingPlacement(vertex, gc);
+    }
+}
+    private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
+        Vertex boardVertex = this.gameBoard.getVertex(vertex);
+        // first click places chip into the ring
+        if (isFirstClick) {
+            if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
+                placeChip(vertex, gc);
+                selectedChipVertex = vertex;//store chip coordinate
+                isFirstClick = false;
             } else {
+                showAlert("Invalid Placement", "Place your chip in one of your rings.");
+            }
+        } else {
+            ///second click either selecting the ring for movement or place the chip into another ring
+            if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
                 removeCircleIndicators();
-
-                if (chipPlacement) {
-                    placeChip(vertex, gc);  // Place chip and remain in place
+                if (vertex == selectedChipVertex) {
+                    displayPossibleMovesForRing(boardVertex);
                 } else {
-                    // Handle selecting and moving a ring
-                    if (selectedRingVertex == -1) {
-                        // First click: select the ring to move
-                        selectRingForMovement(vertex);
-                    } else {
-                        // Second click: attempt to move the selected ring to the new vertex
-                        moveRing(selectedRingVertex, vertex, gc);
-                        selectedRingVertex = -1; // Reset selection after moving
-                    }
+                    moveChipToRing(selectedChipVertex, vertex, gc);
+                    selectedChipVertex = vertex;
                 }
+            } else if (vertex != selectedChipVertex) {
+                moveRing(selectedChipVertex, vertex, gc);
+                resetTurn();
+            } else {
+                showAlert("Invalid Move", "Please select a valid ring or cell to move.");
             }
         }
     }
-    private void selectRingForMovement(int vertex) {
-        Vertex boardVertex = this.gameBoard.getVertex(vertex);
 
-        // Check if the selected vertex has a ring and is of the correct turn color
-        if (boardVertex != null && boardVertex.hasRing() && boardVertex.getRing().getColour().equals(isWhiteTurn ? "White" : "Black")) {
-            selectedRingVertex = vertex; // Track the selected ring's location
-            displayPossibleMovesForRing(boardVertex); // Display possible moves for selected ring
-        } else {
-            showAlert("Invalid Selection", "Please select a valid ring to move.");
+    private void moveChipToRing(int fromVertex, int toVertex, GraphicsContext gc) {
+        Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
+        Vertex targetVertex = this.gameBoard.getVertex(toVertex);
+
+        if (sourceVertex != null && targetVertex != null && sourceVertex.hasCoin()) {
+            Coin currentChip = (Coin) sourceVertex.getCoin();
+            if (targetVertex.hasRing() && !targetVertex.hasCoin() && targetVertex.getRing().getColour().equalsIgnoreCase(currentChip.getColour())) {
+                sourceVertex.setPlayObject(null); //delete the chip from its place
+                gc.clearRect(vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                        vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+
+                targetVertex.setPlayObject(currentChip); //chips new position
+                selectedChipVertex = toVertex;
+
+                Image chipImage = currentChip.getColour().equals("White") ? chipWImage : chipBImage;
+                gc.drawImage(chipImage, vertexCoordinates[toVertex][0] + pieceDimension / 4,
+                        vertexCoordinates[toVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+            } else {
+                showAlert("Invalid Move", "You can only move the chip to an empty ring of the same color.");
+            }
         }
     }
 
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc) {
+        //System.out.println("Moving ring from " + fromVertex + " to " + toVertex);
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = this.gameBoard.getVertex(toVertex);
 
-        // Ensure the target position is unoccupied and does not contain a chip
         if (targetVertex != null && !targetVertex.hasRing() && !chipNumber.contains(toVertex)) {
-            // Clear the original ring position on the canvas
+            Ring ringToMove = (Ring) sourceVertex.getRing();
             gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
 
-            // Move the ring to the new target vertex
-            Ring ringToMove = (Ring) sourceVertex.getRing();
-            targetVertex.setPlayObject(ringToMove); // Place ring in target vertex
-            sourceVertex.setPlayObject(null); // Clear ring from original position
+            if (sourceVertex.hasCoin()) {
+                Coin existingChip = (Coin) sourceVertex.getCoin();
+                Image chipImage = existingChip.getColour().equals("White") ? chipWImage : chipBImage;
+                gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                        vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+            }
 
-            // Draw ring at the new position
-            Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
+            //move the ring to the target vertex, without moving the chip
+            targetVertex.setPlayObject(ringToMove);
+            sourceVertex.setPlayObject(null);
+            Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
             gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
-
-            // Toggle the turn and switch to chip placement phase
-            isWhiteTurn = !isWhiteTurn;
-            chipPlacement = true;
+            chipRingVertex = -1;
+            chipPlaced = false;
+            selectedRingVertex = -1;
         } else {
-            showAlert("Invalid Move", "The selected position is not valid for movement.");
+            showAlert("Invalid Move", "Cannot move ring here.");
         }
     }
 
     // Method to place chips on the board
     private void placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
-        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
-            String chipColor = isWhiteTurn ? "White" : "Black";
-            Image chipImage = isWhiteTurn ? chipWImage : chipBImage;
 
+        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
+            String chipColor = currentPlayerColor();
+            Image chipImage = chipColor.equals("White") ? chipWImage : chipBImage;
+
+            //condition for same ring colors
+            if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
+                showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
+                return;
+            }
             Coin newChip = new Coin(chipColor);
             boardVertex.setPlayObject(newChip);
+            chipRingVertex = vertex;
 
-
-            gc.drawImage(chipImage, vertexCoordinates[vertex][0] + pieceDimension / 4,
-                    vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+            gc.drawImage(chipImage, vertexCoordinates[vertex][0] + pieceDimension / 4,vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
 
             chipNumber.add(vertex);
             updateChipsRemaining();
-            chipPlacement = false;
-            displayPossibleMovesForRing(boardVertex);
-
-            //isWhiteTurn = !isWhiteTurn;
-
+            chipPlaced = true;//after chip placement we can move the ring
         } else {
-            showAlert("Warning", "Cannot place a chip on top of another chip or an empty space!");
-            System.out.println("Attempted to place a chip on an invalid vertex " + vertex);  // Debug statement
+            showAlert("Warning", "Cannot place a chip here");
         }
     }
 
-    /**
-     * This for the start of the game to show the vertexes to store the rings
-     * @param boardVertex
-     */
     private void displayPossibleMovesForRing(Vertex boardVertex) {
         int[] ringPosition = {boardVertex.getXposition(), boardVertex.getYposition()};
         Vertex[][] board = this.gameBoard.getBoard();
 
-        // Start simulation to find eligible moves
         this.gameSimulation.startSimulation(board, ringPosition[0], ringPosition[1]);
         ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
 
-        // Indicate possible moves
         for (ArrayList<Move> directionMoves : allPossibleMoves) {
             for (Move move : directionMoves) {
                 int x = move.getXposition();
                 int y = move.getYposition();
                 int moveVertexNumber = this.gameBoard.getVertexNumberFromPosition(x, y);
 
-                // Only proceed if moveVertexNumber is valid
                 if (moveVertexNumber != -1 && !chipNumber.contains(moveVertexNumber)) {
                     int pixelX = vertexCoordinates[moveVertexNumber][0];
                     int pixelY = vertexCoordinates[moveVertexNumber][1];
@@ -313,45 +337,18 @@ public class MainApp extends Application {
     }
     private void updateChipsRemaining() {
         if (chipsRemaining > 0) {
-            chipsRemaining--;  // Decrement chips remaining
-            chipsRemainText.setText("Chips Remaining: " + chipsRemaining);  // Update display text
+            chipsRemaining--;
+            chipsRemainText.setText("Chips Remaining: " + chipsRemaining);
         }
     }
-    private void updateBlackRing(){
-        if(ringBlack >0){
-            ringBlack--;
-            ringBlackRemainingText.setText("Black Ring Remaining: " + ringBlack);
-        }
-    }
-    private void updateWhiteRing(){
-        if(ringWhite >0){
+    private void updateRingCount(String color) {
+        if (color.equals("White")) {
             ringWhite--;
-            ringWhiteRemainingText.setText("White Ring Remaining: " + ringWhite);
+            ringWhiteRemainingText.setText("White Rings Remaining: " + ringWhite);
+        } else {
+            ringBlack--;
+            ringBlackRemainingText.setText("Black Rings Remaining: " + ringBlack);
         }
-
-    }
-
-    private void displayPossibleMoves(ArrayList<ArrayList<Move>> allPossibleMoves){
-        removeCircleIndicators();
-        Vertex[][] board = this.gameBoard.getBoard();
-        for(ArrayList<Move> currentDirectionMoves: allPossibleMoves){
-            if(!currentDirectionMoves.isEmpty()){
-                for(Move currentMove: currentDirectionMoves){
-                    int[] currentMovesCoordinates = {currentMove.getXposition(), currentMove.getYposition()};
-                    int vertexNumber = board[currentMovesCoordinates[0]][currentMovesCoordinates[1]].getVertextNumber();
-                    // System.out.println(currentMove.getXposition());
-                    // System.out.println(currentMove.getYposition());
-                    // System.out.println("Vertex number: "+Integer.toString(board[currentMovesCoordinates[0]][currentMovesCoordinates[1]].getVertextNumber()));
-                    Circle availableCircle = new Circle();
-                    availableCircle.setCenterX(vertexCoordinates[vertexNumber][0] + pieceDimension / 2);
-                    availableCircle.setCenterY(vertexCoordinates[vertexNumber][1] + pieceDimension / 2);
-                    availableCircle.setRadius(7);
-                    availableCircle.setFill(Color.LIGHTGREEN);
-                    fieldPane.getChildren().add(availableCircle);
-                }
-            }
-        }
-
     }
 
     private void removeCircleIndicators(){
@@ -361,9 +358,7 @@ public class MainApp extends Application {
     private void displayAvailablePlacesForStartingRings(int vertex) {
         Vertex[][] board = this.gameBoard.getBoard();
         ArrayList<Vertex> availablePlaces = this.gameSimulation.getAllPossibleStartingRingPlaces(board);
-    
         for (Vertex v : availablePlaces) {
-           
             if (v != null) {
                 Circle availableCircle = new Circle();
                 availableCircle.setCenterX(vertexCoordinates[v.getVertextNumber()][0] + pieceDimension / 2);
@@ -382,37 +377,33 @@ public class MainApp extends Application {
             }
         }
     }
-
+    private void resetTurn() {
+        isWhiteTurn = !isWhiteTurn;
+        chipPlacement = true;
+        chipPlaced = false;
+        isFirstClick = true;
+    }
+    private String currentPlayerColor() {
+        return isWhiteTurn ? "White" : "Black";
+    }
     private void placeStartingRing(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
-
         if (boardVertex != null && !boardVertex.hasRing()) {
-            String ringColor = isWhiteTurn ? "White" : "Black";
-            Image ringImage = isWhiteTurn ? ringWImage : ringBImage;
+            String ringColor = currentPlayerColor();
             Ring newRing = new Ring(ringColor);
-
             boardVertex.setPlayObject(newRing);
+            ringsPlaced++;
+
+            Image ringImage = ringColor.equals("White") ? ringWImage : ringBImage;
             gc.drawImage(ringImage, vertexCoordinates[vertex][0], vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
 
-            ringsPlaced++;
-            ringVertexNumbers.add(vertex);
-            //update rings count
-            if ("White".equals(ringColor)) {
-                updateWhiteRing();
-            } else {
-                updateBlackRing();
-            }
-            if(ringsPlaced>=10){
-                chipPlacement = true;
-            }
-            isWhiteTurn = !isWhiteTurn;  // Switch to the other player’s turn
-
+            updateRingCount(ringColor);
+            if (ringsPlaced >= 10) chipPlacement= true;
+            resetTurn();
         } else {
-            showAlert("Warning", "Cannot place a ring on top of another ring!");
-            System.out.println("Attempted to place a ring on an occupied vertex.");
+            showAlert("Invalid Placement", "Cannot place ring here.");
         }
     }
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -501,112 +492,110 @@ public class MainApp extends Application {
 
     private void drawBoard(GraphicsContext gc) {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
-
-        
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
 
 
         // up slant lines
-        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
         vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
         vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2,
         vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2,
         vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2,
         vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[9][0]+pieceDimension/2, vertexCoordinates[9][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[9][0]+pieceDimension/2, vertexCoordinates[9][1]+pieceDimension/2,
         vertexCoordinates[75][0]+pieceDimension/2, vertexCoordinates[75][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2,
         vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2,
         vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2,
         vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2,
         vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2,
         vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
 
         // down slant lines
-        gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2,
         vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2,
         vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2,
         vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2,
         vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
         vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[5][0]+pieceDimension/2, vertexCoordinates[5][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[5][0]+pieceDimension/2, vertexCoordinates[5][1]+pieceDimension/2,
         vertexCoordinates[79][0]+pieceDimension/2, vertexCoordinates[79][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
         vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2,
         vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2,
         vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2,
         vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2,
         vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
 
         // // vertical lines
-        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
         vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2);
-             
-        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
         vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2,
         vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2,
         vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2,
         vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[38][0]+pieceDimension/2, vertexCoordinates[38][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[38][0]+pieceDimension/2, vertexCoordinates[38][1]+pieceDimension/2,
         vertexCoordinates[46][0]+pieceDimension/2, vertexCoordinates[46][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2,
         vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2,
         vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2,
         vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
-        
-        gc.strokeLine(vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2, 
+
+        gc.strokeLine(vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2,
         vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
 
-        gc.strokeLine(vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2, 
+        gc.strokeLine(vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2,
         vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
         // // for demo
@@ -617,16 +606,16 @@ public class MainApp extends Application {
 
         // //hit box
         // gc.setStroke(Color.MAGENTA);
-        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10, 
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10,
         // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
-        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10,
         // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10);
-        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 - 10,
         // vertexCoordinates[40][0]+pieceDimension/2 + 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
-        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10, 
+        // gc.strokeLine(vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 - 10,
         // vertexCoordinates[40][0]+pieceDimension/2 - 10, vertexCoordinates[40][1]+pieceDimension/2 + 10);
 
-        //vertex numbers 
+        //vertex numbers
         for (int i = 0 ; i < 85 ; i++){
             gc.setFill(Color.BLACK);
             gc.fillText(""+i, vertexCoordinates[i][0] + 10 + pieceDimension/2, vertexCoordinates[i][1] + 5 + pieceDimension/2);
