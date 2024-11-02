@@ -14,6 +14,7 @@ public class Vertex {
         playObjects = new PlayObj[2];
         this.xIndex = xIndex;
         this.yIndex = yIndex;
+        this.vertexNumber = -1;
     }
 
     public void setVertexNumber(int vertexNumber){
@@ -33,16 +34,23 @@ public class Vertex {
     }
 
     public void setRing(PlayObj newRing) {
-        // if(newRing==null){
-        //     this.playObjects = = new PlayObj[2]{,playObjects[1]};
-        // }
-        this.playObjects[0] = newRing;
+        this.playObjects[0] = newRing;  // Если newRing == null, кольцо удаляется
+        if (newRing == null) {
+            System.out.println("Ring removed from vertex " + this.vertexNumber);
+        } else {
+            System.out.println("Ring set at vertex " + this.vertexNumber);
+        }
     }
+
 
     public void setCoin(PlayObj newCoin) {
-        this.playObjects[1] = newCoin;
+        if (newCoin instanceof Coin) {
+            this.playObjects[1] = newCoin;
+            System.out.println("Coin set at (" + xIndex + ", " + yIndex + ")");
+        } else {
+            System.out.println("Attempted to set non-coin object as coin at (" + xIndex + ", " + yIndex + ")");
+        }
     }
-
 
     /** Returns the play object currently at the vertex
      * 0 - Ring, 1 - Coin
@@ -58,21 +66,35 @@ public class Vertex {
     public PlayObj getCoin() {
         return playObjects[1];
     }
-    public boolean hasRing(){
-        return playObjects[0]!=null;
+    public boolean hasRing() {
+        boolean result = playObjects[0] != null;
+        //System.out.println("Vertex " + this.vertexNumber + " hasRing: " + result);
+        return result;
     }
-    public boolean hasCoin(){
-        return playObjects[1]!=null;
+
+    public boolean hasCoin() {
+        boolean result = playObjects[1] != null;
+        // System.out.println("Vertex " + this.vertexNumber + " hasCoin: " + result);
+        return result;
     }
+
     /** Sets the play object currently held in it
      * @param playObject the player object we want to place in a vertex
      */
     public void setPlayObject(PlayObj playObject) {
-        if(playObject instanceof Ring){       // sets if it is a ring in the 0th index
-            playObjects[0]=playObject;
-        }else{                              // sets otherwise a coin in the 1st index
-            playObjects[1]=playObject;
+        if (playObject instanceof Ring) {
+            playObjects[0] = playObject;
+            System.out.println("Set Ring at vertex " + this.vertexNumber);
+        } else if (playObject instanceof Coin) {
+            playObjects[1] = playObject;
+            System.out.println("Set Coin at vertex " + this.vertexNumber);
+        } else {
+            playObjects[0] = null;
+            playObjects[1] = null;
+            System.out.println("Cleared vertex " + this.vertexNumber);
         }
-//        label=playObject.type;
     }
+
+
+
 }

@@ -58,42 +58,29 @@ public class Diagonal {
             int newX = currentX + deltaX;
             int newY = currentY + deltaY;
 
-            // Check if the new coordinates are within bounds
             if (newX < 0 || newX >= board.length || newY < 0 || newY >= board[0].length) {
                 break;
             }
-
-            Vertex currentVertex = board[newX][newY];
-
-            // Stop if there's a ring in the path
-            if (currentVertex != null && currentVertex.hasRing()) {
+            if (board[newX][newY]!= null && board[newX][newY].hasRing()) {
                 break;
             }
 
-            // If there’s a coin, mark it for flipping and continue
-            if (currentVertex != null && currentVertex.hasCoin()) {
-                coinFlip.add((Coin) currentVertex.getPlayObject()[1]);
+            if (board[newX][newY] != null && board[newX][newY].hasCoin()) {
+                coinFlip.add((Coin) board[newX][newY].getPlayObject()[1]);
                 hasPassedMarker = true;
             } else {
-                // If we’ve passed markers and now find an empty spot, mark this as a possible move
                 if (hasPassedMarker) {
                     possibleMoves.add(new Move(newX, newY, new ArrayList<>(coinFlip), direction));
-                    break; // Stop after reaching the first empty cell after passing markers
+
                 } else {
-                    // Add empty cell as a possible move if we haven’t passed any markers
                     possibleMoves.add(new Move(newX, newY, direction));
                 }
             }
 
-            // Update position to continue along the direction
             currentX = newX;
             currentY = newY;
         }
-
         return possibleMoves;
     }
-
-
-
 
 }
