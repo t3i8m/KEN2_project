@@ -2,6 +2,8 @@ package com.ken2.ui;
 import java.util.ArrayList;
 
 import com.ken2.Game_Components.Board.*;
+import com.ken2.engine.Diagonal;
+import com.ken2.engine.Direction;
 import com.ken2.engine.GameSimulation;
 import com.ken2.engine.Move;
 
@@ -59,6 +61,7 @@ public class MainApp extends Application {
     private boolean chipPlaced = false;
     private boolean isFirstClick = true;
     private int chipRingVertex = -1;
+    private ArrayList<Integer> highlightedvertices = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -97,31 +100,6 @@ public class MainApp extends Application {
 
         initialiseVertex();
         drawBoard(gcB);
-
-        // gameBoardCanvas.setOnMouseClicked((MouseEvent e) -> {
-        //     double x = e.getX();
-        //     double y = e.getY();
-        //     int vertex = findClosestVertex(x,y);
-
-        //     if ((ringsPlaced < 10) && (vertex >= 0)){
-        //         placeStartingRing(vertex, gcP);
-        //         displayAvailablePlacesForStartingRings(vertex);
-        //     } else if (ringsPlaced>=10){
-        //         removeCircleIndicators();
-
-        //         if(this.ringVertexNumbers.contains(vertex)){
-        //             System.out.println("CONTAINS");
-        //         }
-
-        //         int[] vertexPosition = this.gameBoard.getVertexPositionByNumber(vertex);
-        //         System.out.println(vertexPosition[0]);
-        //         Vertex[][] board = this.gameBoard.getBoard();
-        //         this.gameSimulation.startSimulation(board, vertexPosition[0], vertexPosition[1]);
-        //         ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
-        //         displayPossibleMoves(allPossibleMoves);
-        //     }
-
-        // });
         playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
         // info elements
         whitePlayerComboBox = new ComboBox<>();
@@ -211,10 +189,12 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
             if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
                 removeCircleIndicators();
                 if (vertex == selectedChipVertex) {
-                    displayPossibleMovesForRing(boardVertex);
-                } else {
+                    highlightPossibleMoves(boardVertex);
+                } else if (highlightedvertices.contains(vertex)){
                     moveChipToRing(selectedChipVertex, vertex, gc);
                     selectedChipVertex = vertex;
+                } else{
+                    showAlert("Invalid move", "Please select a highlighted vertex");
                 }
             } else if (vertex != selectedChipVertex) {
                 moveRing(selectedChipVertex, vertex, gc);
@@ -249,12 +229,18 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
     }
 
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc) {
-        //System.out.println("Moving ring from " + fromVertex + " to " + toVertex);
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = this.gameBoard.getVertex(toVertex);
 
+        if (targetVertex.hasRing() || chipNumber.contains(toVertex)) {
+            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+            return;
+        }
         if (targetVertex != null && !targetVertex.hasRing() && !chipNumber.contains(toVertex)) {
             Ring ringToMove = (Ring) sourceVertex.getRing();
+            if(ringToMove!=null) {
+                sourceVertex.setRing(null);
+
             gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
 
             if (sourceVertex.hasCoin()) {
@@ -264,18 +250,18 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
                         vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
             }
 
-            //move the ring to the target vertex, without moving the chip
-            targetVertex.setPlayObject(ringToMove);
-            sourceVertex.setPlayObject(null);
+            targetVertex.setRing(ringToMove);
             Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
             gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+
             chipRingVertex = -1;
             chipPlaced = false;
             selectedRingVertex = -1;
-        } else {
+        } }else {
             showAlert("Invalid Move", "Cannot move ring here.");
         }
     }
+
 
     // Method to place chips on the board
     private void placeChip(int vertex, GraphicsContext gc) {
@@ -304,131 +290,37 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
         }
     }
 
-//    private void displayPossibleMovesForRing(Vertex boardVertex) {
-//        int[] ringPosition = {boardVertex.getXposition(), boardVertex.getYposition()};
-//        Vertex[][] board = this.gameBoard.getBoard();
-//
-//        // Start the game simulation to get possible moves
-//        this.gameSimulation.startSimulation(board, ringPosition[0], ringPosition[1]);
-//        ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
-//
-//        // Clear any existing move indicators before adding new ones
-//        removeCircleIndicators();
-//
-//        System.out.println("Displaying possible moves for ring at position: " + ringPosition[0] + ", " + ringPosition[1]);
-//
-//        // Iterate over each direction of possible moves
-//        for (ArrayList<Move> directionMoves : allPossibleMoves) {
-//            boolean jumpedOverChip = false;
-//
-//            for (Move move : directionMoves) {
-//                int x = move.getXposition();
-//                int y = move.getYposition();
-//                int moveVertexNumber = this.gameBoard.getVertexNumberFromPosition(x, y);
-//
-//                // Debugging: Check the move position
-//                System.out.println("Checking move position x: " + x + ", y: " + y + ", vertex: " + moveVertexNumber);
-//
-//                // Skip invalid vertices
-//                if (moveVertexNumber == -1) {
-//                    System.out.println("Invalid vertex encountered, skipping");
-//                    continue;
-//                }
-//
-//                // Stop searching in this direction if a ring is encountered
-//                if (board[x][y].hasRing()) {
-//                    System.out.println("Encountered a ring at x: " + x + ", y: " + y + ", stopping in this direction.");
-//                    break;
-//                }
-//
-//                // If a chip is encountered and we haven't jumped over a chip yet, mark it as jumped and continue
-//                if (board[x][y].hasCoin() && !jumpedOverChip) {
-//                    jumpedOverChip = true;
-//                    System.out.println("Jumping over chip at x: " + x + ", y: " + y);
-//                    continue;
-//                }
-//
-//                // If an empty cell is found after jumping over a chip, add it as a valid move
-//                if (!board[x][y].hasCoin() && !board[x][y].hasRing() && jumpedOverChip) {
-//                    int pixelX = vertexCoordinates[moveVertexNumber][0];
-//                    int pixelY = vertexCoordinates[moveVertexNumber][1];
-//
-//                    // Create a new circle to indicate possible move location
-//                    Circle possibleMoveIndicator = new Circle();
-//                    possibleMoveIndicator.setCenterX(pixelX + pieceDimension / 2);
-//                    possibleMoveIndicator.setCenterY(pixelY + pieceDimension / 2);
-//                    possibleMoveIndicator.setRadius(7);
-//                    possibleMoveIndicator.setFill(Color.GREEN);
-//
-//                    // Add indicator to the field pane
-//                    fieldPane.getChildren().add(possibleMoveIndicator);
-//
-//                    System.out.println("Possible move indicator added at vertex: " + moveVertexNumber);
-//                }
-//            }
-//        }
-//    }
-private void displayPossibleMovesForRing(Vertex boardVertex) {
-    int[] ringPosition = {boardVertex.getXposition(), boardVertex.getYposition()};
-    Vertex[][] board = this.gameBoard.getBoard();
+private void highlightPossibleMoves(Vertex boardVertex) {
+    ArrayList<Move> possibleMoves = new ArrayList<>();
+    highlightedvertices.clear();
+    for (Direction direction : Direction.values()) {
+        Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()});
+        possibleMoves.addAll(diagonal.moveAlongDiagonal(gameBoard.getBoard()));
+    }
+    removeCircleIndicators();
 
-    this.gameSimulation.startSimulation(board, ringPosition[0], ringPosition[1]);
-    ArrayList<ArrayList<Move>> allPossibleMoves = this.gameSimulation.getAllPossibleMoves();
+    for (Move move : possibleMoves) {
+        int vertexX = move.getXposition();
+        int vertexY = move.getYposition();
 
-    System.out.println("Displaying possible moves for ring at vertex: " + boardVertex.getVertextNumber());
+        int vertexNumber = this.gameBoard.getVertexNumberFromPosition(vertexX, vertexY);
+        if (vertexNumber== -1)
+            continue;
 
-    for (ArrayList<Move> directionMoves : allPossibleMoves) {
-        boolean jumpoverchip = false;  // Reset for each direction
-        System.out.println("New direction:");
-
-        for (Move move : directionMoves) {
-            int x = move.getXposition();
-            int y = move.getYposition();
-
-            // Convert (x, y) to vertex number
-            int vertexNumber = this.gameBoard.getVertexNumberFromPosition(x, y);
-
-            if (vertexNumber == -1) {
-                System.out.println("Out of bounds or null cell at vertex " + vertexNumber + ", stopping in this direction.");
-                break;
-            }
-
-            Vertex currentVertex = board[x][y];
-            System.out.println("Checking vertex " + vertexNumber + ": hasRing = " + currentVertex.hasRing() + ", hasCoin = " + currentVertex.hasCoin());
-
-            if (currentVertex.hasRing() && !currentVertex.hasCoin()) {
-                System.out.println("Encountered a ring at vertex " + vertexNumber + ", stopping in this direction.");
-                break;
-            }
-
-            if (currentVertex.hasCoin() && !currentVertex.hasRing()) {
-                if (!jumpoverchip) {
-                    System.out.println("Encountered a coin at vertex " + vertexNumber + ", setting jumpoverchip to true.");
-                    jumpoverchip = true;
-                } else {
-                    System.out.println("Second coin encountered at vertex " + vertexNumber + ", stopping.");
-                    break;
-                }
-            } else if (jumpoverchip) {
-                System.out.println("Placing green circle at vertex " + vertexNumber + " after jumping over coins.");
-                int pixelX = vertexCoordinates[vertexNumber][0];
-                int pixelY = vertexCoordinates[vertexNumber][1];
-
-                Circle possibleMoveIndicator = new Circle();
-                possibleMoveIndicator.setCenterX(pixelX + pieceDimension / 2);
-                possibleMoveIndicator.setCenterY(pixelY + pieceDimension / 2);
-                possibleMoveIndicator.setRadius(7);
-                possibleMoveIndicator.setFill(Color.GREEN);
-
-                fieldPane.getChildren().add(possibleMoveIndicator);
-
-                break;
-            } else {
-                System.out.println("Encountered an empty cell at vertex " + vertexNumber + " with no prior jump.");
-            }
-        }
+        int pixelX = vertexCoordinates[vertexNumber][0];
+        int pixelY = vertexCoordinates[vertexNumber][1];
+        Circle highlightIndicator = new Circle();
+        highlightIndicator.setCenterX(pixelX + pieceDimension / 2);
+        highlightIndicator.setCenterY(pixelY + pieceDimension / 2);
+        highlightIndicator.setRadius(7);
+        highlightIndicator.setFill(Color.GREEN);
+        fieldPane.getChildren().add(highlightIndicator);
     }
 }
+    private void removeCircleIndicators(){
+        fieldPane.getChildren().removeIf(node -> node instanceof Circle);
+    }
+
 
 
     private void checkWinningPosition(int vertex) {
@@ -450,9 +342,6 @@ private void displayPossibleMovesForRing(Vertex boardVertex) {
         }
     }
 
-    private void removeCircleIndicators(){
-        fieldPane.getChildren().removeIf(node -> node instanceof Circle);
-    }
 
     private void displayAvailablePlacesForStartingRings(int vertex) {
         Vertex[][] board = this.gameBoard.getBoard();

@@ -34,13 +34,14 @@ public class Vertex {
     }
 
     public void setRing(PlayObj newRing) {
-        if (newRing instanceof Ring) {
-            this.playObjects[0] = newRing;
-            System.out.println("Ring set at (" + xIndex + ", " + yIndex + ")");
+        this.playObjects[0] = newRing;  // Если newRing == null, кольцо удаляется
+        if (newRing == null) {
+            System.out.println("Ring removed from vertex " + this.vertexNumber);
         } else {
-            System.out.println("Attempted to set non-ring object as ring at (" + xIndex + ", " + yIndex + ")");
+            System.out.println("Ring set at vertex " + this.vertexNumber);
         }
     }
+
 
     public void setCoin(PlayObj newCoin) {
         if (newCoin instanceof Coin) {
@@ -65,14 +66,15 @@ public class Vertex {
     public PlayObj getCoin() {
         return playObjects[1];
     }
-    public boolean hasRing(){
-        boolean result = playObjects[0] instanceof Ring;
-        System.out.println("Checking for ring at (" + xIndex + ", " + yIndex + "): " + result);
+    public boolean hasRing() {
+        boolean result = playObjects[0] != null;
+        //System.out.println("Vertex " + this.vertexNumber + " hasRing: " + result);
         return result;
     }
-    public boolean hasCoin(){
-        boolean result = playObjects[1] instanceof Coin;
-        System.out.println("Checking for coin at (" + xIndex + ", " + yIndex + "): " + result);
+
+    public boolean hasCoin() {
+        boolean result = playObjects[1] != null;
+        // System.out.println("Vertex " + this.vertexNumber + " hasCoin: " + result);
         return result;
     }
 
@@ -81,13 +83,15 @@ public class Vertex {
      */
     public void setPlayObject(PlayObj playObject) {
         if (playObject instanceof Ring) {
-            playObjects[0] = playObject; // Store Ring at index 0
-            System.out.println("Ring set at vertex " + this.vertexNumber);
+            playObjects[0] = playObject;
+            System.out.println("Set Ring at vertex " + this.vertexNumber);
         } else if (playObject instanceof Coin) {
-            playObjects[1] = playObject; // Store Coin at index 1
-            System.out.println("Coin set at vertex " + this.vertexNumber);
+            playObjects[1] = playObject;
+            System.out.println("Set Coin at vertex " + this.vertexNumber);
         } else {
-            System.out.println("Error: Attempted to set unknown PlayObj at vertex " + this.vertexNumber);
+            playObjects[0] = null;
+            playObjects[1] = null;
+            System.out.println("Cleared vertex " + this.vertexNumber);
         }
     }
 
