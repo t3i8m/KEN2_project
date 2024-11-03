@@ -183,40 +183,43 @@ public class MainApp extends Application {
     private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
         // first click places chip into the ring
-        if (isFirstClick) {
-            if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
-                placeChip(vertex, gc);
-                selectedChipVertex = vertex;//store chip coordinate
-                isFirstClick = false;
-            } else {
-                showAlert("Invalid Placement", "Place your chip in one of your rings.");
-            }
-        } else {
+        // if (isFirstClick) {
+        //     if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
+        //         placeChip(vertex, gc);
+        //         selectedChipVertex = vertex;//store chip coordinate
+        //         isFirstClick = false;
+        //     } else {
+        //         showAlert("Invalid Placement", "Place your chip in one of your rings.");
+        //     }
+        // } else {
             ///second click either selecting the ring for movement or place the chip into another ring
-            if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
-                removeCircleIndicators();
-                if (vertex == selectedChipVertex) {
-                    highlightPossibleMoves(boardVertex);
-                }
-                else if (boardVertex.hasRing()){
-                   moveChipToRing(selectedChipVertex, vertex, gc);
-                   GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
-                   playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
-               }
-            else{
-                    showAlert("Invalid move", "Please select a highlighted vertex");
-                }
-
-            } else if (vertex != selectedChipVertex) {
-                int[] Move_Valid = new int[1];
-                Move currentMove = this.gameSimulation.simulateMove(this.gameBoard, this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
-                moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);
-                if(Move_Valid[0] == 1) resetTurn();
-            } else {
-                showAlert("Invalid Move", "Please select a valid ring or cell to move.");
+        if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
+            placeChip(vertex, gc);
+            selectedChipVertex = vertex;//store chip coordinate
+            isFirstClick = false;
+            removeCircleIndicators();
+            if (vertex == selectedChipVertex) {
+                highlightPossibleMoves(boardVertex);
             }
+            else if (boardVertex.hasRing()){
+                moveChipToRing(selectedChipVertex, vertex, gc);
+                GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
+                playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
+            }
+        else{
+                showAlert("Invalid move", "Please select a highlighted vertex");
+            }
+
+        } else if (vertex != selectedChipVertex) {
+            int[] Move_Valid = new int[1];
+            Move currentMove = this.gameSimulation.simulateMove(this.gameBoard, this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
+            moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);
+            if(Move_Valid[0] == 1) resetTurn();
+        } else {
+            showAlert("Invalid Move", "Please select a valid ring or cell to move.");
         }
     }
+    // }
 
 
     private void moveChipToRing(int fromVertex, int toVertex, GraphicsContext gc) {
