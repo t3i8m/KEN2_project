@@ -2,6 +2,7 @@ package com.ken2.engine;
 
 import java.util.ArrayList;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.Diagonal;
@@ -137,5 +138,14 @@ public class GameSimulation {
         }
         System.out.println("The target position is not a valid move in this direction.");
         return null;
+    }
+
+    public void flipCoins(ArrayList<Coin> coinFlips, Game_Board gameBoard) {
+        for (Coin coin : coinFlips) {
+            coin.flipCoin();
+            Vertex vertex = gameBoard.getVertexByCoin(coin);
+                System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+
+        }
     }
 }

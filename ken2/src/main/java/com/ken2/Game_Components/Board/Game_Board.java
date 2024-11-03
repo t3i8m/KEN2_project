@@ -46,17 +46,17 @@ public class Game_Board {
             }
         }
         // assign a vertex number for each not null vertex
-        System.out.println(this.strMaker());
+        // System.out.println(this.strMaker());
         for (int i = 0; i < the_Board[0].length; i++) {
-            System.out.println("column: "+Integer.toString(i));
+            // System.out.println("column: "+Integer.toString(i));
             for (int j=0; j < the_Board.length; j+=1) {
                 if (the_Board[j][i] != null) {
-                    System.out.println("row: "+Integer.toString(j));
+                    // System.out.println("row: "+Integer.toString(j));
                     the_Board[j][i].setVertexNumber(vertexNumber);  
-                    System.out.println("x: "+Integer.toString(the_Board[j][i].getXposition()));
-                    System.out.println("y: "+Integer.toString(the_Board[j][i].getYposition()));
+                    // System.out.println("x: "+Integer.toString(the_Board[j][i].getXposition()));
+                    // System.out.println("y: "+Integer.toString(the_Board[j][i].getYposition()));
 
-                    System.out.println("Vertex number "+Integer.toString(the_Board[j][i].getVertextNumber()));
+                    // System.out.println("Vertex number "+Integer.toString(the_Board[j][i].getVertextNumber()));
 
                     vertexNumber++;  
                 }
@@ -81,8 +81,8 @@ public class Game_Board {
                     PlayObj[] playObjs = the_Board[i][j].getPlayObject();
                     s+=" |";
                     if(playObjs[0]!=null || playObjs[1]!=null){
-                        s+="R";
                         if(playObjs[0]!=null){
+                            s+="R";
                             if (playObjs[0].getColour().toLowerCase().equals("white")){
                                 s+="W";
                             }
@@ -93,10 +93,10 @@ public class Game_Board {
                     
                         if (playObjs[1]!=null) {
                             s+="C";
-                            if (playObjs[1].getColour().equals("White")){
+                            if (playObjs[1].getColour().equals("white")){
                                 s+="W";
                             }
-                            else if (playObjs[1].getColour().equals("Black")){
+                            else if (playObjs[1].getColour().equals("black")){
                                 s+="B";
                             }
                         }

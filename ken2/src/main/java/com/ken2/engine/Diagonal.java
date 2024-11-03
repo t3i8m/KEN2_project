@@ -91,17 +91,17 @@ public class Diagonal {
             currentX = newX;
             currentY = newY;
         }
-        flipCoins();
+        // flipCoins();
         return possibleMoves;
     }
-    public void flipCoins() {
-        for (Coin coin : coinFlip) {
-            coin.flipCoin();
-            Vertex vertex = gameBoard.getVertexByCoin(coin);
-                System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+    // public void flipCoins(ArrayList<Coin> coinFlips) {
+    //     for (Coin coin : coinFlips) {
+    //         coin.flipCoin();
+    //         Vertex vertex = gameBoard.getVertexByCoin(coin);
+    //             System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
 
-        }
-    }
+    //     }
+    // }
 
 
 

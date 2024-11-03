@@ -175,7 +175,7 @@ public class MainApp extends Application {
             placeStartingRing(vertex, gc);
             displayAvailablePlacesForStartingRings(vertex);
         } else {
-
+            removeCircleIndicators();
             handleChipAndRingPlacement(vertex, gc);
         }
     }
@@ -209,7 +209,8 @@ public class MainApp extends Application {
 
             } else if (vertex != selectedChipVertex) {
                 int[] Move_Valid = new int[1];
-                moveRing(selectedChipVertex, vertex, gc, Move_Valid);
+                Move currentMove = this.gameSimulation.simulateMove(this.gameBoard, this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
+                moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);
                 if(Move_Valid[0] == 1) resetTurn();
             } else {
                 showAlert("Invalid Move", "Please select a valid ring or cell to move.");
@@ -241,7 +242,7 @@ public class MainApp extends Application {
         }
     }
 
-    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid) {
+    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = this.gameBoard.getVertex(toVertex);
         boolean isMoveValid = true;
@@ -267,18 +268,32 @@ public class MainApp extends Application {
 
                  if (sourceVertex.hasCoin()) {
                      Coin existingChip = (Coin) sourceVertex.getCoin();
-                     Image chipImage = existingChip.getColour().equals("White") ? chipWImage : chipBImage;
+                     Image chipImage = existingChip.getColour().equals("white") ? chipWImage : chipBImage;
                      gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
                              vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
-                 }
+                }
+                this.gameSimulation.flipCoins(currentMove.getFlippedCoins(), gameBoard);
 
-                 targetVertex.setRing(ringToMove);
-                 Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
-                 gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+                // flip coins if array is not empty
+                if(!currentMove.getFlippedCoins().isEmpty()){
+                    for(Coin coinToFlip: currentMove.getFlippedCoins()){
+                        Vertex currVertex = this.gameBoard.getVertexByCoin(coinToFlip);
+                        Image chipImage = coinToFlip.getColour().equals("white") ? chipWImage : chipBImage;
+                        gc.drawImage(chipImage, vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
+                             vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
 
-                 chipRingVertex = -1;
-                 chipPlaced = false;
-                 selectedRingVertex = -1;
+                    }
+                }
+                
+                targetVertex.setRing(ringToMove);
+                Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
+                gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+
+                chipRingVertex = -1;
+                chipPlaced = false;
+                selectedRingVertex = -1;
+                System.out.println(this.gameBoard.strMaker());
+
              } else {
                  showAlert("Invalid Move", "Cannot move ring here.");
 
@@ -300,7 +315,7 @@ public class MainApp extends Application {
                 showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
                 return;
             }
-            Coin newChip = new Coin(chipColor);
+            Coin newChip = new Coin(chipColor.toLowerCase());
             boardVertex.setPlayObject(newChip);
             chipRingVertex = vertex;
 

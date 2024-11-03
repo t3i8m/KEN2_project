@@ -1,5 +1,6 @@
 package com.ken2.engine;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
@@ -219,4 +220,5 @@ public class GameEngine {
 
     public boolean getChipPalcement(){return chipPlacement;}
 
+    
 }
