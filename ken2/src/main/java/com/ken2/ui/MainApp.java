@@ -1,5 +1,6 @@
 package com.ken2.ui;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.ken2.Game_Components.Board.*;
 import com.ken2.engine.Diagonal;
@@ -30,17 +31,17 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
-    private Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
+    private static Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
     private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
-    private Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
-    private int fieldDimension = 470;
-    private int pieceDimension = 37;
+    private static Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
+    private static int fieldDimension = 470;
+    private static int pieceDimension = 37;
     private int chipsRemaining = 51;
     private int ringBlack = 5;
     private int ringWhite = 5;
     private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     private Color activeScoreRingColor = Color.rgb(90, 150, 220);
-    private int[][] vertexCoordinates = new int[85][2];
+    private static int[][] vertexCoordinates = new int[85][2];
     private ComboBox whitePlayerComboBox;
     private ComboBox blackPlayerComboBox;
     private int ringsPlaced;
@@ -53,6 +54,7 @@ public class MainApp extends Application {
     private Text chipsRemainText;
     private Text ringWhiteRemainingText;
     private Text ringBlackRemainingText;
+    private Canvas playObjectCanvas;
 
     private boolean chipPlacement = false;
     private ArrayList<Integer> chipNumber = new ArrayList<>();
@@ -62,6 +64,8 @@ public class MainApp extends Application {
     private boolean isFirstClick = true;
     private int chipRingVertex = -1;
     private ArrayList<Integer> highlightedvertices = new ArrayList<>();
+    private HashSet<Integer> s = new HashSet<>();
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -90,10 +94,11 @@ public class MainApp extends Application {
         gameBoardCanvas.setWidth(fieldDimension);
         gameBoardCanvas.setHeight(fieldDimension);
 
+        this.playObjectCanvas = new Canvas();
 
-        Canvas playObjectCanvas = new Canvas();
         playObjectCanvas.setWidth(fieldDimension);
         playObjectCanvas.setHeight(fieldDimension);
+
 
         GraphicsContext gcB = gameBoardCanvas.getGraphicsContext2D();
         GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
@@ -162,17 +167,19 @@ public class MainApp extends Application {
         displayAvailablePlacesForStartingRings(0);
     }
 
-private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
-    int vertex = findClosestVertex(e.getX(), e.getY());
-    if (vertex < 0) return;
+    private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
+        int vertex = findClosestVertex(e.getX(), e.getY());
+        if (vertex < 0) return;
 
-    if (ringsPlaced < 10) {
-        placeStartingRing(vertex, gc);
-        displayAvailablePlacesForStartingRings(vertex);
-         } else {
-        handleChipAndRingPlacement(vertex, gc);
+        if (ringsPlaced < 10) {
+            placeStartingRing(vertex, gc);
+            displayAvailablePlacesForStartingRings(vertex);
+        } else {
+
+            handleChipAndRingPlacement(vertex, gc);
+        }
     }
-}
+
     private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
         // first click places chip into the ring
@@ -190,20 +197,26 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
                 removeCircleIndicators();
                 if (vertex == selectedChipVertex) {
                     highlightPossibleMoves(boardVertex);
-                } else if (highlightedvertices.contains(vertex)){
-                    moveChipToRing(selectedChipVertex, vertex, gc);
-                    selectedChipVertex = vertex;
-                } else{
+                }
+                else if (boardVertex.hasRing()){
+                   moveChipToRing(selectedChipVertex, vertex, gc);
+                   GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
+                   playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
+               }
+            else{
                     showAlert("Invalid move", "Please select a highlighted vertex");
                 }
+
             } else if (vertex != selectedChipVertex) {
-                moveRing(selectedChipVertex, vertex, gc);
-                resetTurn();
+                int[] Move_Valid = new int[1];
+                moveRing(selectedChipVertex, vertex, gc, Move_Valid);
+                if(Move_Valid[0] == 1) resetTurn();
             } else {
                 showAlert("Invalid Move", "Please select a valid ring or cell to move.");
             }
         }
     }
+
 
     private void moveChipToRing(int fromVertex, int toVertex, GraphicsContext gc) {
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
@@ -228,39 +241,50 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
         }
     }
 
-    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc) {
+    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid) {
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = this.gameBoard.getVertex(toVertex);
-
-        if (targetVertex.hasRing() || chipNumber.contains(toVertex)) {
-            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+        boolean isMoveValid = true;
+        if (!highlightedvertices.contains(toVertex)){
+            showAlert("INVALID", "JJDJDJD");
+            Move_Valid[0] = 0;
             return;
+
         }
-        if (targetVertex != null && !targetVertex.hasRing() && !chipNumber.contains(toVertex)) {
-            Ring ringToMove = (Ring) sourceVertex.getRing();
-            if(ringToMove!=null) {
-                sourceVertex.setRing(null);
 
-            gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
-
-            if (sourceVertex.hasCoin()) {
-                Coin existingChip = (Coin) sourceVertex.getCoin();
-                Image chipImage = existingChip.getColour().equals("White") ? chipWImage : chipBImage;
-                gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
-                        vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
-            }
-
-            targetVertex.setRing(ringToMove);
-            Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
-            gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
-
-            chipRingVertex = -1;
-            chipPlaced = false;
-            selectedRingVertex = -1;
-        } }else {
-            showAlert("Invalid Move", "Cannot move ring here.");
+        else if (targetVertex.hasRing() || chipNumber.contains(toVertex)) {
+            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+              isMoveValid = false;
         }
-    }
+
+         if(isMoveValid) {
+             Move_Valid[0] = 1;
+             Ring ringToMove = (Ring) sourceVertex.getRing();
+             if (ringToMove != null) {
+                 sourceVertex.setRing(null);
+
+                 gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
+
+                 if (sourceVertex.hasCoin()) {
+                     Coin existingChip = (Coin) sourceVertex.getCoin();
+                     Image chipImage = existingChip.getColour().equals("White") ? chipWImage : chipBImage;
+                     gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                             vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+                 }
+
+                 targetVertex.setRing(ringToMove);
+                 Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
+                 gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+
+                 chipRingVertex = -1;
+                 chipPlaced = false;
+                 selectedRingVertex = -1;
+             } else {
+                 showAlert("Invalid Move", "Cannot move ring here.");
+
+             }
+         }
+        }
 
 
     // Method to place chips on the board
@@ -290,33 +314,33 @@ private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
         }
     }
 
-private void highlightPossibleMoves(Vertex boardVertex) {
-    ArrayList<Move> possibleMoves = new ArrayList<>();
-    highlightedvertices.clear();
-    for (Direction direction : Direction.values()) {
-        Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()});
-        possibleMoves.addAll(diagonal.moveAlongDiagonal(gameBoard.getBoard()));
+    private void highlightPossibleMoves(Vertex boardVertex) {
+        ArrayList<Move> possibleMoves = new ArrayList<>();
+        highlightedvertices.clear();
+        for (Direction direction : Direction.values()) {
+            Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()}, gameBoard);            possibleMoves.addAll(diagonal.moveAlongDiagonal(gameBoard.getBoard()));
+        }
+        removeCircleIndicators();
+
+        for (Move move : possibleMoves) {
+            int vertexX = move.getXposition();
+            int vertexY = move.getYposition();
+
+            int vertexNumber = this.gameBoard.getVertexNumberFromPosition(vertexX, vertexY);
+            if (vertexNumber== -1)
+                continue;
+            highlightedvertices.add(vertexNumber);
+
+            int pixelX = vertexCoordinates[vertexNumber][0];
+            int pixelY = vertexCoordinates[vertexNumber][1];
+            Circle highlightIndicator = new Circle();
+            highlightIndicator.setCenterX(pixelX + pieceDimension / 2);
+            highlightIndicator.setCenterY(pixelY + pieceDimension / 2);
+            highlightIndicator.setRadius(7);
+            highlightIndicator.setFill(Color.GREEN);
+            fieldPane.getChildren().add(highlightIndicator);
+        }
     }
-    removeCircleIndicators();
-
-    for (Move move : possibleMoves) {
-        int vertexX = move.getXposition();
-        int vertexY = move.getYposition();
-
-        int vertexNumber = this.gameBoard.getVertexNumberFromPosition(vertexX, vertexY);
-        if (vertexNumber== -1)
-            continue;
-
-        int pixelX = vertexCoordinates[vertexNumber][0];
-        int pixelY = vertexCoordinates[vertexNumber][1];
-        Circle highlightIndicator = new Circle();
-        highlightIndicator.setCenterX(pixelX + pieceDimension / 2);
-        highlightIndicator.setCenterY(pixelY + pieceDimension / 2);
-        highlightIndicator.setRadius(7);
-        highlightIndicator.setFill(Color.GREEN);
-        fieldPane.getChildren().add(highlightIndicator);
-    }
-}
     private void removeCircleIndicators(){
         fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
@@ -411,7 +435,7 @@ private void highlightPossibleMoves(Vertex boardVertex) {
             double yDist = Math.abs(y - vY);
 
             if(xDist<=10 && yDist <=10){
-                System.out.println("Vertex Clicled: " + i);
+                System.out.println("Vertex Clicked: " + i);
                 return i;
             }
         }
@@ -486,105 +510,105 @@ private void highlightPossibleMoves(Vertex boardVertex) {
 
         // up slant lines
         gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
-        vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2);
+                vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
-        vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2);
+                vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2,
-        vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2);
+                vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2,
-        vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2);
+                vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2,
-        vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
+                vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[9][0]+pieceDimension/2, vertexCoordinates[9][1]+pieceDimension/2,
-        vertexCoordinates[75][0]+pieceDimension/2, vertexCoordinates[75][1]+pieceDimension/2);
+                vertexCoordinates[75][0]+pieceDimension/2, vertexCoordinates[75][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2,
-        vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
+                vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2,
-        vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
+                vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2,
-        vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
+                vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2,
-        vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
+                vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2,
-        vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
+                vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
 
         // down slant lines
         gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2,
-        vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
+                vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2,
-        vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
+                vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2,
-        vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
+                vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2,
-        vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
+                vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
-        vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
+                vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[5][0]+pieceDimension/2, vertexCoordinates[5][1]+pieceDimension/2,
-        vertexCoordinates[79][0]+pieceDimension/2, vertexCoordinates[79][1]+pieceDimension/2);
+                vertexCoordinates[79][0]+pieceDimension/2, vertexCoordinates[79][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
-        vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
+                vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[1][0]+pieceDimension/2, vertexCoordinates[1][1]+pieceDimension/2,
-        vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
+                vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[2][0]+pieceDimension/2, vertexCoordinates[2][1]+pieceDimension/2,
-        vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
+                vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2,
-        vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
+                vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2,
-        vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
+                vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
 
         // // vertical lines
         gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
-        vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2);
+                vertexCoordinates[3][0]+pieceDimension/2, vertexCoordinates[3][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
-        vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2);
+                vertexCoordinates[10][0]+pieceDimension/2, vertexCoordinates[10][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2,
-        vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2);
+                vertexCoordinates[18][0]+pieceDimension/2, vertexCoordinates[18][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2,
-        vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2);
+                vertexCoordinates[27][0]+pieceDimension/2, vertexCoordinates[27][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2,
-        vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
+                vertexCoordinates[37][0]+pieceDimension/2, vertexCoordinates[37][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[38][0]+pieceDimension/2, vertexCoordinates[38][1]+pieceDimension/2,
-        vertexCoordinates[46][0]+pieceDimension/2, vertexCoordinates[46][1]+pieceDimension/2);
+                vertexCoordinates[46][0]+pieceDimension/2, vertexCoordinates[46][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[47][0]+pieceDimension/2, vertexCoordinates[47][1]+pieceDimension/2,
-        vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
+                vertexCoordinates[56][0]+pieceDimension/2, vertexCoordinates[56][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[57][0]+pieceDimension/2, vertexCoordinates[57][1]+pieceDimension/2,
-        vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
+                vertexCoordinates[65][0]+pieceDimension/2, vertexCoordinates[65][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[66][0]+pieceDimension/2, vertexCoordinates[66][1]+pieceDimension/2,
-        vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
+                vertexCoordinates[73][0]+pieceDimension/2, vertexCoordinates[73][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[74][0]+pieceDimension/2, vertexCoordinates[74][1]+pieceDimension/2,
-        vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
+                vertexCoordinates[80][0]+pieceDimension/2, vertexCoordinates[80][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2,
-        vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
+                vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
         // // for demo
         // gc.drawImage(ringBImage, vertexCoordinates[39][0], vertexCoordinates[39][1], pieceDimension, pieceDimension);
@@ -626,7 +650,7 @@ private void highlightPossibleMoves(Vertex boardVertex) {
         System.out.println("Reset!");
     }
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 }

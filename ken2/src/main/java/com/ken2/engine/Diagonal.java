@@ -4,7 +4,11 @@ import java.util.ArrayList;
 
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.ui.MainApp;
+
+
 
 /**
  * class for each diagonal 
@@ -13,12 +17,16 @@ public class Diagonal {
     private int[] diskPosition = new int[2];
     private Direction direction; //enum object with direction params
     private ArrayList<Move> possibleMoves = new ArrayList<Move>();
-    private ArrayList<Coin>coinFlip = new ArrayList<Coin>();
+    private ArrayList<Coin>coinFlip = new ArrayList<>();
+    private Game_Board gameBoard;
 
 
-    public Diagonal(Direction direction, int[] diskPosition){
+
+
+    public Diagonal(Direction direction, int[] diskPosition, Game_Board gameBoard){
         this.direction = direction;
         this.diskPosition = diskPosition;
+        this.gameBoard = gameBoard;
     }
 
     /**
@@ -66,7 +74,10 @@ public class Diagonal {
             }
 
             if (board[newX][newY] != null && board[newX][newY].hasCoin()) {
-                coinFlip.add((Coin) board[newX][newY].getPlayObject()[1]);
+                PlayObj playObject = board[newX][newY].getPlayObject()[1];
+                if (playObject instanceof Coin) {
+                    coinFlip.add((Coin) playObject);
+                }
                 hasPassedMarker = true;
             } else {
                 if (hasPassedMarker) {
@@ -80,7 +91,18 @@ public class Diagonal {
             currentX = newX;
             currentY = newY;
         }
+        flipCoins();
         return possibleMoves;
     }
+    public void flipCoins() {
+        for (Coin coin : coinFlip) {
+            coin.flipCoin();
+            Vertex vertex = gameBoard.getVertexByCoin(coin);
+                System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+
+        }
+    }
+
+
 
 }
