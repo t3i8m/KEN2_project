@@ -34,22 +34,15 @@ public class Vertex {
     }
 
     public void setRing(PlayObj newRing) {
-        this.playObjects[0] = newRing;  // Если newRing == null, кольцо удаляется
-        if (newRing == null) {
-            System.out.println("Ring removed from vertex " + this.vertexNumber);
-        } else {
-            System.out.println("Ring set at vertex " + this.vertexNumber);
-        }
+        this.playObjects[0] = newRing;
+
     }
 
 
     public void setCoin(PlayObj newCoin) {
-        if (newCoin instanceof Coin) {
+
             this.playObjects[1] = newCoin;
-            System.out.println("Coin set at (" + xIndex + ", " + yIndex + ")");
-        } else {
-            System.out.println("Attempted to set non-coin object as coin at (" + xIndex + ", " + yIndex + ")");
-        }
+
     }
 
     /** Returns the play object currently at the vertex
@@ -60,6 +53,7 @@ public class Vertex {
         return playObjects;
     }
 
+
     public PlayObj getRing(){
         return playObjects[0];
     }
@@ -68,13 +62,11 @@ public class Vertex {
     }
     public boolean hasRing() {
         boolean result = playObjects[0] != null;
-        //System.out.println("Vertex " + this.vertexNumber + " hasRing: " + result);
         return result;
     }
 
     public boolean hasCoin() {
         boolean result = playObjects[1] != null;
-        // System.out.println("Vertex " + this.vertexNumber + " hasCoin: " + result);
         return result;
     }
 
@@ -84,14 +76,12 @@ public class Vertex {
     public void setPlayObject(PlayObj playObject) {
         if (playObject instanceof Ring) {
             playObjects[0] = playObject;
-            System.out.println("Set Ring at vertex " + this.vertexNumber);
         } else if (playObject instanceof Coin) {
             playObjects[1] = playObject;
-            System.out.println("Set Coin at vertex " + this.vertexNumber);
         } else {
             playObjects[0] = null;
             playObjects[1] = null;
-            System.out.println("Cleared vertex " + this.vertexNumber);
+
         }
     }
 

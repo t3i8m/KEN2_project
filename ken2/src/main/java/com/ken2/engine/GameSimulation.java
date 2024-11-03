@@ -35,7 +35,7 @@ public class GameSimulation {
         int[] diskPositions= {xRingPosition, yRingPosition};
 
         for (Direction direction : Direction.values()) {
-            Diagonal currDiagonal= new Diagonal(direction, diskPositions);
+            Diagonal currDiagonal= new Diagonal(direction, diskPositions, new Game_Board());
             allPossibleMoves.add(currDiagonal.moveAlongDiagonal(board));
         }
     }
@@ -128,7 +128,7 @@ public class GameSimulation {
             System.out.println("The move is not in a straight line direction.");
             return null;
         } 
-        Diagonal diagonal = new Diagonal(moveDirection, startPosition);
+        Diagonal diagonal = new Diagonal(moveDirection, startPosition, new Game_Board());
         ArrayList<Move> possibleMoves = diagonal.moveAlongDiagonal(board.getBoard());
         for (Move move : possibleMoves) {
             if (move.getXposition() == targetPosition[0] && move.getYposition() == targetPosition[1]) {
