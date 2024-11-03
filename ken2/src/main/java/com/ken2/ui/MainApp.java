@@ -174,6 +174,9 @@ public class MainApp extends Application {
         if (ringsPlaced < 10) {
             placeStartingRing(vertex, gc);
             displayAvailablePlacesForStartingRings(vertex);
+            if(ringsPlaced==10){
+                removeCircleIndicators();
+            }
         } else {
             removeCircleIndicators();
             handleChipAndRingPlacement(vertex, gc);
