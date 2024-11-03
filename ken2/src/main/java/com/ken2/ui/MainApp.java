@@ -275,10 +275,11 @@ public class MainApp extends Application {
                      gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
                              vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
                 }
-                this.gameSimulation.flipCoins(currentMove.getFlippedCoins(), gameBoard);
 
                 // flip coins if array is not empty
                 if(!currentMove.getFlippedCoins().isEmpty()){
+                    this.gameSimulation.flipCoins(currentMove.getFlippedCoins(), gameBoard);
+
                     for(Coin coinToFlip: currentMove.getFlippedCoins()){
                         Vertex currVertex = this.gameBoard.getVertexByCoin(coinToFlip);
                         Image chipImage = coinToFlip.getColour().equals("white") ? chipWImage : chipBImage;
