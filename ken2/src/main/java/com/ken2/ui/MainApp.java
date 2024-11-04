@@ -197,8 +197,9 @@ public class MainApp extends Application {
         // } else {
             ///second click either selecting the ring for movement or place the chip into another ring
         if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
-            placeChip(vertex, gc);
             selectedChipVertex = vertex;//store chip coordinate
+            //             placeChip(fromVertex, gc);
+
             isFirstClick = false;
             removeCircleIndicators();
             if (vertex == selectedChipVertex) {
@@ -265,6 +266,8 @@ public class MainApp extends Application {
         }
 
          if(isMoveValid) {
+            placeChip(fromVertex, gc);
+
              Move_Valid[0] = 1;
              Ring ringToMove = (Ring) sourceVertex.getRing();
              if (ringToMove != null) {
