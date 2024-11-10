@@ -201,9 +201,10 @@ public class MainApp2 extends Application {
         fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
 
+
     // F I X     T H I S    XD
     private void handleChipandRingPlacement(int vertex, GraphicsContext gc){
-        System.out.println("\n\n\n\n\ implementation in progress");
+        System.out.println("\n\n\n\n\nimplementation in progress");
     }
 
     /**
