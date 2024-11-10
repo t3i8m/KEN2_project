@@ -41,8 +41,10 @@ public class MainApp extends Application {
     private int chipsRemaining = 51;
     private int ringBlack = 5;
     private int ringWhite = 5;
+
     private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     private Color activeScoreRingColor = Color.rgb(90, 150, 220);
+
     private static int[][] vertexCoordinates = new int[85][2];
     private ComboBox whitePlayerComboBox;
     private ComboBox blackPlayerComboBox;
@@ -229,13 +231,12 @@ public class MainApp extends Application {
                 GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
                 playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
             }
-        else{
-                showAlert("Invalid move", "Please select a highlighted vertex");
-            }
+            else{showAlert("Invalid move", "Please select a highlighted vertex");}
 
         } else if (vertex != selectedChipVertex) {
             int[] Move_Valid = new int[1];
-            Move currentMove = this.gameSimulation.simulateMove(this.gameBoard, this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
+            Move currentMove = this.gameSimulation.simulateMove(this.gameBoard,
+                    this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
             moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);
             if(Move_Valid[0] == 1) resetTurn();
         } else {
@@ -433,6 +434,7 @@ public class MainApp extends Application {
             }
         }
     }
+
     private void resetTurn() {
         isWhiteTurn = !isWhiteTurn;
         chipPlacement = true;
@@ -442,9 +444,11 @@ public class MainApp extends Application {
         // Update the turn indicator
         turnIndicator.setText(isWhiteTurn ? "White's Turn" : "Black's Turn");
     }
+
     private String currentPlayerColor() {
         return isWhiteTurn ? "White" : "Black";
     }
+
     private void placeStartingRing(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
         if (boardVertex != null && !boardVertex.hasRing()) {
@@ -463,6 +467,7 @@ public class MainApp extends Application {
             showAlert("Invalid Placement", "Cannot place ring here.");
         }
     }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);

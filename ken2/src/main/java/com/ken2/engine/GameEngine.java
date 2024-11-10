@@ -1,80 +1,94 @@
 package com.ken2.engine;
 
-import com.ken2.Game_Components.Board.Coin;
-import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.text.Text;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
+/**
+ * All decision-making of the game
+ */
 public class GameEngine {
 
-    private int chipsRemaining = 51;
-    private int ringBlack = 5;
-    private int ringWhite = 5;
-
-    private int ringsPlaced;
-
-    private boolean isWhiteTurn;
-
-    private Game_Board gameBoard;
+    public GameState currentState;
     private GameSimulation gameSimulation;
 
-    private int[][] vertexCoordinates = new int[85][2];
-
-    private boolean chipPlacement = false;
-    private ArrayList<Integer> chipNumber = new ArrayList<>();
-
+    public static int[][] vertexCoordinates;
 
     /**
-     * Constructor
+     * Contructor
      */
     public GameEngine(){
-        gameBoard = new Game_Board();
-        gameSimulation = new GameSimulation();
+        currentState=new GameState();
+        gameSimulation=new GameSimulation();
+        vertexCoordinates = new int[85][2];
         initialiseVertex();
     }
 
     /**
-     * return the closest vertex closest to the mouse clicks
-     * @param x x-coordinates
-     * @param y y-coordinates
-     * @return the vertex index
+     * Method for placing the Starting rings
+     * @param vertex vertex we want to place the rings
+     * @return returns true or false for ring placement in GUI
      */
-    public int findClosestVertex(double x, double y){
+    public boolean placeStartingRing(int vertex,String ringColor) {
+        Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
+        if (boardVertex != null && !boardVertex.hasRing()) {
+            ringColor = currentState.currentPlayerColor();
+            Ring newRing = new Ring(ringColor);
+            boardVertex.setPlayObject(newRing); // add ring to the board data structure
+            currentState.ringsPlaced++;
+            currentState.updateRingCount(ringColor);
+            if (currentState.ringsPlaced >= 10) currentState.chipPlacement= true;
+            currentState.resetTurn();
 
-        System.out.println();
-
-        for(int i = 0 ; i < 85; i++){
-            double vX = vertexCoordinates[i][0] + 18;
-            double vY = vertexCoordinates[i][1] + 18;
-
-            double xDist = Math.abs(x - vX);
-            double yDist = Math.abs(y - vY);
-
-            if(xDist<=10 && yDist <=10){
-                System.out.println("Vertex Clicled: " + i);
-                return i;
-            }
+            return true;
+        } else {
+            showAlert("Invalid Placement", "Cannot place ring here.");
         }
-
-        return -1;
-    }
-
-    public ArrayList<ArrayList<Move>> getAllPossibleMoves(int vertexPositionX, int vertexPositionY){
-        Vertex[][] board = gameBoard.getBoard();
-        this.gameSimulation.startSimulation(board, vertexPositionX, vertexPositionY);
-        return this.gameSimulation.getAllPossibleMoves();
+        return false;
     }
 
     /**
-     * Fill the vertex coordinates array
+     * Returns available places for the starting ring
+     * @return available vertices for starting ring placement
      */
-    public void initialiseVertex() {
+    public ArrayList<Vertex> availablePlacesForStartingRings() {
+        Vertex[][] board = currentState.gameBoard.getBoard();
+        return this.gameSimulation.getAllPossibleStartingRingPlaces(board);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Initializes the coordinates of the vertices, Maps the vertex number with coordinates
+     */
+    private void initialiseVertex() {
         int index = 0;
         // a
         for (int i = 0; i < 4; i++) {
@@ -134,7 +148,32 @@ public class GameEngine {
     }
 
     /**
-     * Display alerts for the
+     * A function to select a vertex when give player Clicks the screen
+     * @param xCoordinate X coordinate of the clicked location
+     * @param yCoordinate Y coordinate of the clicked location
+     * @return vertex number as a integer
+     */
+    public int findClosestVertex(double xCoordinate, double yCoordinate){
+
+        System.out.println();
+
+        for(int i = 0 ; i < 85; i++){
+            double vX = vertexCoordinates[i][0] + 18;
+            double vY = vertexCoordinates[i][1] + 18;
+
+            double xDist = Math.abs(xCoordinate - vX);
+            double yDist = Math.abs(yCoordinate - vY);
+
+            if(xDist<=10 && yDist <=10){
+                System.out.println("Vertex Clicked: " + i);
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * A helper function for pushing alerts during gameplay
      * @param title
      * @param message
      */
@@ -145,80 +184,26 @@ public class GameEngine {
         alert.showAndWait();
     }
 
-
     /**
-     * Find the available places for the start rings
-     * @param vertex from where we want
-     * @return
+     * Return the vertex coordinates array
+     * @return integer matrix
      */
-    public ArrayList<Vertex> AvailablePlacesForStartingRings(int vertex) {
-        Vertex[][] board = this.gameBoard.getBoard();
-        ArrayList<Vertex> availablePlaces = this.gameSimulation.getAllPossibleStartingRingPlaces(board);
-        return availablePlaces;
+    public int[][] getVertexCoordinates() {
+        return vertexCoordinates;
     }
 
-
-
-    /**
-     * updates the number of
-     * @param chipsRemainText
-     */
-    public void updateChipsRemaining(Text chipsRemainText) {
-        if (chipsRemaining > 0) {
-            chipsRemaining--;  // Decrement chips remaining
-            chipsRemainText.setText("Chips Remaining: " + chipsRemaining);  // Update display text
-        }
+    public int[] getcoordinates(int vertex){
+        return vertexCoordinates[vertex];
     }
 
     /**
-     * updates the number of black rings
-     * @param ringBlackRemainingText
+     * Set the parameters of the game
      */
-    public void updateBlackRing(Text ringBlackRemainingText){
-        if(ringBlack >0){
-            ringBlack--;
-            ringBlackRemainingText.setText("Black Ring Remaining: " + ringBlack);
-        }
+    public void resetGame(){
+        currentState=new GameState();
+        vertexCoordinates = new int[85][2];
+        initialiseVertex();
     }
 
-    /**
-     * updates the number of white rings
-     * @param ringWhiteRemainingText
-     */
-    public void updateWhiteRing(Text ringWhiteRemainingText){
-        if(ringWhite >0){
-            ringWhite--;
-            ringWhiteRemainingText.setText("White Ring Remaining: " + ringWhite);
-        }
-    }
 
-    public void updateChipNumber(int vertex){chipNumber.add(vertex);}
-
-    public void increamentRingsPlaced(){ringsPlaced++;}
-
-    public void toggleTurn(){isWhiteTurn = !isWhiteTurn;}
-
-    public void updateChipPlacement(boolean bool){chipPlacement=bool;}
-
-    public boolean getisWhiteTurn(){ return isWhiteTurn;}
-
-    public Game_Board getGameBoard(){
-        return gameBoard;
-    }
-
-    public int getRingBlack(){return ringBlack;}
-
-    public int getRingWhite(){return ringWhite;}
-
-    public int getRingsPlaced(){return ringsPlaced;}
-
-    public int getChipsRemaining() {return chipsRemaining;}
-
-    public int[][] getVertexCoordinates(){return vertexCoordinates;}
-
-    public ArrayList<Integer> getChipNumber() {return chipNumber;}
-
-    public boolean getChipPalcement(){return chipPlacement;}
-
-    
 }
