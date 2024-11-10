@@ -203,7 +203,7 @@ public class MainApp2 extends Application {
 
     // F I X     T H I S    XD
     private void handleChipandRingPlacement(int vertex, GraphicsContext gc){
-        System.out.println("\n\n\n\n\n\nFuck you ");
+        System.out.println("\n\n\n\n\ implementation in progress");
     }
 
     /**
