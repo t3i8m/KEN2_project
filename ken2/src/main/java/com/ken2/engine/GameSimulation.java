@@ -1,6 +1,7 @@
 package com.ken2.engine;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
@@ -40,6 +41,8 @@ public class GameSimulation {
             allPossibleMoves.add(currDiagonal.moveAlongDiagonal(board));
         }
     }
+
+
 
     /**
      * getter for the possible moves

@@ -22,6 +22,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -65,6 +67,7 @@ public class MainApp extends Application {
     private int chipRingVertex = -1;
     private ArrayList<Integer> highlightedvertices = new ArrayList<>();
     private HashSet<Integer> s = new HashSet<>();
+    private Text turnIndicator = new Text("White's Turn");
 
 
     @Override
@@ -134,9 +137,22 @@ public class MainApp extends Application {
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> resetBoard());
+
+        Button undoButton = new Button("Undo");
+        //undoButton.setOnAction(e -> undoToLastState());
+
+        // Create a Text object to display whose turn it is
+        turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        /*turnIndicator.setTranslateX(0);
+        turnIndicator.setTranslateY(0);*/
+
         fieldPane = new Pane();
         fieldPane.setPrefSize(fieldDimension, fieldDimension);
         root.add(fieldPane, 1, 1, 5, 5);
+
+
+
+
 
         // score elements
         Circle scoreRingeW1 = makeScoreCircle();
@@ -162,7 +178,10 @@ public class MainApp extends Application {
         root.add(scoreRingeB2, 7, 3);
         root.add(scoreRingeB3, 7, 4);
         root.add(resetButton, 0 , 7);
+        root.add(undoButton, 1, 7);
+        root.add(turnIndicator, 3, 7);
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
         primaryStage.show();
         displayAvailablePlacesForStartingRings(0);
     }
@@ -419,6 +438,9 @@ public class MainApp extends Application {
         chipPlacement = true;
         chipPlaced = false;
         isFirstClick = true;
+
+        // Update the turn indicator
+        turnIndicator.setText(isWhiteTurn ? "White's Turn" : "Black's Turn");
     }
     private String currentPlayerColor() {
         return isWhiteTurn ? "White" : "Black";
