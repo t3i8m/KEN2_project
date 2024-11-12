@@ -206,44 +206,27 @@ public class MainApp extends Application {
 
     private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
-        // first click places chip into the ring
-        // if (isFirstClick) {
-        //     if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
-        //         placeChip(vertex, gc);
-        //         selectedChipVertex = vertex;//store chip coordinate
-        //         isFirstClick = false;
-        //     } else {
-        //         showAlert("Invalid Placement", "Place your chip in one of your rings.");
-        //     }
-        // } else {
-            ///second click either selecting the ring for movement or place the chip into another ring
         if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(currentPlayerColor())) {
             selectedChipVertex = vertex;//store chip coordinate
-            //             placeChip(fromVertex, gc);
-
-            isFirstClick = false;
             removeCircleIndicators();
             if (vertex == selectedChipVertex) {
                 highlightPossibleMoves(boardVertex);
             }
-            else if (boardVertex.hasRing()){
-                moveChipToRing(selectedChipVertex, vertex, gc);
-                GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
-                playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP));
-            }
+
             else{showAlert("Invalid move", "Please select a highlighted vertex");}
 
         } else if (vertex != selectedChipVertex) {
             int[] Move_Valid = new int[1];
             Move currentMove = this.gameSimulation.simulateMove(this.gameBoard,
-                    this.gameBoard.getVertex(selectedChipVertex), this.gameBoard.getVertex(vertex));
-            moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);
+                    this.gameBoard.getVertex(selectedChipVertex),
+                    this.gameBoard.getVertex(vertex));
+            moveRing(selectedChipVertex, vertex, gc, Move_Valid, currentMove);      // ring ring ring MOVE RING
             if(Move_Valid[0] == 1) resetTurn();
         } else {
             showAlert("Invalid Move", "Please select a valid ring or cell to move.");
         }
     }
-    // }
+
 
 
     private void moveChipToRing(int fromVertex, int toVertex, GraphicsContext gc) {
@@ -273,33 +256,34 @@ public class MainApp extends Application {
         Vertex sourceVertex = this.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = this.gameBoard.getVertex(toVertex);
         boolean isMoveValid = true;
+
         if (!highlightedvertices.contains(toVertex)){
             showAlert("INVALID", "JJDJDJD");
             Move_Valid[0] = 0;
             return;
-
         }
 
         else if (targetVertex.hasRing() || chipNumber.contains(toVertex)) {
             showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
-              isMoveValid = false;
+            isMoveValid = false;
         }
 
-         if(isMoveValid) {
+        // After we check is the vertices are clear for moveRing
+        if(isMoveValid) {
             placeChip(fromVertex, gc);
 
-             Move_Valid[0] = 1;
-             Ring ringToMove = (Ring) sourceVertex.getRing();
-             if (ringToMove != null) {
-                 sourceVertex.setRing(null);
+            Move_Valid[0] = 1;
+            Ring ringToMove = (Ring) sourceVertex.getRing();
+            if (ringToMove != null) {
+                sourceVertex.setRing(null);
 
-                 gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
+                gc.clearRect(vertexCoordinates[fromVertex][0], vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
 
-                 if (sourceVertex.hasCoin()) {
-                     Coin existingChip = (Coin) sourceVertex.getCoin();
-                     Image chipImage = existingChip.getColour().equals("white") ? chipWImage : chipBImage;
-                     gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
-                             vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+                if (sourceVertex.hasCoin()) {
+                    Coin existingChip = (Coin) sourceVertex.getCoin();
+                    Image chipImage = existingChip.getColour().equals("white") ? chipWImage : chipBImage;
+                    gc.drawImage(chipImage, vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                            vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
                 }
 
                 // flip coins if array is not empty
@@ -310,11 +294,11 @@ public class MainApp extends Application {
                         Vertex currVertex = this.gameBoard.getVertexByCoin(coinToFlip);
                         Image chipImage = coinToFlip.getColour().equals("white") ? chipWImage : chipBImage;
                         gc.drawImage(chipImage, vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
-                             vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+                                vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
 
                     }
                 }
-                
+
                 targetVertex.setRing(ringToMove);
                 Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
                 gc.drawImage(ringImage, vertexCoordinates[toVertex][0], vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
@@ -324,17 +308,18 @@ public class MainApp extends Application {
                 selectedRingVertex = -1;
                 System.out.println(this.gameBoard.strMaker());
 
-             } else {
-                 showAlert("Invalid Move", "Cannot move ring here.");
+            } else {
+                showAlert("Invalid Move", "Cannot move ring here.");
 
-             }
-         }
+            }
         }
+    }
 
 
     // Method to place chips on the board
     private void placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = this.gameBoard.getVertex(vertex);
+
 
         if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
             String chipColor = currentPlayerColor();
@@ -363,7 +348,8 @@ public class MainApp extends Application {
         ArrayList<Move> possibleMoves = new ArrayList<>();
         highlightedvertices.clear();
         for (Direction direction : Direction.values()) {
-            Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()}, gameBoard);            possibleMoves.addAll(diagonal.moveAlongDiagonal(gameBoard.getBoard()));
+            Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()}, gameBoard);
+            possibleMoves.addAll(diagonal.moveAlongDiagonal(gameBoard.getBoard()));
         }
         removeCircleIndicators();
 

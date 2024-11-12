@@ -1,16 +1,14 @@
 package com.ken2.engine;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 /**
  * All decision-making of the game
@@ -18,9 +16,11 @@ import java.util.concurrent.Callable;
 public class GameEngine {
 
     public GameState currentState;
-    private GameSimulation gameSimulation;
+    public GameSimulation gameSimulation;
 
     public static int[][] vertexCoordinates;
+
+
 
     /**
      * Contructor
@@ -65,14 +65,72 @@ public class GameEngine {
     }
 
 
+    /**
+     * Place chip logic checker
+     * @param vertex vertex where we check for chip placement
+     * @param gc GraphicsContext
+     * @return true if rules are conditions are right and false if not
+     */
+    public boolean placeChip(int vertex, GraphicsContext gc) {
+        Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
+
+        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
+            String chipColor = currentState.currentPlayerColor();
+
+            //condition for same ring colors
+            if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
+                showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
+                return false;
+            }
+
+            Coin newChip = new Coin(chipColor.toLowerCase());
+            boardVertex.setPlayObject(newChip);
+            currentState.chipRingVertex = vertex;
+            System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
+            currentState.chipNumber.add(vertex);
+            currentState.chipsRemaining--;
+            currentState.chipPlaced = true;//after chip placement we can move the ring
+            return true;
+        } else {
+            showAlert("Warning", "Cannot place a chip here");
+        }
+        return false;
+    }
+
+    /**
+     * Initial check if the vertices are valid for ringMove method
+     * @param frmVertex initial vertex
+     * @param toVertex target vertex
+     * @param availableMoves list of available moves
+     * @return true if vertices valid for ringMove and false otherwise
+     */
+    public boolean checkPlaceRingVertex(int frmVertex,int toVertex,ArrayList<Integer> availableMoves) {
+        Vertex targetVertex = currentState.gameBoard.getVertex(toVertex);
+        if (!availableMoves.contains(toVertex)){
+            showAlert("INVALID", "JJDJDJD");
+            return false;
+        }
+        else if (targetVertex.hasRing() || currentState.chipNumber.contains(toVertex)) {
+            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+            return false;
+        }
+        return true;
+    }
 
 
+    /**
+     * simulate and get the possible vertices
+     * @param boardVertex the starting vertex
+     */
+    public ArrayList<Move> possibleMoves(Vertex boardVertex) {
+        ArrayList<Move> possibleMoves = new ArrayList<>();
 
-
-
-
-
-
+        for (Direction direction : Direction.values()) {
+            Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()}, currentState.gameBoard);
+            possibleMoves.addAll(diagonal.moveAlongDiagonal(currentState.gameBoard.getBoard()));
+        }
+        return possibleMoves;
+    }
 
 
 
@@ -191,6 +249,7 @@ public class GameEngine {
     public int[][] getVertexCoordinates() {
         return vertexCoordinates;
     }
+
 
     public int[] getcoordinates(int vertex){
         return vertexCoordinates[vertex];

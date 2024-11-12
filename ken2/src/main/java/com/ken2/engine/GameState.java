@@ -26,10 +26,8 @@ public class GameState {
     public int selectedRingVertex;
     public int selectedChipVertex;
     public boolean chipPlaced;
-    public boolean isFirstClick;
     public int chipRingVertex;
-    public ArrayList<Integer> highlightedVertices;
-    public HashSet<Integer> s;
+
 
     /**
      * Constructor
@@ -44,11 +42,8 @@ public class GameState {
         selectedRingVertex=-1;
         selectedChipVertex=-1;
         chipPlaced=false;
-        isFirstClick=true;
+        chipNumber=new ArrayList<>();
         gameBoard=new Game_Board();
-        ringVertexNumbers=new ArrayList<>();
-        highlightedVertices=new ArrayList<>();
-        s=new HashSet<>();
     }
 
     /**
@@ -78,6 +73,5 @@ public class GameState {
         isWhiteTurn = !isWhiteTurn;
         chipPlacement = true;
         chipPlaced = false;
-        isFirstClick = true;
     }
 }

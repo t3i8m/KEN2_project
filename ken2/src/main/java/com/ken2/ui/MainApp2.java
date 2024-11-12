@@ -1,9 +1,12 @@
 package com.ken2.ui;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.PlayObj;
+import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
+import com.ken2.engine.Move;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -17,6 +20,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -48,10 +53,14 @@ public class MainApp2 extends Application {
     private Text ringBlackRemainingText;
     private Text ringWhiteRemainingText;
     private Text chipsRemainText;
+    private Text turnIndicator = new Text("White's Turn");
 
     // COMBOBOXES
     private ComboBox whitePlayerComboBox;
     private ComboBox blackPlayerComboBox;
+
+    private ArrayList<Integer> highlightedVertices;
+
 
 
     @Override
@@ -111,6 +120,12 @@ public class MainApp2 extends Application {
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> resetBoard());
+
+        Button undoButton = new Button("Undo");
+        //undoButton.setOnAction(e -> undoToLastState());
+
+        turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+
         fieldPane = new Pane();
         fieldPane.setPrefSize(fieldDimension, fieldDimension);
         root.add(fieldPane, 1, 1, 5, 5);
@@ -139,9 +154,12 @@ public class MainApp2 extends Application {
         root.add(scoreRingeB2, 7, 3);
         root.add(scoreRingeB3, 7, 4);
         root.add(resetButton, 0 , 7);
+        root.add(undoButton, 1, 7);
+        root.add(turnIndicator, 3, 7);
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        highlightedVertices=new ArrayList<>();
         GUIavailablePlacesForStartRings(gcP);
     }
 
@@ -162,7 +180,7 @@ public class MainApp2 extends Application {
             }
         } else {
             removeCircleIndicators();
-            handleChipandRingPlacement(vertex, gc);
+            handleChipAndRingPlacement(vertex, gc);
         }
         updateOnscreenText();
     }
@@ -195,16 +213,125 @@ public class MainApp2 extends Application {
     }
 
     /**
-     * Removes the highlighters
+     * Handles game logic between chips and rings placement
+     * @param vertex vertex clicked
+     * @param gc GraphicsContext
      */
-    private void removeCircleIndicators(){
-        fieldPane.getChildren().removeIf(node -> node instanceof Circle);
+    private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
+
+        Vertex boardVertex = gameEngine.currentState.gameBoard.getVertex(vertex);
+
+        ArrayList<Move> possibleMoves = new ArrayList<>();
+
+        if (boardVertex.hasRing() && boardVertex.getRing().getColour().equals(gameEngine.currentState.currentPlayerColor())) {
+            gameEngine.currentState.selectedChipVertex = vertex;//store chip coordinate
+            removeCircleIndicators();
+            if (vertex == gameEngine.currentState.selectedChipVertex) {
+                possibleMoves=gameEngine.possibleMoves(boardVertex);
+                highlightPossibleMoves(possibleMoves);
+            }
+            else{gameEngine.showAlert("Invalid move", "Please select a highlighted vertex");}
+
+        }
+        else if (vertex != gameEngine.currentState.selectedChipVertex) {
+            int[] Move_Valid = new int[1];
+            Move currentMove = gameEngine.gameSimulation.simulateMove(gameEngine.currentState.gameBoard,
+                    gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex),
+                    gameEngine.currentState.gameBoard.getVertex(vertex));
+            moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove,possibleMoves);
+            if(Move_Valid[0] == 1) resetTurn();
+        } else {
+            gameEngine.showAlert("Invalid Move", "Please select a valid ring or cell to move.");
+        }
     }
 
+    /**
+     * Highlight the possible moves of the ring
+     * @param possibleMoves posiible moves
+     */
+    private void highlightPossibleMoves(ArrayList<Move> possibleMoves) {
+        highlightedVertices.clear();
+        for (Move move : possibleMoves) {
+            int vertexNumber = gameEngine.currentState.gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+            if (vertexNumber == -1) {
+                continue;
+            }
+            drawHighlighter(vertexNumber,true);
+        }
+    }
 
-    // F I X     T H I S    XD
-    private void handleChipandRingPlacement(int vertex, GraphicsContext gc){
-        System.out.println("\n\n\n\n\nimplementation in progress");
+    /**
+     * Logic for the Move ring method
+     * @param fromVertex
+     * @param toVertex
+     * @param gc
+     * @param Move_Valid
+     * @param currentMove
+     * @param possibleMoves
+     */
+    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove, ArrayList<Move> possibleMoves) {
+        Vertex sourceVertex = gameEngine.currentState.gameBoard.getVertex(fromVertex);
+        Vertex targetVertex = gameEngine.currentState.gameBoard.getVertex(toVertex);
+        boolean isMoveValid = true;
+
+
+        if (!highlightedVertices.contains(toVertex)){
+            gameEngine.showAlert("INVALID", "JJDJDJD");
+            Move_Valid[0] = 0;
+            return;
+        }
+
+        else if (targetVertex.hasRing() || gameEngine.currentState.chipNumber.contains(toVertex)) {
+            gameEngine.showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+            isMoveValid = false;
+        }
+
+        // After we check is the vertices are clear for moveRing
+        if(isMoveValid) {
+            gameEngine.placeChip(fromVertex, gc);
+
+            Move_Valid[0] = 1;
+            Ring ringToMove = (Ring) sourceVertex.getRing();
+            if (ringToMove != null) {
+                sourceVertex.setRing(null);
+
+                gc.clearRect(gameEngine.vertexCoordinates[fromVertex][0], gameEngine.vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
+
+                if (sourceVertex.hasCoin()) {
+                    Coin existingChip = (Coin) sourceVertex.getCoin();
+                    Image chipImage = existingChip.getColour().equals("white") ? chipWImage : chipBImage;
+                    gc.drawImage(chipImage, gameEngine.vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                            gameEngine.vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+                }
+
+                // flip coins if array is not empty
+                if(!currentMove.getFlippedCoins().isEmpty()){
+                    gameEngine.gameSimulation.flipCoins(currentMove.getFlippedCoins(), gameEngine.currentState.gameBoard);
+
+                    for(Coin coinToFlip: currentMove.getFlippedCoins()){
+                        Vertex currVertex = gameEngine.currentState.gameBoard.getVertexByCoin(coinToFlip);
+                        Image chipImage = coinToFlip.getColour().equals("white") ? chipWImage : chipBImage;
+                        gc.drawImage(chipImage, gameEngine.vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
+                                gameEngine.vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2,
+                                pieceDimension / 2);
+
+                    }
+                }
+
+                targetVertex.setRing(ringToMove);
+                Image ringImage = ringToMove.getColour().equals("White") ? ringWImage : ringBImage;
+                gc.drawImage(ringImage, gameEngine.vertexCoordinates[toVertex][0], gameEngine.vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
+
+                gameEngine.currentState.chipRingVertex = -1;
+                gameEngine.currentState.chipPlaced = false;
+                gameEngine.currentState.selectedRingVertex = -1;
+                System.out.println(gameEngine.currentState.gameBoard.strMaker());
+
+            } else {
+                gameEngine.showAlert("Invalid Move", "Cannot move ring here.");
+
+            }
+        }
     }
 
     /**
@@ -219,7 +346,7 @@ public class MainApp2 extends Application {
         int[][] vertexCoordinates = gameEngine.getVertexCoordinates();
 
         // up slant lines
-        gc.strokeLine(vertexCoordinates[4][0]+pieceDimension/2, vertexCoordinates[4][1]+pieceDimension/2,
+        gc.strokeLine(vertexCoordinates[4][0]+ pieceDimension /2, vertexCoordinates[4][1]+pieceDimension/2,
                 vertexCoordinates[28][0]+pieceDimension/2, vertexCoordinates[28][1]+pieceDimension/2);
 
         gc.strokeLine(vertexCoordinates[0][0]+pieceDimension/2, vertexCoordinates[0][1]+pieceDimension/2,
@@ -360,6 +487,7 @@ public class MainApp2 extends Application {
      * @param availability true for green and false for red
      */
     public void drawHighlighter( int vertex, boolean availability){
+        if (availability){highlightedVertices.add(vertex);}
         Color highLighterColor = (availability) ? Color.GREEN : Color.RED;
         Circle availableCircle = new Circle();
         availableCircle.setCenterX(gameEngine.getcoordinates(vertex)[0] + pieceDimension / 2);
@@ -368,6 +496,15 @@ public class MainApp2 extends Application {
         availableCircle.setFill(highLighterColor);
         fieldPane.getChildren().add(availableCircle);
     }
+
+
+    /**
+     * Removes the highlighters
+     */
+    private void removeCircleIndicators(){
+        fieldPane.getChildren().removeIf(node -> node instanceof Circle);
+    }
+
 
     /**
      * Draw the inactive score circles
@@ -392,6 +529,13 @@ public class MainApp2 extends Application {
         System.out.println("Reset!");
     }
 
+    /**
+     * reset the turn for the nest player
+     */
+    private void resetTurn(){
+        gameEngine.currentState.resetTurn();
+        turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+    }
     /**
      * Updates onscreen text
      */
