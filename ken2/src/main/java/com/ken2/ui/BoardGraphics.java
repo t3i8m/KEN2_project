@@ -7,6 +7,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class BoardGraphics extends MainApp2{
+public class BoardGraphics extends MainApp{
 
 }
