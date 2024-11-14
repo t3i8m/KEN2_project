@@ -53,7 +53,7 @@ public class GameAlerts {
 
     // Alert for completing a row
     public static void alertRowCompletion(String playerColor) {
-        showAlert("Row Completed", "Congratulations! " + playerColor + " completed a row.");
+        showAlert("Row Completed", "Congratulations! " + playerColor + " completed a row. Select any " + playerColor + "ring.");
     }
 
     // Alert for the end of the game
