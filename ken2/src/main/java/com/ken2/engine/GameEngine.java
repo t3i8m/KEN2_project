@@ -3,6 +3,8 @@ package com.ken2.engine;
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.ui.GameAlerts;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -50,7 +52,7 @@ public class GameEngine {
 
             return true;
         } else {
-            showAlert("Invalid Placement", "Cannot place ring here.");
+            GameAlerts.alertRingPlacement(); // Alert for when you try to place a ring on another one during the starting phase. Works
         }
         return false;
     }
@@ -74,12 +76,12 @@ public class GameEngine {
     public boolean placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
 
-        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
+        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) { 
             String chipColor = currentState.currentPlayerColor();
 
             //condition for same ring colors
             if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
-                showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
+                GameAlerts.alertWrongRingColor(); //Alert for when you try to select a ring with the opponent color. Does not work.
                 return false;
             }
 
@@ -91,8 +93,12 @@ public class GameEngine {
             currentState.chipsRemaining--;
             currentState.chipPlaced = true;//after chip placement we can move the ring
             return true;
-        } else {
-            showAlert("Warning", "Cannot place a chip here");
+        } else if (boardVertex == null) { 
+            GameAlerts.alertOutOfBounds(); // Alert for when the selectionned position is out of the bounds of the board. Does not work.
+        } else if (!boardVertex.hasRing()) { 
+            GameAlerts.alertNoRing(); // Alert for when the selectionned position has no ring. Works 1/2.
+        } else if (boardVertex.hasCoin()) { 
+            GameAlerts.alertPositionHasChip(); // Alert for when there is already a chip on the position. Does not work.
         }
         return false;
     }
@@ -107,11 +113,11 @@ public class GameEngine {
     public boolean checkPlaceRingVertex(int frmVertex,int toVertex,ArrayList<Integer> availableMoves) {
         Vertex targetVertex = currentState.gameBoard.getVertex(toVertex);
         if (!availableMoves.contains(toVertex)){
-            showAlert("INVALID", "JJDJDJD");
+            GameAlerts.alertInvalidMove(); // Alert for when a player tries to move its ring on a forbidden place (based on the rules of the game). Does not work.
             return false;
         }
         else if (targetVertex.hasRing() || currentState.chipNumber.contains(toVertex)) {
-            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+            GameAlerts.alertOccupiedSpace(); //Alert for when a player tries to move its ring on a palce occupied by either a ring or a chip. Does not work.
             return false;
         }
         return true;

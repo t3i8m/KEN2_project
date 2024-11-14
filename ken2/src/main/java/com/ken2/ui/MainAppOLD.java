@@ -688,7 +688,7 @@ public class MainAppOLD extends Application {
         System.out.println("Reset!");
     }
 
-    public static void main(String[] args) {
+   // public static void main(String[] args) {
         launch(args);
     }
-}
+//}

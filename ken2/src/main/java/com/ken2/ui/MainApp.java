@@ -242,7 +242,9 @@ public class MainApp extends Application {
                 possibleMoves=gameEngine.possibleMoves(boardVertex);
                 highlightPossibleMoves(possibleMoves);
             }
-            else{gameEngine.showAlert("Invalid move", "Please select a highlighted vertex");}
+            else {
+                GameAlerts.alertTest(); //GameAlerts.alertInvalidMove()
+            }
 
         }
         else if (vertex != gameEngine.currentState.selectedChipVertex) {
@@ -253,7 +255,7 @@ public class MainApp extends Application {
             moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove,possibleMoves);
             if(Move_Valid[0] == 1) resetTurn();
         } else {
-            gameEngine.showAlert("Invalid Move", "Please select a valid ring or cell to move.");
+            GameAlerts.alertTest(); //GameAlerts.alertInvalidMove()
         }
     }
 
@@ -287,16 +289,22 @@ public class MainApp extends Application {
         boolean isMoveValid = true;
 
 
-        if (!highlightedVertices.contains(toVertex)){
-            gameEngine.showAlert("INVALID", "JJDJDJD");
-            Move_Valid[0] = 0;
+        if (!highlightedVertices.contains(toVertex)) {
+            GameAlerts.alertInvalidMove(); // Alert for when you try to move your ring to a non-highlited position (a non-allowed move). Works.
+            Move_Valid[0] = 0; // The move is validated if Move_Valid[0] = 1.
             return;
         }
 
-        else if (targetVertex.hasRing() || gameEngine.currentState.chipNumber.contains(toVertex)) {
-            gameEngine.showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+        else if (targetVertex.hasRing()) {
+            GameAlerts.alertRingPlacement(); // Alert if the targeted vertex has a ring. Does not work
             isMoveValid = false;
         }
+
+        else if (gameEngine.currentState.chipNumber.contains(toVertex)) {
+            GameAlerts.alertPositionHasChip(); // Alert if the targeted vertex has a chip. Does not work.
+            isMoveValid = false;
+        }
+
 
         // After we check is the vertices are clear for moveRing
         if(isMoveValid) {
@@ -339,9 +347,8 @@ public class MainApp extends Application {
                 gameEngine.currentState.selectedRingVertex = -1;
                 System.out.println(gameEngine.currentState.gameBoard.strMaker());
 
-            } else {
-                gameEngine.showAlert("Invalid Move", "Cannot move ring here.");
-
+            } else if (ringToMove == null) {
+                GameAlerts.alertNoRing(); //Alert when there are no ring at the selected position. Works sometimes. Bug.
             }
         }
     }
