@@ -16,4 +16,9 @@ public class Ring implements PlayObj{
     public void setColour(String colour){
         this.colour = colour;
     }
+
+    @Override
+    public PlayObj clone() {
+        return new Ring(this.colour); 
+    }
 }

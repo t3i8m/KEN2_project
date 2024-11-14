@@ -1,6 +1,8 @@
 package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.Ring;
+import com.ken2.Game_Components.Board.Vertex;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,7 +11,7 @@ import java.util.HashSet;
  * A class for holding all the variables needed by the Game engine to call simulation on
  * Basically a class for the current state of the game
  */
-public class GameState {
+public class GameState implements Cloneable{
 
     public int ringsWhite;
     public int ringsBlack;
@@ -74,4 +76,38 @@ public class GameState {
         chipPlacement = true;
         chipPlaced = false;
     }
+
+    public ArrayList<Vertex> getAllVertexOfColor(String color){
+        Vertex[][] board = gameBoard.getBoard().clone();
+        ArrayList<Vertex> allPositions = new ArrayList<>();
+        for(Vertex row[]: board){
+            for(Vertex v: row){
+                if(v.hasRing()){
+                    Ring currR = (Ring) v.getRing();
+                    String rColor = currR.getColour().toLowerCase();
+                    if(rColor.equals(color.toLowerCase())){
+                        allPositions.add(v);
+                    }
+                }
+            }
+        }
+        return allPositions;
+    }
+
+    @Override
+    public GameState clone() {
+        try {
+            GameState copy = (GameState) super.clone(); 
+            copy.gameBoard = new Game_Board(this.gameBoard); 
+            copy.chipNumber = new ArrayList<>(this.chipNumber); 
+            copy.ringVertexNumbers = new ArrayList<>(this.ringVertexNumbers);
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning not supported", e);
+        }
+    }
+
+
+
+    
 }

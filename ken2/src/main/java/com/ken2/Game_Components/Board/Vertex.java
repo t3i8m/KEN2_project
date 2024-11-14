@@ -17,6 +17,20 @@ public class Vertex {
         this.vertexNumber = -1;
     }
 
+    public Vertex(Vertex other) {
+        this.xIndex = other.xIndex;
+        this.yIndex = other.yIndex;
+        this.vertexNumber = other.vertexNumber;
+
+        this.playObjects = new PlayObj[2];
+        if (other.playObjects[0] != null) {
+            this.playObjects[0] = other.playObjects[0].clone(); 
+        }
+        if (other.playObjects[1] != null) {
+            this.playObjects[1] = other.playObjects[1].clone();
+        }
+    }
+
     public void setVertexNumber(int vertexNumber){
         this.vertexNumber = vertexNumber;
     }
@@ -55,7 +69,7 @@ public class Vertex {
 
 
     public PlayObj getRing(){
-        return playObjects[0];
+        return (Ring)playObjects[0];
     }
     public PlayObj getCoin() {
         return playObjects[1];

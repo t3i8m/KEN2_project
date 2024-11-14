@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * All decision-making of the game
@@ -136,6 +137,15 @@ public class GameEngine {
             possibleMoves.addAll(diagonal.moveAlongDiagonal(currentState.gameBoard.getBoard()));
         }
         return possibleMoves;
+    }
+
+    // gets ring positions and returns all of the moves from these positions
+    public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions){
+        HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<Vertex, ArrayList<Move>>();
+        for(Vertex v: allRingPositions){
+            allMoves.put(v, this.possibleMoves(v));
+        }
+        return allMoves;
     }
 
 
