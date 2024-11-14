@@ -1,13 +1,17 @@
 package com.ken2.ui;
 
 import com.ken2.Game_Components.Board.Coin;
+import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.BotAbstract;
+import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 import javafx.application.Application;
+import javafx.css.Rule;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -61,6 +65,9 @@ public class MainApp extends Application {
 
     private ArrayList<Integer> highlightedVertices;
 
+    // BOT COMPONENTS
+    ArrayList<RuleBasedBot> bots = new ArrayList<>();
+    Button botTurnButton;
 
 
     @Override
@@ -119,10 +126,14 @@ public class MainApp extends Application {
         updateOnscreenText();
 
         Button resetButton = new Button("Reset");
-        resetButton.setOnAction(e -> resetBoard());
+        resetButton.setOnAction(e -> resetBoard(gcP));
 
         Button undoButton = new Button("Undo");
         //undoButton.setOnAction(e -> undoToLastState());
+
+        botTurnButton = new Button("Next Bot Move");
+        botTurnButton.setOnAction(e -> nextBotTurn(gcP));
+        botTurnButton.setDisable(bots.size()==0);
 
         turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
@@ -156,6 +167,7 @@ public class MainApp extends Application {
         root.add(resetButton, 0 , 7);
         root.add(undoButton, 1, 7);
         root.add(turnIndicator, 3, 7);
+        root.add(botTurnButton, 7, 7);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -522,15 +534,116 @@ public class MainApp extends Application {
     /**
      * Reset the Board for a new game
      */
-    private void resetBoard() {
+    private void resetBoard(GraphicsContext gc) {
         System.out.println();
         System.out.println(whitePlayerComboBox.getValue());
         System.out.println(blackPlayerComboBox.getValue());
-        System.out.println("Reset!");
+
+        // clear all chips
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+        // check player selection
+        selectPlayer("White", whitePlayerComboBox);
+        selectPlayer("Black", blackPlayerComboBox);
+        
+        botTurnButton.setDisable(bots.size()==0);
+        
+        // get a new game
+        gameEngine.resetGame();
+
+        // update highlights
+        GUIavailablePlacesForStartRings(gc);
+        
+
     }
 
     /**
-     * reset the turn for the nest player
+     * created bot for the player if bot is selected
+     * @param color
+     * @param comboBox
+     */
+    private void selectPlayer(String color, ComboBox comboBox){
+
+        switch (comboBox.getSelectionModel().getSelectedIndex()) {
+            case 1: //ai player
+                RuleBasedBot ruleBasedBot = new RuleBasedBot(color);
+                bots.add(ruleBasedBot);
+                break;
+        
+            default: // human
+            
+                break;
+        }
+    }
+
+    private void nextBotTurn(GraphicsContext gc){
+        Game_Board gameBoard = gameEngine.currentState.gameBoard;
+        boolean ringsPlaced = gameEngine.currentState.ringsPlaced >= 10;
+        System.out.println(ringsPlaced);
+
+        // find out whos turn it is
+        Boolean isWhiteTurn = gameEngine.currentState.isWhiteTurn;
+
+        // check the bots if its their turn
+        for (RuleBasedBot ruleBasedBot : bots) {
+            Boolean isWhite = "White".equals(ruleBasedBot.getColor());
+            if (isWhite == isWhiteTurn){
+                Move move = ruleBasedBot.makeMove(gameBoard, !ringsPlaced);
+                updateGameBoard(gameBoard, gc);
+            }
+        }
+
+        updateOnscreenText();
+
+        System.out.println("Next Bot Turn");
+    }
+
+    private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
+
+        //clear canvas
+        
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+        //run through every vertex and put image there if there is an image
+        for (int i = 0; i <85;i++){
+            Vertex vertex = game_Board.getVertex(i);
+
+            //vertex has ring
+            if (vertex.hasRing()){
+                PlayObj ring = vertex.getRing();
+
+                String colour = ring.getColour();
+
+                if (colour.equals("White")){
+                    drawImage(ringWImage, i, gc);
+                } else {
+                    drawImage(ringBImage, i, gc);
+                }
+
+            }
+
+            //vertex has coin
+            if (vertex.hasCoin()){
+                PlayObj coin = vertex.getCoin();
+
+                String colour = coin.getColour();
+
+                if (colour.equals("White")){
+                    drawImage(chipWImage, i, gc);
+                } else {
+                    drawImage(chipBImage, i, gc);
+                }
+
+            }
+            
+        }
+        
+
+
+    }
+
+    /**
+     * reset the turn for the next player
      */
     private void resetTurn(){
         gameEngine.currentState.resetTurn();
@@ -543,6 +656,11 @@ public class MainApp extends Application {
         chipsRemainText.setText("Chips Remaining: " + gameEngine.currentState.chipsRemaining);
         ringWhiteRemainingText.setText("White Rings Remaining: " + gameEngine.currentState.ringsWhite);
         ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
+    }
+
+    
+    public static void main(String[] args) {
+        launch(args);
     }
 
 }
