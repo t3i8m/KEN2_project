@@ -5,11 +5,16 @@ import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
+import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
+import com.ken2.utils.BotFactory;
+import com.ken2.utils.Player;
+
 import javafx.application.Application;
 import javafx.css.Rule;
 import javafx.geometry.Insets;
@@ -30,6 +35,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
 
 
 public class MainApp extends Application {
@@ -66,10 +74,25 @@ public class MainApp extends Application {
     private ArrayList<Integer> highlightedVertices;
 
     // BOT COMPONENTS
-    ArrayList<RuleBasedBot> bots = new ArrayList<>();
-    Button botTurnButton;
+    // ArrayList<Bot> bots = new ArrayList<>();
+    // Button botTurnButton;
+    // private Bot whiteBot;
+    // private Bot blackBot;
+
+    // Player List
+    private int currentPlayerIndex = 0;
+    private Player whitePlayer;
+    private Player blackPlayer;
+
+    // FLAGS
+    private boolean isGameStarted = false;
+
+    // BUTTONS
+    private Button startGameButton;
 
 
+
+    @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -101,18 +124,47 @@ public class MainApp extends Application {
         GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
 
         drawBoard(gcB);
-        playObjectCanvas.setOnMouseClicked((MouseEvent e)-> handleFieldClick(e, gcP)); // GAAAME ENGIIIINE
+        playObjectCanvas.setOnMouseClicked((MouseEvent e) -> {
+            if (isGameStarted) { 
+                handleFieldClick(e, gcP);
+            }
+        });
 
         // info elements
         whitePlayerComboBox = new ComboBox<>();
         whitePlayerComboBox.getItems().add("Human Player");
-        whitePlayerComboBox.getItems().add("AI Player");
+        whitePlayerComboBox.getItems().add("RuleBased Bot");
+        whitePlayerComboBox.getItems().add("AlphaBeta Bot");
+
         whitePlayerComboBox.getSelectionModel().selectFirst();
 
         blackPlayerComboBox = new ComboBox<>();
         blackPlayerComboBox.getItems().add("Human Player");
-        blackPlayerComboBox.getItems().add("AI Player");
+        blackPlayerComboBox.getItems().add("RuleBased Bot");
+        blackPlayerComboBox.getItems().add("AlphaBeta Bot");
+
         blackPlayerComboBox.getSelectionModel().selectFirst();
+        
+        whitePlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+            if (!isGameStarted) { 
+                selectPlayer("White", whitePlayerComboBox);
+            } else {
+                System.out.println("game has already started");
+                whitePlayerComboBox.getSelectionModel().select(oldValue);
+            }
+        });
+        
+        blackPlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+            if (!isGameStarted) { 
+                selectPlayer("Black", blackPlayerComboBox);
+            } else {
+                System.out.println("game has already started");
+                blackPlayerComboBox.getSelectionModel().select(oldValue);
+            }
+        });
+
+        startGameButton = new Button("Start Game");
+        startGameButton.setOnAction(e -> startGame(gcP));
 
         Text whitePlayerLabel = new Text();
         whitePlayerLabel.setText("White");
@@ -130,10 +182,6 @@ public class MainApp extends Application {
 
         Button undoButton = new Button("Undo");
         //undoButton.setOnAction(e -> undoToLastState());
-
-        botTurnButton = new Button("Next Bot Move");
-        botTurnButton.setOnAction(e -> nextBotTurn(gcP));
-        botTurnButton.setDisable(bots.size()==0);
 
         turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
@@ -167,12 +215,99 @@ public class MainApp extends Application {
         root.add(resetButton, 0 , 7);
         root.add(undoButton, 1, 7);
         root.add(turnIndicator, 3, 7);
-        root.add(botTurnButton, 7, 7);
+
+        root.add(startGameButton, 7, 7);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         highlightedVertices=new ArrayList<>();
-        GUIavailablePlacesForStartRings(gcP);
+  
+    }
+
+    /**
+     * Handle the game start button
+     * @param gc GraphicsContext
+     */
+    private void startGame(GraphicsContext gcP) {
+        this.isGameStarted = true; 
+        if(whitePlayer==null){
+            whitePlayer = new Player("White");
+        }
+        if(blackPlayer==null){
+            blackPlayer=new Player("Black");
+        }
+        startGameButton.setDisable(true); 
+        whitePlayerComboBox.setDisable(true);
+        blackPlayerComboBox.setDisable(true);
+        gameEngine.resetGame();
+        gcP.clearRect(0, 0, gcP.getCanvas().getWidth(), gcP.getCanvas().getHeight());
+        updateOnscreenText();
+
+        currentPlayerIndex = 0;
+
+        playerTurn();
+    }
+
+    private void playerTurn() {
+
+        Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+        GraphicsContext gc = playObjectCanvas.getGraphicsContext2D();
+        // removeCircleIndicators();
+        System.out.println("Current Player Index: " + currentPlayerIndex);
+
+        if (currentPlayer.isBot()) {
+            // TODO: remove for the adversial search
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.2));
+            pause.setOnFinished(event -> {
+                botTurn(gc);
+            });
+            pause.play();
+            // botTurn(gc);
+        } else {
+            if (gameEngine.currentState.ringsPlaced < 10) {
+                GUIavailablePlacesForStartRings(gc);
+                if(gameEngine.currentState.ringsPlaced==10){
+                    removeCircleIndicators();
+                }
+
+            System.out.println(currentPlayer.getColor() + " player's turn. Please make a move.");
+        }}
+    }
+
+    /**
+     * switch current player
+     * @param color
+     * @param comboBox
+     */
+    private void switchPlayer() {
+        gameEngine.currentState.isWhiteTurn = !gameEngine.currentState.isWhiteTurn;
+        currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
+    }
+    
+
+    /**
+     * combobox handler
+     * @param color
+     * @param comboBox
+     */
+    private void selectPlayer(String color, ComboBox<String> comboBox) {
+        String selectedItem = comboBox.getSelectionModel().getSelectedItem();
+        BotFactory botFactory = new BotFactory();
+
+        if ("Human Player".equals(selectedItem)) {
+            if (color.equalsIgnoreCase("White")) {
+                whitePlayer = new Player(color);
+            } else {
+                blackPlayer = new Player(color);
+            }
+        } else {
+            Bot bot = botFactory.getBot(selectedItem, color);
+            if (color.equalsIgnoreCase("White")) {
+                whitePlayer = new Player(color, bot);
+            } else {
+                blackPlayer = new Player(color, bot);
+            }
+        }
     }
 
     /**
@@ -181,6 +316,7 @@ public class MainApp extends Application {
      * @param gc GraphicsContext
      */
     private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
+
         int vertex = gameEngine.findClosestVertex(e.getX(), e.getY());
         if (vertex < 0) return;
 
@@ -194,19 +330,28 @@ public class MainApp extends Application {
             removeCircleIndicators();
             handleChipAndRingPlacement(vertex, gc);
         }
+        switchPlayer();
+        playerTurn();
         updateOnscreenText();
     }
+
+
 
     /**
      * To place rings at the start of the game
      * @param vertex vertex number
      */
     private void GUIplaceStartingRing(int vertex,GraphicsContext gc){
+
         String ringColor = (gameEngine.currentState.isWhiteTurn) ? "white" : "black";
+
         if(gameEngine.placeStartingRing(vertex,ringColor)){
+
             Image ringImage = ringColor.equals("white") ? ringWImage : ringBImage;
             drawImage(ringImage,vertex,gc);
-            turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+            // turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+            resetTurn();
+            playerTurn();
 
             drawHighlighter(vertex,false);
         }
@@ -217,6 +362,7 @@ public class MainApp extends Application {
      * @param gc GraphicsContext
      */
     private void GUIavailablePlacesForStartRings(GraphicsContext gc){
+
         ArrayList<Vertex> aVertices =gameEngine.availablePlacesForStartingRings();
         for(Vertex v : aVertices){
             boolean isVnull = (v!=null);
@@ -254,9 +400,12 @@ public class MainApp extends Application {
             Move currentMove = gameEngine.gameSimulation.simulateMove(gameEngine.currentState.gameBoard,
                     gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex),
                     gameEngine.currentState.gameBoard.getVertex(vertex));
-            moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove,possibleMoves);
+            moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove);
             if(Move_Valid[0] == 1) resetTurn();
-        } else {
+        } else if (gameEngine.currentState.ringsPlaced <10){
+            ;
+        }
+        else {
             GameAlerts.alertTest(); //GameAlerts.alertInvalidMove()
         }
     }
@@ -285,7 +434,7 @@ public class MainApp extends Application {
      * @param currentMove
      * @param possibleMoves
      */
-    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove, ArrayList<Move> possibleMoves) {
+    private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         Vertex sourceVertex = gameEngine.currentState.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = gameEngine.currentState.gameBoard.getVertex(toVertex);
         boolean isMoveValid = true;
@@ -298,6 +447,7 @@ public class MainApp extends Application {
         }
 
         else if (targetVertex.hasRing()) {
+            
             GameAlerts.alertRingPlacement(); // Alert if the targeted vertex has a ring. Does not work
             isMoveValid = false;
         }
@@ -348,7 +498,8 @@ public class MainApp extends Application {
                 gameEngine.currentState.chipPlaced = false;
                 gameEngine.currentState.selectedRingVertex = -1;
                 System.out.println(gameEngine.currentState.gameBoard.strMaker());
-
+                switchPlayer();
+                playerTurn();
             } else if (ringToMove == null) {
                 GameAlerts.alertNoRing(); //Alert when there are no ring at the selected position. Works sometimes. Bug.
             }
@@ -555,7 +706,7 @@ public class MainApp extends Application {
         selectPlayer("White", whitePlayerComboBox);
         selectPlayer("Black", blackPlayerComboBox);
         
-        botTurnButton.setDisable(bots.size()==0);
+        startGameButton.setDisable(false);
         
         // get a new game
         gameEngine.resetGame();
@@ -566,46 +717,51 @@ public class MainApp extends Application {
 
     }
 
-    /**
-     * created bot for the player if bot is selected
-     * @param color
-     * @param comboBox
-     */
-    private void selectPlayer(String color, ComboBox comboBox){
+    // /**
+    //  * created bot for the player if bot is selected
+    //  * @param color
+    //  * @param comboBox
+    //  */
 
-        switch (comboBox.getSelectionModel().getSelectedIndex()) {
-            case 1: //ai player
-                RuleBasedBot ruleBasedBot = new RuleBasedBot(color);
-                bots.add(ruleBasedBot);
-                break;
+
+    private void botTurn(GraphicsContext gc) {
+        GameState gs = gameEngine.getGameState();
+
+        boolean ringsPlaced = gs.ringsPlaced >= 10;
+        Game_Board gameBoard = gs.gameBoard;
+        Boolean isWhiteTurn = gs.isWhiteTurn;
+        Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+
+        Bot activeBot = currentPlayer.getBot();
         
-            default: // human
-            
-                break;
-        }
-    }
+        if (activeBot != null) {
+            Move move = activeBot.makeMove(gameEngine.getGameState());
+            // int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove
+            if(move!=null){
+                if(!ringsPlaced){
+                    int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                    GUIplaceStartingRing(chosenVertexNumber, gc);
 
-    private void nextBotTurn(GraphicsContext gc){
-        Game_Board gameBoard = gameEngine.currentState.gameBoard;
-        boolean ringsPlaced = gameEngine.currentState.ringsPlaced >= 10;
-        System.out.println(ringsPlaced);
+                } else{
+                    System.out.println("aaaaaaaaaaaaaa");
+                    int[] Move_Valid = new int[1];
+                    Vertex vertexFrom = move.getStartingVertex();
+                    moveRing(gameEngine.currentState.selectedChipVertex, vertexFrom.getVertextNumber(), gc, Move_Valid, move);
+                }
+    
+                
+                updateGameBoard(gameBoard, gc);  
+                resetTurn();                     
+                updateOnscreenText();             
 
-        // find out whos turn it is
-        Boolean isWhiteTurn = gameEngine.currentState.isWhiteTurn;
-
-        // check the bots if its their turn
-        for (RuleBasedBot ruleBasedBot : bots) {
-            Boolean isWhite = "White".equals(ruleBasedBot.getColor());
-            if (isWhite == isWhiteTurn){
-                Move move = ruleBasedBot.makeMove(gameBoard, !ringsPlaced);
-                updateGameBoard(gameBoard, gc);
+            } else{
+                System.out.println("move is invalid");
             }
+            
         }
-
-        updateOnscreenText();
-
-        System.out.println("Next Bot Turn");
     }
+
+    
 
     private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
 
@@ -655,7 +811,10 @@ public class MainApp extends Application {
      * reset the turn for the next player
      */
     private void resetTurn(){
+
         gameEngine.currentState.resetTurn();
+        currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
+        playerTurn();
         turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
     }
     /**

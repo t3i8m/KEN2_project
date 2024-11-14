@@ -1,5 +1,7 @@
 package com.ken2.Game_Components.Board;
 
+import java.util.ArrayList;
+
 /** Vertex is a simple placeholder for the playing object (ring or coin)
  *
  */

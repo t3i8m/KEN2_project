@@ -3,6 +3,7 @@ package com.ken2.engine;
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.ui.GameAlerts;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -53,7 +54,7 @@ public class GameEngine {
 
             return true;
         } else {
-            GameAlerts.alertRingPlacement(); // Alert for when you try to place a ring on another one during the starting phase. Works
+            // GameAlerts.alertRingPlacement(); // Alert for when you try to place a ring on another one during the starting phase. Does not work if bot is white
         }
         return false;
     }
@@ -147,6 +148,12 @@ public class GameEngine {
         }
         return allMoves;
     }
+
+    public GameState getGameState(){
+        return this.currentState;
+    }
+
+
 
 
 

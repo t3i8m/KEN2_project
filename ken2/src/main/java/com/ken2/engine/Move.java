@@ -1,6 +1,7 @@
 package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Coin;
+import com.ken2.Game_Components.Board.Vertex;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,9 @@ public class Move {
     private int xPosition;
     private int yPosition;
     private Direction direction; //enum object with direction params
+    // private int[] targetPosition = null;
+    // private int[] fromPosition = null;
+    private Vertex startingVertex;
 
 
     /**
@@ -33,6 +37,33 @@ public class Move {
         this.coinFlip = new ArrayList<>(); // Initialize as empty list
         this.direction = direction;
 
+    }
+
+    // public Move(int[] targetPosition, int[] fromPosition) {
+    //     this.targetPosition = targetPosition;
+    //     this.fromPosition = fromPosition;
+
+    //     this.xPosition = targetPosition[0];
+    //     this.yPosition = targetPosition[1];
+    //     this.coinFlip = new ArrayList<>(); // Initialize as empty list
+
+    // }
+
+    // public int[] getTargetPosition(){
+    //     return this.targetPosition;
+    // }
+
+    
+    // public int[] getFromPosition(){
+    //     return this.fromPosition;
+    // }
+
+    public void setStartingVertex(Vertex newVertex){
+        this.startingVertex = newVertex;
+    }
+
+    public Vertex getStartingVertex(){
+        return this.startingVertex;
     }
 
     /**

@@ -12,15 +12,15 @@ public class BotFactory {
      * @param botColor 
      * @return bot obj or null
      */
-    public Bot geBot(String botType, String botColor){
+    public Bot getBot(String botType, String botColor){
         if(botType==null && botColor == null){
             return null;
         }
 
         switch(botType.toLowerCase()){
-            case "random bot":
+            case "rulebased bot":
                 return new RuleBasedBot(botColor);
-            case "AlphaBeta":
+            case "alphabeta bot":
                 return new AlphaBetaBot(botColor);
         }
         return null;

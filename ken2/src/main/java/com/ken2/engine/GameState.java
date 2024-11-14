@@ -3,6 +3,8 @@ package com.ken2.engine;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.Bot;
+import com.ken2.bots.RuleBased.RuleBasedBot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +61,14 @@ public class GameState implements Cloneable{
     }
 
     /**
+     * Get current gameBoard
+     * @return gameBoard
+     */
+    public Game_Board getGameBoard(){
+        return this.gameBoard;
+    }
+
+    /**
      * Update the ring of the
      * @param playerColor color of the player to update ring count
      */
@@ -107,6 +117,16 @@ public class GameState implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Cloning not supported", e);
         }
+    }
+
+    public boolean isBotTurn(ArrayList<Bot> bots) {
+        boolean isWhiteTurn = this.isWhiteTurn;
+        for (Bot bot : bots) {
+            if (("White".equals(bot.getColor()) && isWhiteTurn) || ("Black".equals(bot.getColor()) && !isWhiteTurn)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
