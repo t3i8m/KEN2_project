@@ -1,5 +1,6 @@
-package com.ken2.bots;
+package com.ken2.utils;
 
+import com.ken2.bots.Bot;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 

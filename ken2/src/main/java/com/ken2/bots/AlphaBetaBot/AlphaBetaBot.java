@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameSimulation;
