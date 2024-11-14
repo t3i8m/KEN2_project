@@ -192,21 +192,21 @@ public class Game_Board {
         return takenPositions;
     }
 
-    public ArrayList<Vertex> getVertexAllOfVertexesOfSpecificColour(String colour){
-        ArrayList<Vertex> positionsVertexes = new ArrayList<Vertex>();
-        for (int i = 0; i < this.the_Board.length; i++) {
-            for (int j = 0; j < this.the_Board[i].length; j++) {
-                if (the_Board[i][j] != null) {
-                    if(the_Board[i][j].hasRing()){
-                        if(the_Board[i][j].getRing().getColour().toLowerCase()==colour.toLowerCase()){
-                            positionsVertexes.add(the_Board[i][j]);
-                        }
-                    }
-                }
-            }
-        }
-        return positionsVertexes;
-    }
+    // public ArrayList<Vertex> getVertexAllOfVertexesOfSpecificColour(String colour){
+    //     ArrayList<Vertex> positionsVertexes = new ArrayList<Vertex>();
+    //     for (int i = 0; i < this.the_Board.length; i++) {
+    //         for (int j = 0; j < this.the_Board[i].length; j++) {
+    //             if (the_Board[i][j] != null) {
+    //                 if(the_Board[i][j].hasRing()){
+    //                     if(the_Board[i][j].getRing().getColour().toLowerCase()==colour.toLowerCase()){
+    //                         positionsVertexes.add(the_Board[i][j]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return positionsVertexes;
+    // }
     public Vertex getVertexByCoin(Coin coin) {
         for (int i = 0; i < the_Board.length; i++) {
             for (int j = 0; j < the_Board[i].length; j++) {

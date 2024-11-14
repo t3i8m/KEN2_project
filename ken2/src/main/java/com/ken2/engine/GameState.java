@@ -94,13 +94,15 @@ public class GameState implements Cloneable{
         ArrayList<Vertex> allPositions = new ArrayList<>();
         for(Vertex row[]: board){
             for(Vertex v: row){
-                if(v.hasRing()){
-                    Ring currR = (Ring) v.getRing();
-                    String rColor = currR.getColour().toLowerCase();
-                    if(rColor.equals(color.toLowerCase())){
-                        allPositions.add(v);
+                if(v!=null){
+                    if(v.hasRing()){
+                        Ring currR = (Ring) v.getRing();
+                        String rColor = currR.getColour().toLowerCase();
+                        if(rColor.equals(color.toLowerCase())){
+                            allPositions.add(v);
+                        }
                     }
-                }
+                } 
             }
         }
         return allPositions;

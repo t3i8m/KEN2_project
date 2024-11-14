@@ -8,7 +8,7 @@ public class GameAlerts {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.show();
     }
     // 2
     public static void alertTest(){ //GameAlerts.alertTest()

@@ -31,7 +31,6 @@ public class GameSimulation {
      * @param xRingPosition x position of the disk
      * @param yRingPosition y position of the disk
      */
-    // instead of the x&y distances we will use disk obj and its atributes
     public void startSimulation(Vertex[][] board, int xRingPosition, int yRingPosition){
         allPossibleMoves.clear();
         int[] diskPositions= {xRingPosition, yRingPosition};
@@ -116,6 +115,34 @@ public class GameSimulation {
         return null; // No matching direction found
     }
 
+    // public Direction getDirectionBetween(int startX, int startY, int targetX, int targetY) {
+    //     int deltaX = targetX - startX;
+    //     int deltaY = targetY - startY;
+    
+    //     if (deltaX == 0 && deltaY == 0) {
+    //         return null;
+    //     }
+    
+    //     int gcd = gcd(Math.abs(deltaX), Math.abs(deltaY));
+    //     int stepX = (gcd != 0) ? deltaX / gcd : 0;
+    //     int stepY = (gcd != 0) ? deltaY / gcd : 0;
+    
+    //     for (Direction direction : Direction.values()) {
+    //         if (stepX == direction.getDeltaX() && stepY == direction.getDeltaY()) {
+    //             return direction;
+    //         }
+    //     }
+    
+    //     return null; 
+    // }
+    
+    // private int gcd(int a, int b) {
+    //     if (b == 0) {
+    //         return a;
+    //     }
+    //     return gcd(b, a % b);
+    // }
+
     // simulate a move from the given start/target positions
     public Move simulateMove(Game_Board board, Vertex startVertex, Vertex targetVertex){
 
@@ -139,7 +166,7 @@ public class GameSimulation {
                 return move;
             }
         }
-        System.out.println("The target position is not a valid move in this direction.");
+        // System.out.println("The target position is not a valid move in this direction.");
         return null;
     }
 

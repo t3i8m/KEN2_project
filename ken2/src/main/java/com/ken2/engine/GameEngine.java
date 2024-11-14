@@ -78,12 +78,12 @@ public class GameEngine {
     public boolean placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
 
-        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) { 
+        if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
             String chipColor = currentState.currentPlayerColor();
 
             //condition for same ring colors
             if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
-                GameAlerts.alertWrongRingColor(); //Alert for when you try to select a ring with the opponent color. Does not work.
+                showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
                 return false;
             }
 
@@ -94,15 +94,13 @@ public class GameEngine {
             currentState.chipNumber.add(vertex);
             currentState.chipsRemaining--;
             currentState.chipPlaced = true;//after chip placement we can move the ring
+            currentState.resetTurn();
             return true;
-        } else if (boardVertex == null) { 
-            GameAlerts.alertOutOfBounds(); // Alert for when the selectionned position is out of the bounds of the board. Does not work.
-        } else if (!boardVertex.hasRing()) { 
-            GameAlerts.alertNoRing(); // Alert for when the selectionned position has no ring. Works 1/2.
-        } else if (boardVertex.hasCoin()) { 
-            GameAlerts.alertPositionHasChip(); // Alert for when there is already a chip on the position. Does not work.
+        } else {
+            showAlert("Warning", "Cannot place a chip here");
         }
         return false;
+    
     }
 
     /**
@@ -115,11 +113,11 @@ public class GameEngine {
     public boolean checkPlaceRingVertex(int frmVertex,int toVertex,ArrayList<Integer> availableMoves) {
         Vertex targetVertex = currentState.gameBoard.getVertex(toVertex);
         if (!availableMoves.contains(toVertex)){
-            GameAlerts.alertInvalidMove(); // Alert for when a player tries to move its ring on a forbidden place (based on the rules of the game). Does not work.
+            showAlert("INVALID", "JJDJDJD");
             return false;
         }
         else if (targetVertex.hasRing() || currentState.chipNumber.contains(toVertex)) {
-            GameAlerts.alertOccupiedSpace(); //Alert for when a player tries to move its ring on a palce occupied by either a ring or a chip. Does not work.
+            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
             return false;
         }
         return true;
