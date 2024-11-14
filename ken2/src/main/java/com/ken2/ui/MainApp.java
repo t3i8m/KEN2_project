@@ -86,6 +86,9 @@ public class MainApp extends Application {
 
     // FLAGS
     private boolean isGameStarted = false;
+    private Vertex lastMoveStartVertex = null;
+    private Vertex lastMoveEndVertex = null;
+
 
     // BUTTONS
     private Button startGameButton;
@@ -346,17 +349,16 @@ public class MainApp extends Application {
     private void GUIplaceStartingRing(int vertex,GraphicsContext gc){
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
-        String ringColor =currentPlayer.getColor().toLowerCase();
-
+        String ringColor =currentPlayer.getColor();
         if(gameEngine.placeStartingRing(vertex,ringColor)){
 
             Image ringImage = ringColor.equals("white") ? ringWImage : ringBImage;
-            drawImage(ringImage,vertex,gc);
+            drawImage(ringImage,vertex,gc, true);
             // turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
             resetTurn();
             System.out.println("now turn is"+ringColor);
             // playerTurn();
-
+            // gameEngine.currentState.ringsPlaced+=1;
             drawHighlighter(vertex,false);
         }
     }
@@ -442,12 +444,12 @@ public class MainApp extends Application {
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         Vertex sourceVertex = gameEngine.currentState.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = gameEngine.currentState.gameBoard.getVertex(toVertex);
-    
-        if (!highlightedVertices.contains(toVertex)) {
-            GameAlerts.alertInvalidMove();
-            Move_Valid[0] = 0;
-            return;
-        }
+
+        // if (!highlightedVertices.contains(toVertex)) {
+        //     GameAlerts.alertInvalidMove();
+        //     Move_Valid[0] = 0;
+        //     return;
+        // }
     
         if (targetVertex.hasRing()) {
             GameAlerts.alertRingPlacement();
@@ -467,14 +469,15 @@ public class MainApp extends Application {
         Ring ringToMove = (Ring) sourceVertex.getRing();
         if (ringToMove != null) {
             sourceVertex.setRing(null);
-    
+            this.lastMoveStartVertex = sourceVertex;
+            this.lastMoveEndVertex = targetVertex;
             gc.clearRect(gameEngine.vertexCoordinates[fromVertex][0], gameEngine.vertexCoordinates[fromVertex][1], pieceDimension, pieceDimension);
     
             if (sourceVertex.hasCoin()) {
                 Coin existingChip = (Coin) sourceVertex.getCoin();
-                Image chipImage = existingChip.getColour().equals("white") ? chipWImage : chipBImage;
-                gc.drawImage(chipImage, gameEngine.vertexCoordinates[fromVertex][0] + pieceDimension / 4,
-                        gameEngine.vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+                // Image chipImage = existingChip.getColour().toLowerCase().equals("white") ? chipWImage : chipBImage;
+                // gc.drawImage(chipImage, gameEngine.vertexCoordinates[fromVertex][0] + pieceDimension / 4,
+                //         gameEngine.vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
             }
     
             if (!currentMove.getFlippedCoins().isEmpty()) {
@@ -482,13 +485,13 @@ public class MainApp extends Application {
     
                 for (Coin coinToFlip : currentMove.getFlippedCoins()) {
                     Vertex currVertex = gameEngine.currentState.gameBoard.getVertexByCoin(coinToFlip);
-                    Image chipImage = coinToFlip.getColour().equals("white") ? chipWImage : chipBImage;
-                    gc.drawImage(chipImage, gameEngine.vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
-                            gameEngine.vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2,
-                            pieceDimension / 2);
+                    // Image chipImage = coinToFlip.getColour().toLowerCase().equals("white") ? chipWImage : chipBImage;
+                    // gc.drawImage(chipImage, gameEngine.vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
+                    //         gameEngine.vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2,
+                    //         pieceDimension / 2);
                 }
             }
-    
+
             targetVertex.setRing(ringToMove);
             Image ringImage = ringToMove.getColour().toLowerCase().equals("white") ? ringWImage : ringBImage;
             gc.drawImage(ringImage, gameEngine.vertexCoordinates[toVertex][0], gameEngine.vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
@@ -501,6 +504,25 @@ public class MainApp extends Application {
             GameAlerts.alertNoRing();
         }
     }
+
+    private void drawDashedLine(GraphicsContext gc) {
+        if (lastMoveStartVertex == null || lastMoveEndVertex == null) {
+            return;
+        }
+        int[] startCoords = gameEngine.getVertexCoordinates()[lastMoveStartVertex.getVertextNumber()];
+        int[] endCoords = gameEngine.getVertexCoordinates()[lastMoveEndVertex.getVertextNumber()];
+
+        gc.setStroke(Color.RED);
+        gc.setLineDashes(10); 
+        gc.setLineWidth(4);
+        gc.strokeLine(
+            startCoords[0] + pieceDimension / 2,
+            startCoords[1] + pieceDimension / 2,
+            endCoords[0] + pieceDimension / 2,
+            endCoords[1] + pieceDimension / 2
+        );
+    }
+    
     
 
     /**
@@ -646,9 +668,19 @@ public class MainApp extends Application {
      * @param vertex vertex to draw image at
      * @param gc GraphicsContext
      */
-    private void drawImage(Image img, int vertex, GraphicsContext gc){
-        gc.drawImage(img, gameEngine.vertexCoordinates[vertex][0], gameEngine.vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
-    }
+        private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
+            int x = gameEngine.vertexCoordinates[vertex][0];
+            int y = gameEngine.vertexCoordinates[vertex][1];
+            int dimension = resol ? pieceDimension : pieceDimension / 2;
+        
+            if (!resol) {
+                x += pieceDimension / 4;
+                y += pieceDimension / 4;
+            }
+        
+            gc.drawImage(img, x, y, dimension, dimension);
+        }
+    
 
     /**
      * Draws the highlighter for the available moves
@@ -726,33 +758,46 @@ public class MainApp extends Application {
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
         Bot activeBot = currentPlayer.getBot();
-        
+        Move move = null;
         if (activeBot != null) {
-            Move move = activeBot.makeMove(gameEngine.getGameState());
-            if (move != null) {
-                int[] Move_Valid = new int[1];
-                if (gs.ringsPlaced <= 10) {
-                    int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                    GUIplaceStartingRing(chosenVertexNumber, gc);
-                    
-                    gameEngine.currentState.resetTurn();
-                    gameEngine.currentState.selectedChipVertex = -1; 
-                    currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
-                } else {
-                    Vertex vertexFrom = move.getStartingVertex();
-                    int vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                    moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, Move_Valid, move);
-                }
-    
-                if (Move_Valid[0] == 1) {
-                    resetTurn();  
-                }
-    
-                updateGameBoard(gameBoard, gc);
-                updateOnscreenText();
+
+            if (gs.ringsPlaced < 10) {
+                
+                move = activeBot.makeMove(gameEngine.getGameState());
+
+                int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                GUIplaceStartingRing(chosenVertexNumber, gc);
+
+                gameEngine.currentState.resetTurn();
+                gameEngine.currentState.selectedChipVertex = -1; 
+                currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
+            } else {
+                move = activeBot.makeMove(gameEngine.getGameState());
+                Vertex vertexFrom = move.getStartingVertex();
+
+                int vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                System.out.println("from "+vertexFrom.getVertextNumber());
+                System.out.println("to "+vertexTo);
+                int[] moveValid = {1};
+                moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
+                // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
+
             }
+            System.out.println("NUMBER OF "+gs.ringsPlaced);
+            System.out.println("NUMBER BLACK "+gs.ringsBlack);
+            System.out.println("NUMBER WHITE "+gs.ringsWhite);
+
+            if (move != null) {
+                resetTurn();  
+                
+
+    
+                // updateGameBoard(gameBoard, gc);
+                updateOnscreenText();
+            }}
+            
         }
-    }
+    
     
 
     
@@ -771,12 +816,13 @@ public class MainApp extends Application {
             if (vertex.hasRing()){
                 PlayObj ring = vertex.getRing();
 
-                String colour = ring.getColour();
+                String colour = ring.getColour().toLowerCase();
 
-                if (colour.equals("White")){
-                    drawImage(ringWImage, i, gc);
+                if (colour.equals("white")){
+                    
+                    drawImage(ringWImage, i, gc, true);
                 } else {
-                    drawImage(ringBImage, i, gc);
+                    drawImage(ringBImage, i, gc, true);
                 }
 
             }
@@ -785,12 +831,12 @@ public class MainApp extends Application {
             if (vertex.hasCoin()){
                 PlayObj coin = vertex.getCoin();
 
-                String colour = coin.getColour();
+                String colour = coin.getColour().toLowerCase();
 
-                if (colour.equals("White")){
-                    drawImage(chipWImage, i, gc);
+                if (colour.equals("white")){
+                    drawImage(chipWImage, i, gc, false);
                 } else {
-                    drawImage(chipBImage, i, gc);
+                    drawImage(chipBImage, i, gc, false);
                 }
 
             }
@@ -807,11 +853,15 @@ public class MainApp extends Application {
     private void resetTurn(){
         gameEngine.currentState.resetTurn();
         gameEngine.currentState.selectedChipVertex = -1; 
-        currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
-        System.out.println(currentPlayerIndex);
+        // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
         switchPlayer();
-
+        // lastMoveStartVertex = null;
+        // lastMoveEndVertex = null;
+        updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
+        System.out.println(gameEngine.currentState.isWhiteTurn);
         turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+        drawDashedLine(playObjectCanvas.getGraphicsContext2D());
+
         playerTurn();
     }
     /**

@@ -92,5 +92,5 @@ public class Move {
     public ArrayList<Coin>getFlippedCoins(){
         return coinFlip;
     }
-
+    
 }

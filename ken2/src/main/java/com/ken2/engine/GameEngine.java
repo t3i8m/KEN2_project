@@ -44,12 +44,21 @@ public class GameEngine {
     public boolean placeStartingRing(int vertex,String ringColor) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
         if (boardVertex != null && !boardVertex.hasRing()) {
-            ringColor = currentState.currentPlayerColor();
+            // ringColor = currentState.currentPlayerColor();
+            // ringColor = ringColor;
+            if(ringColor.equals("White")){
+                currentState.updateRingCount("white");
+
+            } else{
+                ringColor="Black";
+                currentState.updateRingCount("black");
+            }
+
             Ring newRing = new Ring(ringColor);
             boardVertex.setPlayObject(newRing); // add ring to the board data structure
             currentState.ringsPlaced++;
-            currentState.updateRingCount(ringColor);
-            if (currentState.ringsPlaced >= 10) currentState.chipPlacement= true;
+
+            if (currentState.ringsPlaced > 10) currentState.chipPlacement= true;
             currentState.resetTurn();
 
             return true;
@@ -78,8 +87,9 @@ public class GameEngine {
     public boolean placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
 
+
         if (boardVertex != null && boardVertex.hasRing() && !boardVertex.hasCoin()) {
-            String chipColor = currentState.currentPlayerColor();
+            String chipColor = boardVertex.getRing().getColour();
 
             //condition for same ring colors
             if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {

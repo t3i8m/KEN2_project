@@ -60,6 +60,10 @@ public class GameState implements Cloneable{
         return isWhiteTurn ? "White" : "Black";
     }
 
+    public void setIsWhite(boolean newVal){
+        isWhiteTurn=newVal;
+    }
+
     /**
      * Get current gameBoard
      * @return gameBoard
@@ -68,15 +72,25 @@ public class GameState implements Cloneable{
         return this.gameBoard;
     }
 
+    // public void switchTurn() {
+    //     isWhiteTurn = !isWhiteTurn;
+    //     chipPlacement = true;
+    //     chipPlaced = false;
+    //     selectedRingVertex = -1;
+    //     selectedChipVertex = -1;
+    // }
+    
+
     /**
      * Update the ring of the
      * @param playerColor color of the player to update ring count
      */
     public void updateRingCount(String playerColor){
-        if (playerColor.equals("White")) {
-            ringsWhite--;
+        playerColor = playerColor.toLowerCase();
+        if (playerColor.equals("white")) {
+            this.ringsWhite--;
         } else {
-            ringsBlack--;
+            this.ringsBlack--;
         }
     }
 
@@ -84,9 +98,9 @@ public class GameState implements Cloneable{
      * To reset variables for every turn
      */
     public void resetTurn() {
-        isWhiteTurn = !isWhiteTurn;
-        chipPlacement = true;
-        chipPlaced = false;
+        // isWhiteTurn = !isWhiteTurn;
+        // chipPlacement = true;
+        // chipPlaced = false;
     }
 
     public ArrayList<Vertex> getAllVertexOfColor(String color){
@@ -111,15 +125,16 @@ public class GameState implements Cloneable{
     @Override
     public GameState clone() {
         try {
-            GameState copy = (GameState) super.clone(); 
-            copy.gameBoard = new Game_Board(this.gameBoard); 
-            copy.chipNumber = new ArrayList<>(this.chipNumber); 
-            copy.ringVertexNumbers = new ArrayList<>(this.ringVertexNumbers);
+            GameState copy = (GameState) super.clone();
+            copy.gameBoard = new Game_Board(this.gameBoard); // Клонируем доску
+            copy.chipNumber = this.chipNumber != null ? new ArrayList<>(this.chipNumber) : new ArrayList<>();
+            copy.ringVertexNumbers = this.ringVertexNumbers != null ? new ArrayList<>(this.ringVertexNumbers) : new ArrayList<>();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Cloning not supported", e);
         }
     }
+    
 
     public boolean isBotTurn(ArrayList<Bot> bots) {
         boolean isWhiteTurn = this.isWhiteTurn;
