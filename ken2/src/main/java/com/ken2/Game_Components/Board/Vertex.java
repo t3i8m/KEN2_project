@@ -14,6 +14,7 @@ public class Vertex {
         playObjects = new PlayObj[2];
         this.xIndex = xIndex;
         this.yIndex = yIndex;
+        this.vertexNumber = -1;
     }
 
     public void setVertexNumber(int vertexNumber){
@@ -34,12 +35,15 @@ public class Vertex {
 
     public void setRing(PlayObj newRing) {
         this.playObjects[0] = newRing;
+
     }
+
 
     public void setCoin(PlayObj newCoin) {
-        this.playObjects[1] = newCoin;
-    }
 
+            this.playObjects[1] = newCoin;
+
+    }
 
     /** Returns the play object currently at the vertex
      * 0 - Ring, 1 - Coin
@@ -49,27 +53,38 @@ public class Vertex {
         return playObjects;
     }
 
+
     public PlayObj getRing(){
         return playObjects[0];
     }
     public PlayObj getCoin() {
         return playObjects[1];
     }
-    public boolean hasRing(){
-        return playObjects[0]!=null;
+    public boolean hasRing() {
+        boolean result = playObjects[0] != null;
+        return result;
     }
-    public boolean hasCoin(){
-        return playObjects[1]!=null;
+
+    public boolean hasCoin() {
+        boolean result = playObjects[1] != null;
+        return result;
     }
+
     /** Sets the play object currently held in it
      * @param playObject the player object we want to place in a vertex
      */
     public void setPlayObject(PlayObj playObject) {
-        if(playObject instanceof Ring){       // sets if it is a ring in the 0th index
-            playObjects[0]=playObject;
-        }else{                              // sets otherwise a coin in the 1st index
-            playObjects[1]=playObject;
+        if (playObject instanceof Ring) {
+            playObjects[0] = playObject;
+        } else if (playObject instanceof Coin) {
+            playObjects[1] = playObject;
+        } else {
+            playObjects[0] = null;
+            playObjects[1] = null;
+
         }
-//        label=playObject.type;
     }
+
+
+
 }

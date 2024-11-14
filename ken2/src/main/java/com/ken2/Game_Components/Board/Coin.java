@@ -18,10 +18,12 @@ public class Coin implements PlayObj{
     public void setColour(String colour){
         this.colour = colour;
     }
-    public void flipCoin(){
-        if(this.colour.equalsIgnoreCase("black")){
+    public void flipCoin() {
+        if (this.colour.equalsIgnoreCase("black")) {
             this.colour = "white";
+        } else {
+            this.colour = "black";
         }
-        else this.colour = "black";
+        System.out.println("Coin color flipped to: " + this.colour);
     }
 }

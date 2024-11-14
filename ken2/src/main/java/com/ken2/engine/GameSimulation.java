@@ -1,7 +1,9 @@
 package com.ken2.engine;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.Diagonal;
@@ -29,17 +31,18 @@ public class GameSimulation {
      * @param xRingPosition x position of the disk
      * @param yRingPosition y position of the disk
      */
-
     // instead of the x&y distances we will use disk obj and its atributes
     public void startSimulation(Vertex[][] board, int xRingPosition, int yRingPosition){
         allPossibleMoves.clear();
         int[] diskPositions= {xRingPosition, yRingPosition};
 
         for (Direction direction : Direction.values()) {
-            Diagonal currDiagonal= new Diagonal(direction, diskPositions);
+            Diagonal currDiagonal= new Diagonal(direction, diskPositions, new Game_Board());
             allPossibleMoves.add(currDiagonal.moveAlongDiagonal(board));
         }
     }
+
+
 
     /**
      * getter for the possible moves
@@ -129,7 +132,7 @@ public class GameSimulation {
             System.out.println("The move is not in a straight line direction.");
             return null;
         } 
-        Diagonal diagonal = new Diagonal(moveDirection, startPosition);
+        Diagonal diagonal = new Diagonal(moveDirection, startPosition, new Game_Board());
         ArrayList<Move> possibleMoves = diagonal.moveAlongDiagonal(board.getBoard());
         for (Move move : possibleMoves) {
             if (move.getXposition() == targetPosition[0] && move.getYposition() == targetPosition[1]) {
@@ -138,5 +141,14 @@ public class GameSimulation {
         }
         System.out.println("The target position is not a valid move in this direction.");
         return null;
+    }
+
+    public void flipCoins(ArrayList<Coin> coinFlips, Game_Board gameBoard) {
+        for (Coin coin : coinFlips) {
+            coin.flipCoin();
+            Vertex vertex = gameBoard.getVertexByCoin(coin);
+                System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+
+        }
     }
 }
