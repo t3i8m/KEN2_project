@@ -27,6 +27,7 @@ public class GameState {
     public int selectedChipVertex;
     public boolean chipPlaced;
     public int chipRingVertex;
+    public int totalChipsFlipped;
 
 
     /**
@@ -42,6 +43,7 @@ public class GameState {
         selectedRingVertex=-1;
         selectedChipVertex=-1;
         chipPlaced=false;
+        totalChipsFlipped = 0;
         chipNumber=new ArrayList<>();
         gameBoard=new Game_Board();
     }
