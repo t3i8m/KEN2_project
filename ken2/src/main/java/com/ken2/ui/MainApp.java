@@ -511,8 +511,11 @@ public class MainApp extends Application {
         }
         int[] startCoords = gameEngine.getVertexCoordinates()[lastMoveStartVertex.getVertextNumber()];
         int[] endCoords = gameEngine.getVertexCoordinates()[lastMoveEndVertex.getVertextNumber()];
-
-        gc.setStroke(Color.RED);
+        if (gameEngine.currentState.isWhiteTurn) {
+            gc.setStroke(Color.BLUE);  
+        } else {
+            gc.setStroke(Color.RED);   
+        }
         gc.setLineDashes(10); 
         gc.setLineWidth(4);
         gc.strokeLine(
