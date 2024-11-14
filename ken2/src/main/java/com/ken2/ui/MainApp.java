@@ -206,6 +206,8 @@ public class MainApp extends Application {
         if(gameEngine.placeStartingRing(vertex,ringColor)){
             Image ringImage = ringColor.equals("white") ? ringWImage : ringBImage;
             drawImage(ringImage,vertex,gc);
+            turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+
             drawHighlighter(vertex,false);
         }
     }
