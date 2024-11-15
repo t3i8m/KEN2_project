@@ -60,6 +60,8 @@ public class MainApp extends Application {
     private GridPane root;
     private Canvas playObjectCanvas;
     private Pane fieldPane;
+    private Canvas strengthIndicator;
+
 
     // TEXTS
     private Text ringBlackRemainingText;
@@ -168,6 +170,12 @@ public class MainApp extends Application {
             }
         });
 
+
+        strengthIndicator = new Canvas(fieldDimension, 20);
+        root.add(strengthIndicator, 1, 0, 5, 1); 
+        updateStrengthIndicator(); 
+
+
         startGameButton = new Button("Start Game");
         startGameButton.setOnAction(e -> startGame(gcP));
 
@@ -213,8 +221,8 @@ public class MainApp extends Application {
         root.add(chipsWhiteText, 0, 5);
         root.add(chipsBlackText, 7, 5);
 
-        root.add(ringWhiteRemainingText, 1,0);
-        root.add(ringBlackRemainingText, 5,0);
+        root.add(ringWhiteRemainingText, 1,1);
+        root.add(ringBlackRemainingText, 5,1);
         root.add(scoreRingeW1, 0, 2);
         root.add(scoreRingeW2, 0, 3);
         root.add(scoreRingeW3, 0, 4);
@@ -261,13 +269,13 @@ public class MainApp extends Application {
 
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
         GraphicsContext gc = playObjectCanvas.getGraphicsContext2D();
-        // removeCircleIndicators();
+        removeCircleIndicators();
         System.out.println("Current Player Index: " + currentPlayerIndex);
 
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.2));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
             pause.setOnFinished(event -> {
                 botTurn(gc);
             });
@@ -275,9 +283,10 @@ public class MainApp extends Application {
             // botTurn(gc);
         } else {
             if (gameEngine.currentState.ringsPlaced < 10) {
-                GUIavailablePlacesForStartRings(gc);
                 if(gameEngine.currentState.ringsPlaced==10){
                     removeCircleIndicators();
+                } else{
+                    GUIavailablePlacesForStartRings(gc);
                 }
 
             System.out.println(currentPlayer.getColor() + " player's turn. Please make a move.");
@@ -365,7 +374,7 @@ public class MainApp extends Application {
             System.out.println("now turn is"+ringColor);
             // playerTurn();
             // gameEngine.currentState.ringsPlaced+=1;
-            drawHighlighter(vertex,false);
+            // drawHighlighter(vertex,false);
         }
     }
 
@@ -505,7 +514,8 @@ public class MainApp extends Application {
             gameEngine.currentState.chipRingVertex = -1;
             gameEngine.currentState.chipPlaced = false;
             gameEngine.currentState.selectedRingVertex = -1;
-            gameEngine.currentState.updateChipsCountForEach();
+            gameEngine.currentState.updateChipsRingCountForEach();
+
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
         } else {
             GameAlerts.alertNoRing();
@@ -869,6 +879,7 @@ public class MainApp extends Application {
         switchPlayer();
         // lastMoveStartVertex = null;
         // lastMoveEndVertex = null;
+        updateStrengthIndicator();
         updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
         System.out.println(gameEngine.currentState.isWhiteTurn);
         turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
@@ -876,6 +887,33 @@ public class MainApp extends Application {
 
         playerTurn();
     }
+
+    private void updateStrengthIndicator() {
+        GraphicsContext gc = strengthIndicator.getGraphicsContext2D();
+        GameState gs = gameEngine.getGameState();
+        gc.clearRect(0, 0, strengthIndicator.getWidth(), strengthIndicator.getHeight());
+    
+        int whiteStrength = gs.calculateStrength("white");
+        int blackStrength = gs.calculateStrength("black");
+        int totalStrength = whiteStrength + blackStrength;
+        
+        double whiteRatio = totalStrength == 0 ? 0.5 : (double) whiteStrength / totalStrength;
+        double blackRatio = 1 - whiteRatio;
+        
+        double width = strengthIndicator.getWidth();
+        double height = strengthIndicator.getHeight();
+    
+        gc.setFill(Color.RED);
+        gc.fillRect(0, 0, width * whiteRatio, height);
+    
+        gc.setFill(Color.BLUE);
+        gc.fillRect(width * whiteRatio, 0, width * blackRatio, height);
+    
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeLine(width / 2, 0, width / 2, height);
+    }
+    
     /**
      * Updates onscreen text
      */

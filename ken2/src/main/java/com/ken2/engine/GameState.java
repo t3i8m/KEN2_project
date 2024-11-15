@@ -6,6 +6,7 @@ import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.Bot;
 import com.ken2.bots.RuleBased.RuleBasedBot;
+import com.ken2.utils.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -98,11 +99,20 @@ public class GameState implements Cloneable{
     }
 
     public int getChipsCountForColor(String color){
-        this.updateChipsCountForEach();
+        this.updateChipsRingCountForEach();
         if(color.toLowerCase().equals("white")){
             return this.chipsWhite;
         }else{
             return this.chipsBlack;
+        }
+    }
+
+    public int getRingCountForColor(String color){
+        this.updateChipsRingCountForEach();
+        if(color.toLowerCase().equals("white")){
+            return this.ringsWhite;
+        }else{
+            return this.ringsBlack;
         }
     }
 
@@ -134,14 +144,24 @@ public class GameState implements Cloneable{
         return allPositions;
     }
 
-        public void updateChipsCountForEach(){
+        public void updateChipsRingCountForEach(){
             Game_Board board = this.getGameBoard();
             Vertex[][] gboard = board.getBoard();
             this.chipsWhite=0;
             this.chipsBlack=0;
+            this.ringsWhite=0;
+            this.ringsBlack=0;
             for(int i = 0; i<gboard.length;i++){
                 for(int j = 0; j<gboard[i].length;j++){
                     if(gboard[i][j]!=null){
+                        if(gboard[i][j].getPlayObject()[0]!=null){
+                            PlayObj currRing = gboard[i][j].getPlayObject()[0];
+                            if(currRing.getColour().toLowerCase().equals("white")){
+                                this.ringsWhite++;
+                            } else{
+                                this.ringsBlack++;
+                        }
+                        }
                         if(gboard[i][j].getPlayObject()[1]!=null){
                             PlayObj currCoin = gboard[i][j].getPlayObject()[1];
                             if(currCoin.getColour().toLowerCase().equals("white")){
@@ -150,11 +170,18 @@ public class GameState implements Cloneable{
                                 this.chipsBlack++;
                             }
                         } 
-
-                    }
+    
+                        }
+                        }
+                        
                 }
             }
+    
+
+    public int calculateStrength(String color) {
+        return this.getRingCountForColor(color) * this.getChipsCountForColor(color);
     }
+
 
     @Override
     public GameState clone() {

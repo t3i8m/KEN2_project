@@ -38,7 +38,6 @@ public class RuleBasedBot extends BotAbstract {
         } else {
             boolean work = true;
             while(work){
-                System.out.println("WE ARE");
                 ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(super.getColor());
                 if (coordinatesOfTheRings == null || coordinatesOfTheRings.isEmpty()) {
                     System.out.println("No rings available for the color: " + super.getColor());

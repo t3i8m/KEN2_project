@@ -32,4 +32,6 @@ public class Player {
     public Bot getBot() {
         return bot;
     }
+
+    
 }
