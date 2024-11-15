@@ -21,6 +21,22 @@ public class Game_Board {
         fillBoard();
     }
 
+    // constructor for cloning
+    public Game_Board(Game_Board other) {
+        this.the_Board = new Vertex[other.the_Board.length][other.the_Board[0].length];
+        for (int i = 0; i < other.the_Board.length; i++) {
+            for (int j = 0; j < other.the_Board[i].length; j++) {
+                if (other.the_Board[i][j] != null) {
+                    this.the_Board[i][j] = new Vertex(other.the_Board[i][j]); 
+                }
+            }
+        }
+        this.blanks = new int[other.blanks.length][];
+        for (int i = 0; i < other.blanks.length; i++) {
+            this.blanks[i] = other.blanks[i].clone();
+        }
+    }
+
     public Vertex[][] getBoard(){
         return the_Board;
     }
@@ -176,21 +192,21 @@ public class Game_Board {
         return takenPositions;
     }
 
-    public ArrayList<Vertex> getVertexAllOfVertexesOfSpecificColour(String colour){
-        ArrayList<Vertex> positionsVertexes = new ArrayList<Vertex>();
-        for (int i = 0; i < this.the_Board.length; i++) {
-            for (int j = 0; j < this.the_Board[i].length; j++) {
-                if (the_Board[i][j] != null) {
-                    if(the_Board[i][j].hasRing()){
-                        if(the_Board[i][j].getRing().getColour().toLowerCase()==colour.toLowerCase()){
-                            positionsVertexes.add(the_Board[i][j]);
-                        }
-                    }
-                }
-            }
-        }
-        return positionsVertexes;
-    }
+    // public ArrayList<Vertex> getVertexAllOfVertexesOfSpecificColour(String colour){
+    //     ArrayList<Vertex> positionsVertexes = new ArrayList<Vertex>();
+    //     for (int i = 0; i < this.the_Board.length; i++) {
+    //         for (int j = 0; j < this.the_Board[i].length; j++) {
+    //             if (the_Board[i][j] != null) {
+    //                 if(the_Board[i][j].hasRing()){
+    //                     if(the_Board[i][j].getRing().getColour().toLowerCase()==colour.toLowerCase()){
+    //                         positionsVertexes.add(the_Board[i][j]);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return positionsVertexes;
+    // }
     public Vertex getVertexByCoin(Coin coin) {
         for (int i = 0; i < the_Board.length; i++) {
             for (int j = 0; j < the_Board[i].length; j++) {

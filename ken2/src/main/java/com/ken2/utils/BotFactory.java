@@ -1,5 +1,7 @@
-package com.ken2.bots;
+package com.ken2.utils;
 
+import com.ken2.bots.Bot;
+import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 
 public class BotFactory {
@@ -10,14 +12,16 @@ public class BotFactory {
      * @param botColor 
      * @return bot obj or null
      */
-    public Bot geBot(String botType, String botColor){
+    public Bot getBot(String botType, String botColor){
         if(botType==null && botColor == null){
             return null;
         }
 
         switch(botType.toLowerCase()){
-            case "random bot":
+            case "rulebased bot":
                 return new RuleBasedBot(botColor);
+            case "alphabeta bot":
+                return new AlphaBetaBot(botColor);
         }
         return null;
     }

@@ -26,4 +26,9 @@ public class Coin implements PlayObj{
         }
         System.out.println("Coin color flipped to: " + this.colour);
     }
+
+    @Override
+    public PlayObj clone() {
+        return new Coin(this.colour); 
+    }
 }
