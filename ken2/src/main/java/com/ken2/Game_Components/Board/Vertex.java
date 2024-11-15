@@ -94,7 +94,7 @@ public class Vertex {
             playObjects[0] = playObject;
         } else if (playObject instanceof Coin) {
             playObjects[1] = playObject;
-        } else {
+        } else if (playObject == null) {
             playObjects[0] = null;
             playObjects[1] = null;
 

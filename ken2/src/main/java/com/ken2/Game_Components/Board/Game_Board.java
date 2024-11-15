@@ -40,6 +40,23 @@ public class Game_Board {
     public Vertex[][] getBoard(){
         return the_Board;
     }
+    /**
+     * Returns a list of all non-null vertices on the board.
+     * @return ArrayList of all vertices currently on the board.
+     */
+    public ArrayList<Vertex> getAllVertices() {
+        ArrayList<Vertex> vertices = new ArrayList<>();
+        for (int i = 0; i < the_Board.length; i++) {
+            for (int j = 0; j < the_Board[i].length; j++) {
+                if (the_Board[i][j] != null) {
+                    vertices.add(the_Board[i][j]);
+                }
+            }
+        }
+        return vertices;
+    }
+
+
 
     /**
      * Fills the vertices according to the shape of the board

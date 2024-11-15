@@ -8,13 +8,16 @@ import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.ui.GameAlerts;
 
+import com.ken2.ui.MainApp;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * All decision-making of the game
@@ -25,7 +28,12 @@ public class GameEngine {
     public GameSimulation gameSimulation;
 
     public static int[][] vertexCoordinates;
+    private Direction direction;
+    public Game_Board gameBoard;
 
+    private static final int WIN_CONDITION = 6;
+    private boolean isRingSelectionMode = false;
+    private boolean isChipRemovalMode = false;
 
 
     /**
@@ -36,6 +44,8 @@ public class GameEngine {
         gameSimulation=new GameSimulation();
         vertexCoordinates = new int[85][2];
         initialiseVertex();
+        this.gameBoard = new Game_Board();
+        this.currentState.gameBoard = this.gameBoard;
     }
 
     /**
@@ -164,15 +174,133 @@ public class GameEngine {
         return this.currentState;
     }
 
+    public void checkWinning(int vertex, String chipColor){
+        for (Direction direction: Direction.values()){
+            int k = 1;
+            k+=countChipsInOneDirection(vertex, chipColor, direction.getDeltaX(), direction.getDeltaY());
+            k+=countChipsInOneDirection(vertex, chipColor, -direction.getDeltaX(), -direction.getDeltaY());
+
+
+            //check based on terminal output
+
+             if (k>=WIN_CONDITION){
+                 GameAlerts.alertRowCompletion(chipColor);
+                 //System.out.print("jdhjjdhdh");
+                 setRingSelectionMode(true);
+                 setWinningColor(chipColor);
+                 ringSelection(chipColor);
+                 return;
+             }
+        }
+    }
+    public boolean win(int vertex, String color){
+        boolean win = false;
+        for (Direction direction: Direction.values()){
+            int k = 1;
+            k+=countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
+            k+=countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
+            if (k>=WIN_CONDITION){
+                win = true;
+                //System.out.print("jdhjjdhdh");
+                setRingSelectionMode(true);
+                setWinningColor(color);
+                ringSelection(color);
+
+            }
+        }
+        return win;
+
+    }
+    public void setTurnToWinningPlayer() {
+        System.out.print("djdjjdjddjjdjdjd");
+        if (winningColor.equalsIgnoreCase("white")) {
+            currentState.isWhiteTurn = true;
+        } else if (winningColor.equalsIgnoreCase("black")) {
+            currentState.isWhiteTurn = false;
+        }
+
+        this.winningColor = "";
+    }
+    private boolean winningRing = false;
+    private String winningColor = "";
+
+
+    public void ringSelection(String color){
+        this.winningRing = true;
+        this.winningColor = color;
+    }
+    public boolean GetWinningRing(){
+        return winningRing;
+    }
+    public String getWinningColor(){
+        return  winningColor;
+    }
+    public boolean isInChipRemovalMode() {
+        return isChipRemovalMode;
+    }
+    public boolean ringselectionmode(){
+        return isRingSelectionMode;
+    }
+    public void setWinningRing(boolean winningRing) {
+        this.winningRing = winningRing;
+    }
+
+    public void setWinningColor(String color) {
+        this.winningColor = color;
+    }
+
+    public void setChipRemovalMode(boolean mode) {
+        this.isChipRemovalMode = mode;
+        isRingSelectionMode = false;
+    }
+
+    public void setRingSelectionMode(boolean mode) {
+        this.isRingSelectionMode = mode;
+        isChipRemovalMode = false;
+    }
+
+
+    //method for calculating 5 chips in a row
+    private int countChipsInOneDirection(int start, String chipColor, int dx, int dy){
+        int k = 0;
+        int x = this.gameBoard.getVertex(start).getXposition();
+        int y = this.gameBoard.getVertex(start).getYposition();
+        while(true){
+            x+=dx;
+            y+=dy;
+            int next=this.gameBoard.getVertexNumberFromPosition(x,y);
+            if(next==-1)
+                break;
+            Vertex v =this.gameBoard.getVertex(next);
+            if(v==null || !v.hasCoin()||!v.getCoin().getColour().equalsIgnoreCase(chipColor)){
+                break;
+            }
+            k++;
+        }
+        return k;
+    }
 
 
 
+//    /**
+//     * Flips coins in the given list and updates the total chip flip count in the game state.
+//     * @param coinsToFlip A list of coins to flip.
+//     * @param gameBoard The game board where the coins are located.
+//     */
+//    public void flipCoins(ArrayList<Coin> coinsToFlip, Game_Board gameBoard) {
+//        for (Coin coin : coinsToFlip) {
+//            // Flip the coin color
+//            coin.flipCoin();
+//
+//            // Increment total chips flipped for statistics
+//            currentState.totalChipsFlipped++; // Update the counter in GameState
+//        }
+//    }
 
 
-
-    /**
-     * Initializes the coordinates of the vertices, Maps the vertex number with coordinates
-     */
+/**
+ * Initializes the coordinates of the vertices, Maps the vertex number with coordinates
+ */
     private void initialiseVertex() {
         int index = 0;
         // a
