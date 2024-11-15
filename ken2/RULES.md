@@ -19,7 +19,7 @@ The game is played in turns. Players take turns performing the following steps:
 
 ### **Forming a Row of Five**
 - If a player forms a row of five consecutive markers of their color (horizontally, vertically, or diagonally):
-  1. The player **removes those five markers** from the board.
+  1. The player **removes those five markers** from the board and put them back in the pool.
   2. The player then **removes one of their rings** from the board.
 - The removed markers are not returned to the game.
 - Removing a ring is the main objective; once a player removes **three rings**, they win the game.
