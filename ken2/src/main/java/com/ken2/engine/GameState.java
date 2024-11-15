@@ -1,6 +1,7 @@
 package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.Bot;
@@ -18,6 +19,8 @@ public class GameState implements Cloneable{
     public int ringsWhite;
     public int ringsBlack;
     public int chipsRemaining;
+    public int chipsWhite;
+    public int chipsBlack;
 
     public int ringsPlaced;
     public boolean isWhiteTurn;
@@ -91,6 +94,15 @@ public class GameState implements Cloneable{
             this.ringsWhite--;
         } else {
             this.ringsBlack--;
+        }    
+    }
+
+    public int getChipsCountForColor(String color){
+        this.updateChipsCountForEach();
+        if(color.toLowerCase().equals("white")){
+            return this.chipsWhite;
+        }else{
+            return this.chipsBlack;
         }
     }
 
@@ -120,6 +132,28 @@ public class GameState implements Cloneable{
             }
         }
         return allPositions;
+    }
+
+        public void updateChipsCountForEach(){
+            Game_Board board = this.getGameBoard();
+            Vertex[][] gboard = board.getBoard();
+            this.chipsWhite=0;
+            this.chipsBlack=0;
+            for(int i = 0; i<gboard.length;i++){
+                for(int j = 0; j<gboard[i].length;j++){
+                    if(gboard[i][j]!=null){
+                        if(gboard[i][j].getPlayObject()[1]!=null){
+                            PlayObj currCoin = gboard[i][j].getPlayObject()[1];
+                            if(currCoin.getColour().toLowerCase().equals("white")){
+                                this.chipsWhite++;
+                            } else{
+                                this.chipsBlack++;
+                            }
+                        } 
+
+                    }
+                }
+            }
     }
 
     @Override

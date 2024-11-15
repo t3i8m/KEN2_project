@@ -64,7 +64,9 @@ public class MainApp extends Application {
     // TEXTS
     private Text ringBlackRemainingText;
     private Text ringWhiteRemainingText;
-    private Text chipsRemainText;
+    private Text chipsWhiteText;
+    private Text chipsBlackText;
+
     private Text turnIndicator = new Text("White's Turn");
 
     // COMBOBOXES
@@ -175,7 +177,8 @@ public class MainApp extends Application {
         Text blackPlayerLabel = new Text();
         blackPlayerLabel.setText("Black");
 
-        chipsRemainText = new Text();
+        chipsBlackText = new Text();
+        chipsWhiteText = new Text();
         ringBlackRemainingText = new Text();
         ringWhiteRemainingText = new Text();
         updateOnscreenText();
@@ -206,7 +209,10 @@ public class MainApp extends Application {
         root.add(blackPlayerComboBox, 7, 1);
         root.add(gameBoardCanvas, 1, 1, 5, 5);
         root.add(playObjectCanvas, 1, 1, 5, 5);
-        root.add(chipsRemainText, 3, 0);
+
+        root.add(chipsWhiteText, 0, 5);
+        root.add(chipsBlackText, 7, 5);
+
         root.add(ringWhiteRemainingText, 1,0);
         root.add(ringBlackRemainingText, 5,0);
         root.add(scoreRingeW1, 0, 2);
@@ -499,6 +505,7 @@ public class MainApp extends Application {
             gameEngine.currentState.chipRingVertex = -1;
             gameEngine.currentState.chipPlaced = false;
             gameEngine.currentState.selectedRingVertex = -1;
+            gameEngine.currentState.updateChipsCountForEach();
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
         } else {
             GameAlerts.alertNoRing();
@@ -826,6 +833,8 @@ public class MainApp extends Application {
                     drawImage(ringWImage, i, gc, true);
                 } else {
                     drawImage(ringBImage, i, gc, true);
+                    // gameEngine.currentState.updateRingCount(colour);
+
                 }
 
             }
@@ -871,7 +880,9 @@ public class MainApp extends Application {
      * Updates onscreen text
      */
     private void updateOnscreenText(){
-        chipsRemainText.setText("Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+        chipsWhiteText.setText("Chips White on board: " + gameEngine.currentState.chipsWhite);
+        chipsBlackText.setText("Chips Black on board: " + gameEngine.currentState.chipsBlack);
+
         ringWhiteRemainingText.setText("White Rings Remaining: " + gameEngine.currentState.ringsWhite);
         ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
     }

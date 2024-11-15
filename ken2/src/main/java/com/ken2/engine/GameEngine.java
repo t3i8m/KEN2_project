@@ -1,6 +1,8 @@
 package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Coin;
+import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.RuleBased.RuleBasedBot;
@@ -46,13 +48,13 @@ public class GameEngine {
         if (boardVertex != null && !boardVertex.hasRing()) {
             // ringColor = currentState.currentPlayerColor();
             // ringColor = ringColor;
-            if(ringColor.equals("White")){
-                currentState.updateRingCount("white");
+            // if(ringColor.equals("White")){
+            //     currentState.updateRingCount("white");
 
-            } else{
-                ringColor="Black";
-                currentState.updateRingCount("black");
-            }
+            // } else{
+            //     ringColor="Black";
+            //     currentState.updateRingCount("black");
+            // }
 
             Ring newRing = new Ring(ringColor);
             boardVertex.setPlayObject(newRing); // add ring to the board data structure
@@ -158,15 +160,9 @@ public class GameEngine {
     }
 
     public GameState getGameState(){
+       
         return this.currentState;
     }
-
-
-
-
-
-
-
 
 
 
