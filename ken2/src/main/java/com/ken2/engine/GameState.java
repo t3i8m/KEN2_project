@@ -36,6 +36,8 @@ public class GameState implements Cloneable{
     public boolean chipPlaced;
     public int chipRingVertex;
     public int totalChipsFlipped;
+    public boolean isChipRemovalMode;
+    public boolean isRingSelectionMode;
 
 
     /**

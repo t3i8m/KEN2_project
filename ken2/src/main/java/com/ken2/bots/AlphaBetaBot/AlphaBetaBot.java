@@ -42,7 +42,7 @@ public class AlphaBetaBot extends BotAbstract{
 
     public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge){
         if (depth==0){
-            return new AlphaBetaResult(evaluate(state), null); //TODO: evaluation function takes state-> returns double (Nikhil)
+            //return new AlphaBetaResult(evaluate(state), null); //TODO: evaluation function takes state-> returns double (Nikhil)
         }
 
         Move bestMove = null;
