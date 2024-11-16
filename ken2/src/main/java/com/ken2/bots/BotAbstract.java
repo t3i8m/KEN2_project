@@ -28,7 +28,10 @@ public abstract class BotAbstract implements Bot{
             System.out.println("No rings available for the color: " + this.getColor());
             return null;
         }
+        System.out.println("-------------------------------");
         Vertex potentialRing = coordinatesOfTheRings.get(random.nextInt(coordinatesOfTheRings.size()));
+        System.out.println("BOT WANTS TO REMOVE RING "+potentialRing.getVertextNumber());
+
         return potentialRing;
     }
 

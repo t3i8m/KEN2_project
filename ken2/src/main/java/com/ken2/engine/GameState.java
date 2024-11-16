@@ -189,7 +189,7 @@ public class GameState implements Cloneable{
     public GameState clone() {
         try {
             GameState copy = (GameState) super.clone();
-            copy.gameBoard = new Game_Board(this.gameBoard); // Клонируем доску
+            copy.gameBoard = new Game_Board(this.gameBoard); 
             copy.chipNumber = this.chipNumber != null ? new ArrayList<>(this.chipNumber) : new ArrayList<>();
             copy.ringVertexNumbers = this.ringVertexNumbers != null ? new ArrayList<>(this.ringVertexNumbers) : new ArrayList<>();
             return copy;
