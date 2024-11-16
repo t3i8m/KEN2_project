@@ -452,7 +452,8 @@ public class MainApp extends Application {
                 winningChips.clear();
                 showAlert("Continue Game", "5 chips removed. The game continues.");
                 gameEngine.getWinningChips().clear();
-/////Ne rabotaet
+            }
+////hernia:
                 List<Integer> allchips =gameEngine.getWinningChips();
                 if(allchips.size()>5){
                     String choice = showOptionDialog("Select Chips to Remove",
@@ -468,7 +469,7 @@ public class MainApp extends Application {
 
                 }
 
-            }
+
             chipsRemainText.setText("Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
         } else {

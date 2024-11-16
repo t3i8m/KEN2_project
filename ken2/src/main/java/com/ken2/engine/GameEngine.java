@@ -39,6 +39,8 @@ public class GameEngine {
     private boolean isChipRemovalMode = false;
 
     private List<Integer> winningChips = new ArrayList<>();
+    private boolean winningRing = false;
+    private String winningColor = "";
 
 
     /**
@@ -186,9 +188,6 @@ public class GameEngine {
             k+=countChipsInOneDirection(vertex, chipColor, direction.getDeltaX(), direction.getDeltaY());
             k+=countChipsInOneDirection(vertex, chipColor, -direction.getDeltaX(), -direction.getDeltaY());
 
-
-            //check based on terminal output
-
              if (k>=WIN_CONDITION){
                  GameAlerts.alertRowCompletion(chipColor);
                  //System.out.print("jdhjjdhdh");
@@ -218,8 +217,6 @@ public class GameEngine {
         return win;
 
     }
-    private boolean winningRing = false;
-    private String winningColor = "";
 
 
     public void ringSelection(String color){
@@ -389,11 +386,7 @@ public class GameEngine {
     public void findAndSetAllWinningChips(String chipColor) {
         List<Integer> allWinningChips = findAllWinningChips(chipColor);
         setWinningChips(allWinningChips);
-        System.out.println("Global Winning Chips Set: " + getWinningChips());
     }
-
-
-
 
 
     /**
