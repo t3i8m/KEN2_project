@@ -77,12 +77,14 @@ public class Vertex {
         return playObjects[1];
     }
     public boolean hasRing() {
-        boolean result = playObjects[0] != null;
+        boolean result = playObjects[0] instanceof Ring;
         return result;
     }
 
     public boolean hasCoin() {
-        boolean result = playObjects[1] != null;
+        // System.out.println(playObjects[1]);
+        boolean result = playObjects[1] instanceof Coin;
+        // System.out.println(result);
         return result;
     }
 

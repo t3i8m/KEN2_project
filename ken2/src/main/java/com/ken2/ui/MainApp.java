@@ -655,6 +655,12 @@ public class MainApp extends Application {
             gameEngine.currentState.chipPlaced = false;
             gameEngine.currentState.selectedRingVertex = -1;
             gameEngine.currentState.updateChipsRingCountForEach();
+            String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
+            // gameEngine.checkWinning(fromVertex, color);
+            System.out.println("---------------------- STARTING FROM HERE ----------------------");
+            if (gameEngine.win(fromVertex, color)){
+                System.out.println("YOU CAN REMOVE ONE RING");
+            }
 
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
         } else {

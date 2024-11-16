@@ -175,6 +175,7 @@ public class GameEngine {
     }
 
     public void checkWinning(int vertex, String chipColor){
+        chipColor=chipColor.toLowerCase();
         for (Direction direction: Direction.values()){
             int k = 1;
             k+=countChipsInOneDirection(vertex, chipColor, direction.getDeltaX(), direction.getDeltaY());
@@ -197,11 +198,12 @@ public class GameEngine {
         boolean win = false;
         for (Direction direction: Direction.values()){
             int k = 1;
+            System.out.println("CURRENT DIRECTION: "+direction.name());
             k+=countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
             k+=countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
             if (k>=WIN_CONDITION){
                 win = true;
-                //System.out.print("jdhjjdhdh");
+                System.out.print("WIN");
                 setRingSelectionMode(true);
                 setWinningColor(color);
                 ringSelection(color);
@@ -260,25 +262,42 @@ public class GameEngine {
     }
 
 
+
     //method for calculating 5 chips in a row
     private int countChipsInOneDirection(int start, String chipColor, int dx, int dy){
         int k = 0;
-        int x = this.gameBoard.getVertex(start).getXposition();
-        int y = this.gameBoard.getVertex(start).getYposition();
+        int x = currentState.gameBoard.getVertex(start).getXposition();
+        int y = currentState.gameBoard.getVertex(start).getYposition();
         while(true){
             x+=dx;
             y+=dy;
-            int next=this.gameBoard.getVertexNumberFromPosition(x,y);
+            int next=currentState.gameBoard.getVertexNumberFromPosition(x,y);
             if(next==-1)
                 break;
-            Vertex v =this.gameBoard.getVertex(next);
-            if(v==null || !v.hasCoin()||!v.getCoin().getColour().equalsIgnoreCase(chipColor)){
+            Vertex v =currentState.gameBoard.getVertex(next);
+            System.out.println("CHECKING "+v.getVertextNumber());
+            if(v==null || !v.hasCoin() || !v.getCoin().getColour().toLowerCase().equals(chipColor)){
+                System.out.println("PROBLEM: "+v.getVertextNumber());
+                if(v!=null){
+                    System.out.println("HAS COIN "+v.hasCoin());
+                    System.out.println(v.getCoin());
+                    if(v.hasCoin()){
+                        System.out.println("COLOR WE NEED: "+chipColor);
+                        System.out.println("SAME COLOR: "+v.getCoin().getColour().toLowerCase().equals(chipColor));
+                    }
+                }
+                
+                // System.out.println(v.getVertextNumber());
                 break;
             }
+            System.out.println("COUNT IT "+k);
+
             k++;
         }
         return k;
     }
+
+
 
 
 
