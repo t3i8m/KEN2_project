@@ -221,7 +221,6 @@ public class GameEngine {
                 setRingSelectionMode(true);
                 setWinningColor(color);
                 ringSelection(color);
-                GameAlerts.alertRowCompletion(color);
 
                 break;
             }

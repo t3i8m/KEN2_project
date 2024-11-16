@@ -510,8 +510,10 @@ public class MainApp extends Application {
             gameEngine.setChipRemovalMode(true);
             //chipsToRemove = 5;
             chipsToRemove = winningChips.size();
-            showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
-
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                if(!currentPlayer.isBot()){
+                    showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
+                }
         }
 
     }
@@ -725,6 +727,8 @@ public class MainApp extends Application {
                     handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
 
                 } else{
+                    GameAlerts.alertRowCompletion(color);
+
                     System.out.println("YOU CAN REMOVE ONE RING");
                 }
             }
