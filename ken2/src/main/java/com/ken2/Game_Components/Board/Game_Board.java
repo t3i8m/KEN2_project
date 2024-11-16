@@ -57,6 +57,24 @@ public class Game_Board {
     }
 
 
+    /**
+     * Returns the total number of vertices on the board.
+     * @return The total number of non-null vertices.
+     */
+    public int getTotalVertices() {
+        int count = 0;
+        for (Vertex[] row : the_Board) {
+            for (Vertex v : row) {
+                if (v != null) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+
+
 
     /**
      * Fills the vertices according to the shape of the board

@@ -21,7 +21,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -35,6 +37,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
@@ -106,6 +111,9 @@ public class MainApp extends Application {
 
     // BUTTONS
     private Button startGameButton;
+
+
+    private List<Integer> winningChips = new ArrayList<>();
 
 
     @SuppressWarnings("unchecked")
@@ -243,7 +251,7 @@ public class MainApp extends Application {
         root.add(chipsBlackText, 7, 5);
         //////////
         root.add(chipsRemainText,3,5);
-//////////////////////////
+        //////////////////////////
         root.add(ringWhiteRemainingText, 1, 1);
         root.add(ringBlackRemainingText, 5, 1);
         root.add(scoreRingeW1, 0, 2);
@@ -386,7 +394,7 @@ public class MainApp extends Application {
             System.out.print("jjsjsjs");
             handleWinningRing(vertex, gc);
             Integer RemoveChipVertex = vertex;
-            if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex)) {
+            if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex) && gameEngine.getWinningChips().contains(RemoveChipVertex)) {
                 System.out.print("remove");
                 handleChipRemove(vertex, gc);
                 // handleChipAndRingPlacement(vertex, gc);
@@ -420,6 +428,12 @@ public class MainApp extends Application {
     }
 
     public void handleChipRemove(int vertex, GraphicsContext gc) {
+        if (!gameEngine.getWinningChips().contains(vertex)) {
+            System.out.println("This chip is not part of the winning row.");
+            System.out.println("Winning Chips: " + winningChips);
+            System.out.println("Clicked Vertex: " + vertex);
+            return;
+        }
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null && v.hasCoin() && v.getCoin().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
             v.setPlayObject(null);
@@ -428,11 +442,32 @@ public class MainApp extends Application {
 
             gameEngine.currentState.chipsRemaining++;
             chipsToRemove--;
+
+            gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
+            System.out.println("Chip removed. Remaining chips to remove: " + chipsToRemove);
+
             if (chipsToRemove == 0) {
                 gameEngine.setChipRemovalMode(false);
                 gameEngine.setWinningColor("");
+                winningChips.clear();
                 showAlert("Continue Game", "5 chips removed. The game continues.");
-                gameEngine.setTurnToWinningPlayer();
+                gameEngine.getWinningChips().clear();
+/////Ne rabotaet
+                List<Integer> allchips =gameEngine.getWinningChips();
+                if(allchips.size()>5){
+                    String choice = showOptionDialog("Select Chips to Remove",
+                            "There are more than 5 chips in the winning row. Choose which set to keep:",
+                            "First 5: " + allchips.subList(0, 5),
+                            "Last 5: " + allchips.subList(allchips.size() - 5, allchips.size()));
+
+                    if(choice.startsWith("First")){
+                        gameEngine.setWinningChips(allchips.subList(0,5));
+                    }else{
+                        gameEngine.setWinningChips(allchips.subList(allchips.size()-5,allchips.size()));
+                    }
+
+                }
+
             }
             chipsRemainText.setText("Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
@@ -440,6 +475,24 @@ public class MainApp extends Application {
             System.out.println("No chip found at vertex " + vertex + " or color does not match.");
         }
     }
+    public String showOptionDialog(String title, String header, String option1, String option2) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+
+        ButtonType buttonTypeOne = new ButtonType(option1);
+        ButtonType buttonTypeTwo = new ButtonType(option2);
+
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == buttonTypeOne) {
+            return option1;
+        } else {
+            return option2;
+        }
+    }
+
 
 
     public void handleWinningRing(int vertex, GraphicsContext gc) {
@@ -449,10 +502,15 @@ public class MainApp extends Application {
             moveRingToThePanel(gameEngine.getWinningColor());
             v.setRing(null);
             gc.clearRect(gameEngine.vertexCoordinates[vertex][0], gameEngine.vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
+            ////CHIPS IN A ROW
+            gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
+            System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
+            System.out.println("Clicked Vertex: " + vertex);
 
             gameEngine.setRingSelectionMode(false); // Exit ring selection mode
             gameEngine.setChipRemovalMode(true);
-            chipsToRemove = 5;
+            //chipsToRemove = 5;
+            chipsToRemove = winningChips.size();
             showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
 
         }

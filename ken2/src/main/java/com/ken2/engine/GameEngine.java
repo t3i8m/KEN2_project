@@ -16,7 +16,10 @@ import javafx.scene.image.Image;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -34,6 +37,8 @@ public class GameEngine {
     private static final int WIN_CONDITION = 6;
     private boolean isRingSelectionMode = false;
     private boolean isChipRemovalMode = false;
+
+    private List<Integer> winningChips = new ArrayList<>();
 
 
     /**
@@ -213,16 +218,6 @@ public class GameEngine {
         return win;
 
     }
-    public void setTurnToWinningPlayer() {
-        System.out.print("djdjjdjddjjdjdjd");
-        if (winningColor.equalsIgnoreCase("white")) {
-            currentState.isWhiteTurn = true;
-        } else if (winningColor.equalsIgnoreCase("black")) {
-            currentState.isWhiteTurn = false;
-        }
-
-        this.winningColor = "";
-    }
     private boolean winningRing = false;
     private String winningColor = "";
 
@@ -249,6 +244,19 @@ public class GameEngine {
 
     public void setWinningColor(String color) {
         this.winningColor = color;
+    }
+
+    public List<Integer> getWinningChips() {
+        return winningChips;
+    }
+
+    public void clearWinningChips() {
+        winningChips.clear();
+    }
+
+    public void setWinningChips(List<Integer> chips) {
+        winningChips.clear();
+        winningChips.addAll(chips);
     }
 
     public void setChipRemovalMode(boolean mode) {
@@ -297,27 +305,98 @@ public class GameEngine {
         return k;
     }
 
+    private List<Integer> getChipsInDirection(int startVertex, String chipColor, int dx, int dy) {
+        List<Integer> chips = new ArrayList<>();
+        Vertex currentVertex = gameBoard.getVertex(startVertex);
+
+        if (currentVertex == null) {
+            System.out.println("Starting vertex is null for: " + startVertex);
+            return chips;
+        }
+
+        int x = currentVertex.getXposition();
+        int y = currentVertex.getYposition();
+
+        while (true) {
+            x += dx;
+            y += dy;
+
+            int next = gameBoard.getVertexNumberFromPosition(x, y);
+            if (next == -1) {
+                System.out.println("Reached invalid position.");
+                break;
+            }
+
+            Vertex v = gameBoard.getVertex(next);
+            if (v == null) {
+                System.out.println("Vertex " + next + " is null.");
+                break;
+            }
+
+            if (!v.hasCoin() || !v.getCoin().getColour().equalsIgnoreCase(chipColor)) {
+                System.out.println("Vertex " + next + " does not have the correct chip.");
+                break;
+            }
+
+            System.out.println("Adding vertex " + next + " to chips.");
+            chips.add(next);
+        }
+
+        return chips;
+    }
+
+    public List<Integer> findAllWinningChips(String chipColor) {
+        List<Integer> winningChips = new ArrayList<>();
+        List<Vertex> allVertices = currentState.gameBoard.getAllVertices();
+
+        System.out.println("Total vertices on board: " + allVertices.size());
+
+        for (Vertex vertex : allVertices) {
+            if (vertex.hasCoin() && vertex.getCoin().getColour().equalsIgnoreCase(chipColor)) {
+                System.out.println("Checking vertex: " + vertex.getVertextNumber());
+                List<Integer> chipsFromVertex = findWinningChipsFromVertex(vertex.getVertextNumber(), chipColor);
+                System.out.println("Found chips from vertex " + vertex.getVertextNumber() + ": " + chipsFromVertex);
+                winningChips.addAll(chipsFromVertex);
+            }
+        }
+
+        List<Integer> distinctWinningChips = winningChips.stream().distinct().collect(Collectors.toList());
+        System.out.println("Final winning chips: " + distinctWinningChips);
+
+        return distinctWinningChips;
+    }
+
+
+    private List<Integer> findWinningChipsFromVertex(int startVertex, String chipColor) {
+        List<Integer> winningChips = new ArrayList<>();
+        System.out.println("Finding winning chips from vertex: " + startVertex);
+
+        for (Direction direction : Direction.values()) {
+            System.out.println("Checking direction: " + direction.name());
+            List<Integer> chipsInDirection = getChipsInDirection(startVertex, chipColor, direction.getDeltaX(), direction.getDeltaY());
+            winningChips.addAll(chipsInDirection);
+        }
+
+        if (!winningChips.contains(startVertex)) {
+            System.out.println("Including starting vertex: " + startVertex);
+            winningChips.add(startVertex);
+        }
+
+        System.out.println("Winning chips from vertex " + startVertex + ": " + winningChips);
+        return winningChips;
+    }
+
+    public void findAndSetAllWinningChips(String chipColor) {
+        List<Integer> allWinningChips = findAllWinningChips(chipColor);
+        setWinningChips(allWinningChips);
+        System.out.println("Global Winning Chips Set: " + getWinningChips());
+    }
 
 
 
 
-//    /**
-//     * Flips coins in the given list and updates the total chip flip count in the game state.
-//     * @param coinsToFlip A list of coins to flip.
-//     * @param gameBoard The game board where the coins are located.
-//     */
-//    public void flipCoins(ArrayList<Coin> coinsToFlip, Game_Board gameBoard) {
-//        for (Coin coin : coinsToFlip) {
-//            // Flip the coin color
-//            coin.flipCoin();
-//
-//            // Increment total chips flipped for statistics
-//            currentState.totalChipsFlipped++; // Update the counter in GameState
-//        }
-//    }
 
-
-/**
+    /**
  * Initializes the coordinates of the vertices, Maps the vertex number with coordinates
  */
     private void initialiseVertex() {
