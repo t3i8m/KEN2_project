@@ -1,0 +1,10 @@
+The Game_Board_1 is the board of Yinsh
+It has its own class and methods.
+Basically it is a 2D array of the Vertices (Explained below)
+
+A Vertex is the same as a vertex on the board,
+It is a simple placeholder for a playing piece
+
+Playing piece's obj
+(This has to be updated once that has been created)
+

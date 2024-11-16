@@ -218,7 +218,6 @@ public class GameEngine {
                 System.out.print("WIN--------------");
                 System.out.println("------------K:"+k);
                 winningRing=win;
-
                 setRingSelectionMode(true);
                 setWinningColor(color);
                 ringSelection(color);
