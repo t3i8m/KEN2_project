@@ -1,9 +1,11 @@
 package com.ken2.bots;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.engine.Direction;
 import com.ken2.engine.GameState;
 
 // abstract class for all of the bots
@@ -33,6 +35,31 @@ public abstract class BotAbstract implements Bot{
         System.out.println("BOT WANTS TO REMOVE RING "+potentialRing.getVertextNumber());
 
         return potentialRing;
+    }
+
+    @Override
+    public ArrayList<Integer> removeChips(GameState state) {
+        ArrayList<Integer> chipsToRemove = new ArrayList<>();
+        List <Integer> allChips = state.getAllPossibleCoinsToRemove();
+        System.out.println(allChips);
+
+        if(allChips.size()<5 ||allChips==null){
+            return null;
+        }
+
+        for (Integer vert : allChips) {
+             
+            chipsToRemove.add(vert);
+            if(chipsToRemove.size()==4){
+                chipsToRemove.add(allChips.getLast());
+                System.out.println("BOT SELECTED CHIPS TO REMOVE: " + chipsToRemove);
+
+                return chipsToRemove;
+            }
+        }
+    
+    
+        return chipsToRemove;
     }
 
 }

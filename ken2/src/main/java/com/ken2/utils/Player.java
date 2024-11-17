@@ -6,19 +6,26 @@ public class Player {
     private String color;
     private boolean isBot;
     private Bot bot;
+    private String name;
 
     // contructor for human
-    public Player(String color) {
+    public Player(String color,String name) {
         this.color = color;
         this.isBot = false;
         this.bot = null;
+        this.name = name;
     }
 
     // constructor for a bot
-    public Player(String color, Bot bot) {
+    public Player(String color, Bot bot, String name) {
         this.color = color;
         this.isBot = true;
         this.bot = bot;
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public String getColor() {

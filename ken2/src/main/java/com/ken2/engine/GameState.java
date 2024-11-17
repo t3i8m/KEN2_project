@@ -10,6 +10,7 @@ import com.ken2.utils.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * A class for holding all the variables needed by the Game engine to call simulation on
@@ -39,6 +40,7 @@ public class GameState implements Cloneable{
     public boolean isChipRemovalMode;
     public boolean isRingSelectionMode;
     private ArrayList<Vertex >vertexesOfFlippedCoins;
+    private List<Integer> allPossibleCoinsToRemove;
 
 
     /**
@@ -58,6 +60,15 @@ public class GameState implements Cloneable{
         chipNumber=new ArrayList<>();
         gameBoard=new Game_Board();
         vertexesOfFlippedCoins=new ArrayList<>();
+        allPossibleCoinsToRemove = new ArrayList<>();
+    }
+
+    public void setAllPossibleCoinsToRemove(List<Integer> llPossibleCoinsToRemove){
+        this.allPossibleCoinsToRemove = llPossibleCoinsToRemove;
+    }
+
+    public List<Integer> getAllPossibleCoinsToRemove(){
+        return this.allPossibleCoinsToRemove;
     }
 
     public void setVertexesOfFlippedCoins(ArrayList<Vertex> newVertexesOfFlippedCoins){

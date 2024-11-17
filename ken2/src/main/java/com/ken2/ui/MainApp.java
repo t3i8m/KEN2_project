@@ -81,6 +81,9 @@ public class MainApp extends Application {
     private Text chipsWhiteText;
     private Text chipsBlackText;
     private Text chipsRemainText;
+    private Text whiteWinsText;
+    private Text blackWinsText;
+    private Text drawText;
 
     private Text turnIndicator = new Text("White's Turn");
 
@@ -112,6 +115,11 @@ public class MainApp extends Application {
     private int currentPlayerIndex = 0;
     private Player whitePlayer;
     private Player blackPlayer;
+    private int whiteWins = 0; 
+    private int blackWins = 0; 
+    private int draws = 0;
+
+
 
     // FLAGS
     private boolean isGameStarted = false;
@@ -121,6 +129,7 @@ public class MainApp extends Application {
 
     // BUTTONS
     private Button startGameButton;
+
 
     ///OTHER
     private List<Integer> winningChips = new ArrayList<>();
@@ -184,7 +193,7 @@ public class MainApp extends Application {
 
         whitePlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
             if (!isGameStarted) {
-                selectPlayer("White", whitePlayerComboBox);
+                selectPlayer("White", (String)whitePlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
                 System.out.println("game has already started");
                 whitePlayerComboBox.getSelectionModel().select(oldValue);
@@ -193,7 +202,7 @@ public class MainApp extends Application {
 
         blackPlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
             if (!isGameStarted) {
-                selectPlayer("Black", blackPlayerComboBox);
+                selectPlayer("Black", (String)blackPlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
                 System.out.println("game has already started");
                 blackPlayerComboBox.getSelectionModel().select(oldValue);
@@ -222,9 +231,18 @@ public class MainApp extends Application {
         updateOnscreenText();
 
         Button resetButton = new Button("Reset");
-        resetButton.setOnAction(e -> resetBoard(gcP));
+        resetButton.setOnAction(e -> restartGame());
+        drawText = new Text("Draws: 0");
+        drawText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        root.add(drawText, 3, 6);
 
-        Button undoButton = new Button("Undo");
+
+        whiteWinsText = new Text("White Wins: 0");
+        whiteWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        blackWinsText = new Text("Black Wins: 0");
+        blackWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
         //undoButton.setOnAction(e -> undoToLastState());
 
         turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
@@ -257,8 +275,8 @@ public class MainApp extends Application {
         root.add(blackPlayerComboBox, 7, 1);
         root.add(gameBoardCanvas, 1, 1, 5, 5);
         root.add(playObjectCanvas, 1, 1, 5, 5);
-
-
+        root.add(whiteWinsText, 0, 6);
+        root.add(blackWinsText, 7, 6);
         root.add(chipsWhiteText, 0, 5);
         root.add(chipsBlackText, 7, 5);
         //////////
@@ -290,7 +308,6 @@ public class MainApp extends Application {
         root.add(blackScoreCircle[2], 7, 4);
 
         root.add(resetButton, 0, 7);
-        root.add(undoButton, 1, 7);
         root.add(turnIndicator, 3, 7);
 
         root.add(startGameButton, 7, 7);
@@ -304,10 +321,10 @@ public class MainApp extends Application {
     private void startGame(GraphicsContext gcP) {
         this.isGameStarted = true;
         if (whitePlayer == null) {
-            whitePlayer = new Player("White");
+            whitePlayer = new Player("White", "Human");
         }
         if (blackPlayer == null) {
-            blackPlayer = new Player("Black");
+            blackPlayer = new Player("Black", "Human");
         }
         startGameButton.setDisable(true);
         whitePlayerComboBox.setDisable(true);
@@ -331,7 +348,7 @@ public class MainApp extends Application {
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.001));
             pause.setOnFinished(event -> {
                 botTurn(gc);
             });
@@ -357,22 +374,21 @@ public class MainApp extends Application {
     }
 
 
-    private void selectPlayer(String color, ComboBox<String> comboBox) {
-        String selectedItem = comboBox.getSelectionModel().getSelectedItem();
+    private void selectPlayer(String color, String selectedItem) {
         BotFactory botFactory = new BotFactory();
 
         if ("Human Player".equals(selectedItem)) {
             if (color.equalsIgnoreCase("White")) {
-                whitePlayer = new Player(color);
+                whitePlayer = new Player(color, "Human");
             } else {
-                blackPlayer = new Player(color);
+                blackPlayer = new Player(color, "Human");
             }
         } else {
             Bot bot = botFactory.getBot(selectedItem, color);
             if (color.equalsIgnoreCase("White")) {
-                whitePlayer = new Player(color, bot);
+                whitePlayer = new Player(color, bot, selectedItem);
             } else {
-                blackPlayer = new Player(color, bot);
+                blackPlayer = new Player(color, bot, selectedItem);
             }
         }
     }
@@ -446,11 +462,28 @@ public class MainApp extends Application {
                 if(FirstClickOnCoin) return;
             }
             //System.out.print("remove");
-            handleChipRemove(vertex, gc);
+            // gameEngine.currentState.setAllPossibleCoinsToRemove(nadoEtiChips);
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            if(currentPlayer.isBot()){
+                Bot activeBot = currentPlayer.getBot();
+                ArrayList<Integer> allRemoveChips = activeBot.removeChips(gameEngine.currentState);
+                
+                for (Integer vert : allRemoveChips){
+                    handleChipRemove(vert, gc);
+                    ChipsRemoved--;
+                    gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
+                }
+            } else{
+                handleChipRemove(vertex, gc);
+                ChipsRemoved--;
+                gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
+
+            }
+
+
             // handleChipAndRingPlacement(vertex, gc);
-            gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
-            ChipsRemoved--;
             System.out.println(nadoEtiChips);
+
             if (ChipsRemoved == 0) {
                 gameEngine.setWinningRing(false);
                 gameEngine.setChipRemovalMode(false);
@@ -469,13 +502,17 @@ public class MainApp extends Application {
             System.out.println("Clicked Vertex: " + vertex);
             return;
         }
+        Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null && v.hasCoin() && v.getCoin().getColour().toLowerCase().equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
             gc.clearRect(gameEngine.vertexCoordinates[vertex][0] + pieceDimension / 4,
                     gameEngine.vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
 
-            gameEngine.currentState.chipsRemaining++;
+            gameEngine.currentState.chipsRemaining+=1;
+            chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+
             chipsToRemove--;
 
             gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
@@ -485,7 +522,9 @@ public class MainApp extends Application {
                 gameEngine.setChipRemovalMode(false);
                 gameEngine.setWinningColor("");
                 winningChips.clear();
-                showAlert("Continue Game", "5 chips removed. The game continues.");
+                if (!currentPlayer.isBot()){
+                    showAlert("Continue Game", "5 chips removed. The game continues.");
+                }
                 gameEngine.getWinningChips().clear();
 /////Ne rabotaet
                 List<Integer> allchips =gameEngine.getWinningChips();
@@ -540,6 +579,7 @@ public class MainApp extends Application {
             ////CHIPS IN A ROW
             gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
             System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
+            gameEngine.currentState.setAllPossibleCoinsToRemove(gameEngine.getWinningChips());
             if (gameEngine.getWinningChips().size() > 5){
 
 
@@ -550,7 +590,11 @@ public class MainApp extends Application {
             gameEngine.setChipRemovalMode(true);
             //chipsToRemove = 5;
             chipsToRemove = winningChips.size();
-            showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+
+            if (!currentPlayer.isBot()){
+                showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
+            }
 
         }
 
@@ -562,10 +606,12 @@ public class MainApp extends Application {
                 whiteScoreCircle[whiteScore].setStroke(activeScoreRingColor); // Make the ring appear active
                 whiteScore++;
 
-
                 // Check if White has won
                 if (whiteScore == 3) {
-                    showAlert("Game Over", "White wins!");
+                    whiteWins++; 
+                    updateWinsText();
+                    showGameOverAlert("White wins!");
+                    // showAlert("Game Over", "White wins!");
                     //endGame();
                     return;
                 }
@@ -577,7 +623,12 @@ public class MainApp extends Application {
 
                 // Check if Black has won
                 if (blackScore == 3) {
-                    showAlert("Game Over", "Black wins!");
+                    blackWins++; 
+                    updateWinsText();
+                    showGameOverAlert("Black wins!");
+
+
+                    // showAlert("Game Over", "Black wins!");
                     //endGame();
                     return;
                 }
@@ -691,7 +742,6 @@ public class MainApp extends Application {
 
         Move_Valid[0] = 1;
         gameEngine.placeChip(fromVertex, gc);
-
         Ring ringToMove = (Ring) sourceVertex.getRing();
         if (ringToMove != null) {
             sourceVertex.setRing(null);
@@ -725,12 +775,16 @@ public class MainApp extends Application {
             gc.drawImage(ringImage, gameEngine.vertexCoordinates[toVertex][0], gameEngine.vertexCoordinates[toVertex][1], pieceDimension, pieceDimension);
 
             gameEngine.currentState.chipRingVertex = -1;
+            gameEngine.currentState.chipsRemaining-=1;
             gameEngine.currentState.chipPlaced = false;
             gameEngine.currentState.selectedRingVertex = -1;
             gameEngine.currentState.updateChipsRingCountForEach();
             vertexesOfFlippedCoins.add(sourceVertex);
             gameEngine.currentState.setVertexesOfFlippedCoins(vertexesOfFlippedCoins);
-
+            System.out.println("CHIPS REAMINING: "+gameEngine.currentState.chipsRemaining);
+            if(gameEngine.currentState.chipsRemaining<=0){
+                showDrawAlert();
+            }
 
             String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
             // gameEngine.checkWinning(fromVertex, color);
@@ -744,6 +798,14 @@ public class MainApp extends Application {
                     Bot activeBot = currentPlayer.getBot();
                     Vertex vertexToRemoveBOT = activeBot.removeRing(gameEngine.currentState);
                     handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
+                    System.out.println(gameEngine.currentState.gameBoard.strMaker());
+
+                    // ArrayList<Integer> allRemoveChips = activeBot.removeChips(gameEngine.currentState);
+                    
+                    // for (Integer vert : allRemoveChips){
+                    //     handleChipRemove(vert, gc);
+
+                    // }
                 } else{
                     GameAlerts.alertRowCompletion(color);
 
@@ -753,7 +815,6 @@ public class MainApp extends Application {
             // gameEngine.currentState.setVertexesOfFlippedCoins(null);
             
 
-            System.out.println(gameEngine.currentState.gameBoard.strMaker());
         } else {
             GameAlerts.alertNoRing();
         }
@@ -968,29 +1029,7 @@ public class MainApp extends Application {
     }
 
 
-    private void resetBoard(GraphicsContext gc) {
-        System.out.println();
-        System.out.println(whitePlayerComboBox.getValue());
-        System.out.println(blackPlayerComboBox.getValue());
 
-        // clear all chips
-        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-
-        // check player selection
-        selectPlayer("White", whitePlayerComboBox);
-        selectPlayer("Black", blackPlayerComboBox);
-
-
-        startGameButton.setDisable(false);
-
-        // get a new game
-        gameEngine.resetGame();
-
-        // update highlights
-        GUIavailablePlacesForStartRings(gc);
-
-
-    }
 
     // /
     //  * created bot for the player if bot is selected
@@ -1145,6 +1184,94 @@ public class MainApp extends Application {
         ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
     }
 
+    private void restartGame() {
+        isGameStarted = false; 
+        startGameButton.setDisable(false); 
+        whitePlayerComboBox.setDisable(false);
+        blackPlayerComboBox.setDisable(false);
+        gameEngine.currentState.chipsRemaining=51;
+    
+        gameEngine.resetGame();
+        currentPlayerIndex = 0;
+        whiteScore = 0;
+        blackScore = 0;
+    
+        GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
+        gcP.clearRect(0, 0, playObjectCanvas.getWidth(), playObjectCanvas.getHeight());
+        removeCircleIndicators();
+    
+        for (Circle circle : whiteScoreCircle) {
+            circle.setStroke(inactiveScoreRingColor);
+        }
+        for (Circle circle : blackScoreCircle) {
+            circle.setStroke(inactiveScoreRingColor);
+        }
+    
+        updateOnscreenText();
+        if(whitePlayer.isBot() && blackPlayer.isBot()){
+            selectPlayer("White", whitePlayer.getName());
+            selectPlayer("Black", blackPlayer.getName());
+            startGame(gcP);
+        }
+    }
+
+    private void showGameOverAlert(String message) {
+        turnIndicator.setText(message);
+
+        if(whitePlayer.isBot() && blackPlayer.isBot()){
+            restartGame();
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(message);
+        alert.setContentText("Would you like to restart the game?");
+    
+        ButtonType restartButtonType = new ButtonType("Restart");
+        ButtonType exitButtonType = new ButtonType("Exit");
+    
+        alert.getButtonTypes().setAll(restartButtonType, exitButtonType);
+    
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == restartButtonType) {
+            restartGame(); 
+        } else {
+            System.exit(0); 
+        }
+    }
+    
+    
+    private void updateWinsText() {
+        whiteWinsText.setText("White Wins: " + whiteWins);
+        blackWinsText.setText("Black Wins: " + blackWins);
+    }
+
+    private void showDrawAlert() {
+        turnIndicator.setText("It's a draw!");
+        draws++; 
+        drawText.setText("Draws: " + draws);
+        if(whitePlayer.isBot() && blackPlayer.isBot()){
+            restartGame();
+        }
+    
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Over - Draw");
+        alert.setHeaderText("It's a draw!");
+        alert.setContentText("Would you like to restart the game?");
+    
+        ButtonType restartButtonType = new ButtonType("Restart");
+        ButtonType exitButtonType = new ButtonType("Exit");
+    
+        alert.getButtonTypes().setAll(restartButtonType, exitButtonType);
+    
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == restartButtonType) {
+            restartGame();
+        } else {
+            System.exit(0);
+        }
+    }
+    
 
     public static void main(String[] args) {
         launch(args);

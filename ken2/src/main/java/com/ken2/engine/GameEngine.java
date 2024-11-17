@@ -101,7 +101,7 @@ public class GameEngine {
             currentState.chipRingVertex = vertex;
             System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
             currentState.chipNumber.add(vertex);
-            currentState.chipsRemaining--;
+            // currentState.chipsRemaining--;
             currentState.chipPlaced = true;//after chip placement we can move the ring
             currentState.resetTurn();
             return true;
@@ -184,7 +184,7 @@ public class GameEngine {
         for(Vertex v:vertexesOfFlippedCoins){
             int vertex = v.getVertextNumber();
             System.out.println("VERTEX BEING CHECKED: "+vertex);
-            if(v.getCoin()!=null){
+            if(v.hasCoin()){
                 System.out.println("COLOR "+v.getCoin().getColour());
                 String color = v.getCoin().getColour();
                 for (Direction direction: Direction.values()){
@@ -195,7 +195,7 @@ public class GameEngine {
                     System.out.println("CURRENT DIRECTION: "+direction.name());
                     first=countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
                     second=countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
-                    if(first>0 || second>0){
+                    if(first>=0 || second>=0){
                         k+=(first+second);
                     }
                     System.out.println("TOTAL K:"+k);
@@ -294,7 +294,11 @@ public class GameEngine {
             int next=currentState.gameBoard.getVertexNumberFromPosition(x,y);
             if(next==-1)
                 return k;
+
             Vertex v =currentState.gameBoard.getVertex(next);
+            if(!v.hasCoin() ){
+                return k;
+            }
             //System.out.println("CHECKING "+v.getVertextNumber());
             if(v==null || !v.hasCoin() || !v.getCoin().getColour().toLowerCase().equals(chipColor)){
                 //System.out.println("PROBLEM: "+v.getVertextNumber());
