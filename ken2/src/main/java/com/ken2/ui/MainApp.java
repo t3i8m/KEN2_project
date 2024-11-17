@@ -731,7 +731,18 @@ public class MainApp extends Application {
             System.out.println("---------------------- STARTING FROM HERE ----------------------");
             if (gameEngine.win(fromVertex, color)){
                 System.out.println("YOU CAN REMOVE ONE RING");
+                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                if(currentPlayer.isBot()){
+                    Bot activeBot = currentPlayer.getBot();
+                    Vertex vertexToRemoveBOT = activeBot.removeRing(gameEngine.currentState);
+                    handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
+                } else{
+                    GameAlerts.alertRowCompletion(color);
+
+                    System.out.println("YOU CAN REMOVE ONE RING");
+                }
             }
+            
 
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
         } else {
