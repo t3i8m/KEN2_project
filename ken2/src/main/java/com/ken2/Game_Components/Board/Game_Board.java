@@ -256,6 +256,31 @@ public class Game_Board {
         return null;
     }
 
+    public int getAdjacentVertex(int vertex, int deltaX, int deltaY) {
+        Vertex currentVertex = getVertex(vertex);
+        if (currentVertex == null) {
+            return -1; 
+        }
+    
+        int newX = currentVertex.getXposition() + deltaX;
+        int newY = currentVertex.getYposition() + deltaY;
+    
+        for (int i = 0; i < the_Board.length; i++) {
+            for (int j = 0; j < the_Board[i].length; j++) {
+                Vertex vertexCandidate = the_Board[i][j];
+                if (vertexCandidate != null &&
+                    vertexCandidate.getXposition() == newX &&
+                    vertexCandidate.getYposition() == newY) {
+                    return vertexCandidate.getVertextNumber(); 
+                }
+            }
+        }
+    
+        return -1; 
+    }
+    
+    
+
 
 
 }

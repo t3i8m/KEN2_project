@@ -14,8 +14,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 
-
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,6 +79,19 @@ public class GameEngine {
     public ArrayList<Vertex> availablePlacesForStartingRings() {
         Vertex[][] board = currentState.gameBoard.getBoard();
         return this.gameSimulation.getAllPossibleStartingRingPlaces(board);
+    }
+
+    public ArrayList<Integer> getWinningRings(String color){
+        ArrayList<Integer> winningRings = new ArrayList<>();
+
+        ArrayList<Vertex> allVertices = currentState.gameBoard.getAllVertices();
+
+        for (Vertex vertex : allVertices) {
+            if (vertex.hasRing() && vertex.getRing().getColour().toLowerCase().equalsIgnoreCase(color)) {
+                winningRings.add(vertex.getVertextNumber());
+            }
+        }
+        return winningRings;
     }
 
 
@@ -484,6 +496,17 @@ public class GameEngine {
         System.out.println("Global Winning Chips Set: " + getWinningChips());
     }
 
+    public List<Integer> getAdjacentVertices(int vertex) {
+        List<Integer> adjacentVertices = new ArrayList<>();
+        for (Direction direction : Direction.values()) {
+            int adjVertex = currentState.gameBoard.getAdjacentVertex(vertex, direction.getDeltaX(), direction.getDeltaY());
+            if (adjVertex >= 0) {
+                adjacentVertices.add(adjVertex);
+            }
+        }
+        return adjacentVertices;
+    }
+
 
 
 
@@ -569,6 +592,8 @@ public class GameEngine {
         }
         return -1;
     }
+
+
 
 
     public void showAlert(String title, String message) {

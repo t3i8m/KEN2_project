@@ -424,6 +424,8 @@ public class MainApp extends Application {
     List <Integer> nadoEtiChips  = new ArrayList<>();
 
     public void WinningCase(int vertex, GraphicsContext gc){
+
+
         handleWinningRing(vertex, gc);
         String WinningColor = gameEngine.getWinningColor();
         if(CheckPossibleChipsToRemove){
@@ -519,9 +521,22 @@ public class MainApp extends Application {
             chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
             chipsToRemove--;
-
+            removeCircleIndicators();
             gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
             System.out.println("Chip removed. Remaining chips to remove: " + chipsToRemove);
+            List<Integer> adjacentVertices = gameEngine.getAdjacentVertices(vertex);
+            List<Integer> validRemovableChips = new ArrayList<>();
+            for (int adjVertex : adjacentVertices) {
+                if (winningChips.contains(adjVertex)) {
+                    Vertex adjV = gameEngine.currentState.gameBoard.getVertex(adjVertex);
+                    if (adjV != null && adjV.hasCoin() 
+                            && adjV.getCoin().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+                        validRemovableChips.add(adjVertex);
+                    }
+                }
+            }
+            highlightRemovableChips(validRemovableChips);
+
 
             if (chipsToRemove <= 0) {
                 gameEngine.setChipRemovalMode(false);
@@ -600,6 +615,7 @@ public class MainApp extends Application {
             }
             System.out.println("Clicked Vertex: " + vertex);
 
+
             gameEngine.setRingSelectionMode(false); // Exit ring selection mode
             gameEngine.setChipRemovalMode(true);
             chipsToRemove = 5;
@@ -613,6 +629,31 @@ public class MainApp extends Application {
         }
 
     }
+
+    private void highlightRemovableRings(List<Integer> removableRings) {
+        // removeCircleIndicators(); 
+    
+        for (Integer ringVertex : removableRings) {
+            System.out.println("qqqqqqqq");
+            drawHighlighter(ringVertex, true); 
+        }
+    }
+
+    private List<Integer> getRemovableRings() {
+        List<Integer> removableRings = new ArrayList<>();
+        Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+
+        for (Integer vertex : gameEngine.getWinningRings( gameEngine.getWinningColor().toLowerCase())) {
+            Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
+            if (v != null && v.hasRing() 
+                    && v.getRing().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+                removableRings.add(vertex);
+            }
+        }
+        return removableRings;
+    }
+    
+    
 
     private void moveRingToThePanel(String playerColor) {
         if (playerColor.equalsIgnoreCase("white")) {
@@ -806,6 +847,7 @@ public class MainApp extends Application {
                 gameEngine.currentState.selectedRingVertex = -1;
                 gameEngine.currentState.updateChipsRingCountForEach();
                 vertexesOfFlippedCoins.add(sourceVertex);
+
                 gameEngine.currentState.setVertexesOfFlippedCoins(vertexesOfFlippedCoins);
                 System.out.println("CHIPS REAMINING: "+gameEngine.currentState.chipsRemaining);
                 if(gameEngine.currentState.chipsRemaining<=0){
@@ -820,6 +862,10 @@ public class MainApp extends Application {
                 if (gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins())){
                     String currPlayerColor = gameEngine.getWinningColor(); 
                     Player currentPlayer;
+                    
+                    List<Integer> removableRings = getRemovableRings();
+                    System.out.println(removableRings);
+                    highlightRemovableRings(removableRings);
     
                     if (whitePlayer.getColor().toLowerCase().equalsIgnoreCase(currPlayerColor.toLowerCase())) {
                         currentPlayer = whitePlayer;
