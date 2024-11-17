@@ -9,7 +9,7 @@ import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.ui.GameAlerts;
 
-import com.ken2.ui.MainAppcopy;
+import com.ken2.ui.MainApp;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -176,35 +176,50 @@ public class GameEngine {
     //          }
     //     }
     // }
-    public boolean win(int vertex, String color){
+    public boolean win(ArrayList<Vertex> vertexesOfFlippedCoins){
         boolean win = false;
-        for (Direction direction: Direction.values()){
-            int k = 1;
-            int first = 0;
-            int second = 0;
-            System.out.println("CURRENT DIRECTION: "+direction.name());
-            first=countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
-            second=countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
-            if(first>0 || second>0){
-                k+=(first+second);
-            }
-            System.out.println("TOTAL K:"+k);
-            if (k>=WIN_CONDITION){
-
-                win = true;
-                System.out.print("WIN--------------");
-                System.out.println("------------K:"+k);
-                winningRing=win;
-
-                setRingSelectionMode(true);
-                setWinningColor(color);
-                ringSelection(color);
-
-                break;
-            }
-            win = false;
+        if(vertexesOfFlippedCoins==null){
+            return false;
         }
-        setRingSelectionMode(win);
+        for(Vertex v:vertexesOfFlippedCoins){
+            int vertex = v.getVertextNumber();
+            System.out.println("VERTEX BEING CHECKED: "+vertex);
+            if(v.getCoin()!=null){
+                System.out.println("COLOR "+v.getCoin().getColour());
+                String color = v.getCoin().getColour();
+                for (Direction direction: Direction.values()){
+                    int k = 1;
+    
+                    int first = 0;
+                    int second = 0;
+                    System.out.println("CURRENT DIRECTION: "+direction.name());
+                    first=countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
+                    second=countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
+                    if(first>0 || second>0){
+                        k+=(first+second);
+                    }
+                    System.out.println("TOTAL K:"+k);
+                    if (k>=WIN_CONDITION){
+        
+                        win = true;
+                        System.out.print("WIN--------------");
+                        System.out.println("------------K:"+k);
+                        winningRing=win;
+        
+                        setRingSelectionMode(true);
+                        setWinningColor(color);
+                        ringSelection(color);
+        
+                        return win;
+                    }
+                    // win = false;
+                }
+
+            }
+            
+        }
+
+        // setRingSelectionMode(win);
 
         System.out.println("WIN STATE: "+win);
         return win;

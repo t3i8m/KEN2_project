@@ -9,7 +9,7 @@ import java.util.Map;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
-import com.ken2.engine.GameEnginecopy;
+import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
@@ -26,7 +26,7 @@ public class AlphaBetaBot extends BotAbstract{
         double alpha = Double.NEGATIVE_INFINITY;
         double beta = Double.POSITIVE_INFINITY;
         GameState stateClone = state.clone(); //clone pattern (prototype)
-        GameEnginecopy ge = new GameEnginecopy();
+        GameEngine ge = new GameEngine();
 
         AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
 
@@ -40,7 +40,7 @@ public class AlphaBetaBot extends BotAbstract{
     }
 
 
-    public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEnginecopy ge){
+    public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge){
         if (depth==0){
             //return new AlphaBetaResult(evaluate(state), null); //TODO: evaluation function takes state-> returns double (Nikhil)
         }

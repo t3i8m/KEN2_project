@@ -38,6 +38,7 @@ public class GameState implements Cloneable{
     public int totalChipsFlipped;
     public boolean isChipRemovalMode;
     public boolean isRingSelectionMode;
+    private ArrayList<Vertex >vertexesOfFlippedCoins;
 
 
     /**
@@ -56,6 +57,15 @@ public class GameState implements Cloneable{
         totalChipsFlipped = 0;
         chipNumber=new ArrayList<>();
         gameBoard=new Game_Board();
+        vertexesOfFlippedCoins=new ArrayList<>();
+    }
+
+    public void setVertexesOfFlippedCoins(ArrayList<Vertex> newVertexesOfFlippedCoins){
+        this.vertexesOfFlippedCoins=newVertexesOfFlippedCoins;
+    }
+
+    public ArrayList<Vertex> getVertexesOfFlippedCoins(){
+        return this.vertexesOfFlippedCoins;
     }
 
     /**

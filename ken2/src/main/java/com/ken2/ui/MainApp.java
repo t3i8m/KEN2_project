@@ -705,12 +705,14 @@ public class MainApp extends Application {
                 // gc.drawImage(chipImage, gameEngine.vertexCoordinates[fromVertex][0] + pieceDimension / 4,
                 //         gameEngine.vertexCoordinates[fromVertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
             }
+            ArrayList<Coin> flippedCoins = currentMove.getFlippedCoins();
+            ArrayList<Vertex> vertexesOfFlippedCoins = new ArrayList<>();
 
-            if (!currentMove.getFlippedCoins().isEmpty()) {
-                gameEngine.gameSimulation.flipCoins(currentMove.getFlippedCoins(), gameEngine.currentState.gameBoard);
-
-                for (Coin coinToFlip : currentMove.getFlippedCoins()) {
+            if (!flippedCoins.isEmpty()) {
+                gameEngine.gameSimulation.flipCoins(flippedCoins, gameEngine.currentState.gameBoard);
+                for (Coin coinToFlip : flippedCoins) {
                     Vertex currVertex = gameEngine.currentState.gameBoard.getVertexByCoin(coinToFlip);
+                    vertexesOfFlippedCoins.add(currVertex);
                     // Image chipImage = coinToFlip.getColour().toLowerCase().equals("white") ? chipWImage : chipBImage;
                     // gc.drawImage(chipImage, gameEngine.vertexCoordinates[currVertex.getVertextNumber()][0] + pieceDimension / 4,
                     //         gameEngine.vertexCoordinates[currVertex.getVertextNumber()][1] + pieceDimension / 4, pieceDimension / 2,
@@ -726,10 +728,16 @@ public class MainApp extends Application {
             gameEngine.currentState.chipPlaced = false;
             gameEngine.currentState.selectedRingVertex = -1;
             gameEngine.currentState.updateChipsRingCountForEach();
+            vertexesOfFlippedCoins.add(sourceVertex);
+            gameEngine.currentState.setVertexesOfFlippedCoins(vertexesOfFlippedCoins);
+
+
             String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
             // gameEngine.checkWinning(fromVertex, color);
+            System.out.println(flippedCoins);
             System.out.println("---------------------- STARTING FROM HERE ----------------------");
-            if (gameEngine.win(fromVertex, color)){
+            if (gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins())){
+                
                 System.out.println("YOU CAN REMOVE ONE RING");
                 Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
                 if(currentPlayer.isBot()){
@@ -742,6 +750,7 @@ public class MainApp extends Application {
                     System.out.println("YOU CAN REMOVE ONE RING");
                 }
             }
+            // gameEngine.currentState.setVertexesOfFlippedCoins(null);
             
 
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
