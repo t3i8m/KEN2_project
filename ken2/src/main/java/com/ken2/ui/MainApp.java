@@ -9,6 +9,7 @@ import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.RuleBased.RuleBasedBot;
+import com.ken2.engine.Direction;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
@@ -49,7 +50,9 @@ import static com.ken2.ui.GameAlerts.showAlert;
 
 public class MainApp extends Application {
 
+    public GameState currentState;
     private GameEngine gameEngine;
+    public Game_Board gameBoard;
 
     // ASSETS
     private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
@@ -87,9 +90,10 @@ public class MainApp extends Application {
     private int whiteScore = 0;
     private int blackScore = 0;
     private int ChipsRemoved = 5;
+    private boolean CheckPossibleChipsToRemove = true;
+    private boolean FirstClickOnCoin = true;
     private Circle[] whiteScoreCircle = new Circle[3];
     private Circle[] blackScoreCircle = new Circle[3];
-    private int chipsToRemove = 0;
 
 
     // BOT COMPONENTS
@@ -112,8 +116,11 @@ public class MainApp extends Application {
     // BUTTONS
     private Button startGameButton;
 
-
+    ///OTHER
     private List<Integer> winningChips = new ArrayList<>();
+    private Direction direction;
+    private int chipsToRemove = 0;
+
 
 
     @SuppressWarnings("unchecked")
@@ -250,7 +257,7 @@ public class MainApp extends Application {
         root.add(chipsWhiteText, 0, 5);
         root.add(chipsBlackText, 7, 5);
         //////////
-        root.add(chipsRemainText,3,5);
+        root.add(chipsRemainText,3,1);
         //////////////////////////
         root.add(ringWhiteRemainingText, 1, 1);
         root.add(ringBlackRemainingText, 5, 1);
@@ -261,8 +268,8 @@ public class MainApp extends Application {
         root.add(scoreRingeB2, 7, 3);
         root.add(scoreRingeB3, 7, 4);
         // root.add(chipsRemainText, 4, 0);
-       // root.add(ringWhiteRemainingText, 1, 0);
-     //   root.add(ringBlackRemainingText, 5, 0);
+        // root.add(ringWhiteRemainingText, 1, 0);
+        //   root.add(ringBlackRemainingText, 5, 0);
 //        root.add(scoreRingeW1, 0, 2);
 //        root.add(scoreRingeW2, 0, 3);
 //        root.add(scoreRingeW3, 0, 4);
@@ -391,25 +398,11 @@ public class MainApp extends Application {
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (vertex < 0) return;
         if (gameEngine.GetWinningRing()) {
-            System.out.print("jjsjsjs");
-            handleWinningRing(vertex, gc);
-            Integer RemoveChipVertex = vertex;
-            if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex) && gameEngine.getWinningChips().contains(RemoveChipVertex)) {
-                System.out.print("remove");
-                handleChipRemove(vertex, gc);
-                // handleChipAndRingPlacement(vertex, gc);
-                gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
-                ChipsRemoved--;
-                if (ChipsRemoved == 0) {
-                    gameEngine.setWinningRing(false);
-                    gameEngine.setChipRemovalMode(false);
-                    ChipsRemoved = 5;
-                }
-            }
+            WinningCase(vertex, gc);
             return;
-
         }
-        if (!gameEngine.GetWinningRing() && !gameEngine.isInChipRemovalMode()) {
+
+        if (!gameEngine.GetWinningRing() && !gameEngine.isInChipRemovalMode() ) {
             if (gameEngine.currentState.ringsPlaced < 10) {
                 GUIplaceStartingRing(vertex, gc);
                 GUIavailablePlacesForStartRings(gc);
@@ -426,6 +419,62 @@ public class MainApp extends Application {
         // playerTurn();
         updateOnscreenText();
     }
+    List <Integer> nadoEtiChips  = new ArrayList<>();
+
+    public void WinningCase(int vertex, GraphicsContext gc){
+        handleWinningRing(vertex, gc);
+        String WinningColor = gameEngine.getWinningColor();
+        if(CheckPossibleChipsToRemove){
+            this.winningChips = new ArrayList<>(gameEngine.getWinningChips());
+            for (Integer chip : this.winningChips){
+                for(Direction direction: Direction.values()) {
+                    int ChipCounter = gameEngine.countChipsInOneDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY());
+                    if (ChipCounter >= 4) {
+                        if (!nadoEtiChips.contains(chip)) {
+                            nadoEtiChips.add(chip);
+                        }
+                        for (Integer svo : gameEngine.getChipsInDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY())) {
+                            if (!nadoEtiChips.contains(svo)) {
+                                nadoEtiChips.add(svo);
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(nadoEtiChips);
+            CheckPossibleChipsToRemove = false;
+        }
+
+        Integer RemoveChipVertex = vertex;
+        if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex) && nadoEtiChips.contains(RemoveChipVertex)) {
+            if(FirstClickOnCoin){
+                for(Direction direction: Direction.values()) {
+                    int ChipCounter = gameEngine.countChipsInOneDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY());
+                    if (ChipCounter >= 4) {
+                        nadoEtiChips.clear();
+                        nadoEtiChips.addAll(gameEngine.getChipsInDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY()));
+                        nadoEtiChips = new ArrayList<>(nadoEtiChips.subList(0, 4));
+                        FirstClickOnCoin = false;
+                    }
+                }
+                if(FirstClickOnCoin) return;
+            }
+            //System.out.print("remove");
+            handleChipRemove(vertex, gc);
+            // handleChipAndRingPlacement(vertex, gc);
+            gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
+            ChipsRemoved--;
+            System.out.println(nadoEtiChips);
+            if (ChipsRemoved == 0) {
+                gameEngine.setWinningRing(false);
+                gameEngine.setChipRemovalMode(false);
+                ChipsRemoved = 5;
+                CheckPossibleChipsToRemove = true;
+                FirstClickOnCoin = true;
+                nadoEtiChips.clear();
+            }
+        }
+    }
 
     public void handleChipRemove(int vertex, GraphicsContext gc) {
         if (!gameEngine.getWinningChips().contains(vertex)) {
@@ -435,7 +484,7 @@ public class MainApp extends Application {
             return;
         }
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
-        if (v != null && v.hasCoin() && v.getCoin().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+        if (v != null && v.hasCoin() && v.getCoin().getColour().toLowerCase().equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
             gc.clearRect(gameEngine.vertexCoordinates[vertex][0] + pieceDimension / 4,
                     gameEngine.vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
@@ -452,8 +501,7 @@ public class MainApp extends Application {
                 winningChips.clear();
                 showAlert("Continue Game", "5 chips removed. The game continues.");
                 gameEngine.getWinningChips().clear();
-            }
-////hernia:
+/////Ne rabotaet
                 List<Integer> allchips =gameEngine.getWinningChips();
                 if(allchips.size()>5){
                     String choice = showOptionDialog("Select Chips to Remove",
@@ -469,8 +517,7 @@ public class MainApp extends Application {
 
                 }
 
-
-            chipsRemainText.setText("Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+            }
 
         } else {
             System.out.println("No chip found at vertex " + vertex + " or color does not match.");
@@ -499,13 +546,17 @@ public class MainApp extends Application {
     public void handleWinningRing(int vertex, GraphicsContext gc) {
         System.out.print("snshsbsbsbsb");
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
-        if (v != null && v.hasRing() && v.getRing().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+        if (v != null && v.hasRing() && v.getRing().getColour().toLowerCase().equals(gameEngine.getWinningColor().toLowerCase())) {
             moveRingToThePanel(gameEngine.getWinningColor());
             v.setRing(null);
             gc.clearRect(gameEngine.vertexCoordinates[vertex][0], gameEngine.vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
             ////CHIPS IN A ROW
             gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
             System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
+            if (gameEngine.getWinningChips().size() > 5){
+
+
+            }
             System.out.println("Clicked Vertex: " + vertex);
 
             gameEngine.setRingSelectionMode(false); // Exit ring selection mode
@@ -616,9 +667,9 @@ public class MainApp extends Application {
             if (Move_Valid[0] == 1) {
 
                 String color = gameEngine.currentState.currentPlayerColor();
-                gameEngine.checkWinning(vertex, color);
-                if (!gameEngine.win(vertex, color))
-                    resetTurn();
+                // gameEngine.checkWinning(vertex, color);
+                // if (gameEngine.win(vertex, color)==false)
+                resetTurn();
                 //resetTurn();
                 // gameEngine.currentState.selectedChipVertex = -1;
                 //removeCircleIndicators();
@@ -742,14 +793,14 @@ public class MainApp extends Application {
         gc.setLineDashes(10);
         gc.setLineWidth(4);
         gc.strokeLine(
-            startCoords[0] + pieceDimension / 2,
-            startCoords[1] + pieceDimension / 2,
-            endCoords[0] + pieceDimension / 2,
-            endCoords[1] + pieceDimension / 2
+                startCoords[0] + pieceDimension / 2,
+                startCoords[1] + pieceDimension / 2,
+                endCoords[0] + pieceDimension / 2,
+                endCoords[1] + pieceDimension / 2
         );
     }
-    
-    
+
+
 
     /**
      * Draw the game board for the GUI
@@ -894,19 +945,19 @@ public class MainApp extends Application {
      * @param vertex vertex to draw image at
      * @param gc GraphicsContext
      */
-        private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
-            int x = gameEngine.vertexCoordinates[vertex][0];
-            int y = gameEngine.vertexCoordinates[vertex][1];
-            int dimension = resol ? pieceDimension : pieceDimension / 2;
-        
-            if (!resol) {
-                x += pieceDimension / 4;
-                y += pieceDimension / 4;
-            }
-        
-            gc.drawImage(img, x, y, dimension, dimension);
+    private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
+        int x = gameEngine.vertexCoordinates[vertex][0];
+        int y = gameEngine.vertexCoordinates[vertex][1];
+        int dimension = resol ? pieceDimension : pieceDimension / 2;
+
+        if (!resol) {
+            x += pieceDimension / 4;
+            y += pieceDimension / 4;
         }
-    
+
+        gc.drawImage(img, x, y, dimension, dimension);
+    }
+
 
     /**
      * Draws the highlighter for the available moves
@@ -960,15 +1011,15 @@ public class MainApp extends Application {
         // check player selection
         selectPlayer("White", whitePlayerComboBox);
         selectPlayer("Black", blackPlayerComboBox);
-        
+
         startGameButton.setDisable(false);
-        
+
         // get a new game
         gameEngine.resetGame();
 
         // update highlights
         GUIavailablePlacesForStartRings(gc);
-        
+
 
     }
 
@@ -982,20 +1033,20 @@ public class MainApp extends Application {
         GameState gs = gameEngine.getGameState();
         Game_Board gameBoard = gs.gameBoard;
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
-    
+
         Bot activeBot = currentPlayer.getBot();
         Move move = null;
         if (activeBot != null) {
 
             if (gs.ringsPlaced < 10) {
-                
+
                 move = activeBot.makeMove(gameEngine.getGameState());
 
                 int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
                 GUIplaceStartingRing(chosenVertexNumber, gc);
 
                 gameEngine.currentState.resetTurn();
-                gameEngine.currentState.selectedChipVertex = -1; 
+                gameEngine.currentState.selectedChipVertex = -1;
                 currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
             } else {
                 move = activeBot.makeMove(gameEngine.getGameState());
@@ -1014,20 +1065,20 @@ public class MainApp extends Application {
             System.out.println("NUMBER WHITE "+gs.ringsWhite);
 
             if (move != null) {
-                resetTurn();  
-                
+                resetTurn();
 
-    
+
+
                 // updateGameBoard(gameBoard, gc);
                 updateOnscreenText();
             }}
-            
-        }
+
+    }
 
     private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
 
         //clear canvas
-        
+
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
         //run through every vertex and put image there if there is an image
@@ -1041,7 +1092,7 @@ public class MainApp extends Application {
                 String colour = ring.getColour().toLowerCase();
 
                 if (colour.equals("white")){
-                    
+
                     drawImage(ringWImage, i, gc, true);
                 } else {
                     drawImage(ringBImage, i, gc, true);
@@ -1064,9 +1115,9 @@ public class MainApp extends Application {
                 }
 
             }
-            
+
         }
-        
+
 
 
     }
@@ -1076,12 +1127,14 @@ public class MainApp extends Application {
      */
     private void resetTurn(){
         gameEngine.currentState.resetTurn();
-        gameEngine.currentState.selectedChipVertex = -1; 
+        gameEngine.currentState.selectedChipVertex = -1;
         // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
         switchPlayer();
         // lastMoveStartVertex = null;
         // lastMoveEndVertex = null;
         updateStrengthIndicator();
+        chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+
         updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
         System.out.println(gameEngine.currentState.isWhiteTurn);
         turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
@@ -1094,28 +1147,28 @@ public class MainApp extends Application {
         GraphicsContext gc = strengthIndicator.getGraphicsContext2D();
         GameState gs = gameEngine.getGameState();
         gc.clearRect(0, 0, strengthIndicator.getWidth(), strengthIndicator.getHeight());
-    
+
         int whiteStrength = gs.calculateStrength("white");
         int blackStrength = gs.calculateStrength("black");
         int totalStrength = whiteStrength + blackStrength;
-        
+
         double whiteRatio = totalStrength == 0 ? 0.5 : (double) whiteStrength / totalStrength;
         double blackRatio = 1 - whiteRatio;
-        
+
         double width = strengthIndicator.getWidth();
         double height = strengthIndicator.getHeight();
-    
+
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, width * whiteRatio, height);
-    
+
         gc.setFill(Color.BLUE);
         gc.fillRect(width * whiteRatio, 0, width * blackRatio, height);
-    
+
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
         gc.strokeLine(width / 2, 0, width / 2, height);
     }
-    
+
     /**
      * Updates onscreen text
      */
@@ -1127,7 +1180,7 @@ public class MainApp extends Application {
         ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
     }
 
-    
+
     public static void main(String[] args) {
         launch(args);
     }
