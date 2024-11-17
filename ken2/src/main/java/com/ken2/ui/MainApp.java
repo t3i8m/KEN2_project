@@ -330,7 +330,7 @@ public class MainApp extends Application {
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
             pause.setOnFinished(event -> {
                 botTurn(gc);
             });
@@ -563,8 +563,10 @@ public class MainApp extends Application {
             gameEngine.setChipRemovalMode(true);
             //chipsToRemove = 5;
             chipsToRemove = winningChips.size();
-            showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
-
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                if(!currentPlayer.isBot()){
+                    showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
+                }
         }
 
     }
@@ -767,9 +769,21 @@ public class MainApp extends Application {
             gameEngine.currentState.updateChipsRingCountForEach();
             String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
             // gameEngine.checkWinning(fromVertex, color);
+
+            // future logic to bot remove the ring TODO:finish it and move to the resetTurn()
             System.out.println("---------------------- STARTING FROM HERE ----------------------");
             if (gameEngine.win(fromVertex, color)){
-                System.out.println("YOU CAN REMOVE ONE RING");
+                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                if(currentPlayer.isBot()){
+                    Bot activeBot = currentPlayer.getBot();
+                    Vertex vertexToRemoveBOT = activeBot.removeRing(gameEngine.currentState);
+                    handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
+
+                } else{
+                    GameAlerts.alertRowCompletion(color);
+
+                    System.out.println("YOU CAN REMOVE ONE RING");
+                }
             }
 
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
@@ -1126,6 +1140,14 @@ public class MainApp extends Application {
      * reset the turn for the next player
      */
     private void resetTurn(){
+
+        // String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
+        // will change from vertex on the array of passed coins TODO: implement it
+        // System.out.println("---------------------- STARTING FROM HERE ----------------------");
+        // if (gameEngine.win(fromVertex, color)){
+        //     System.out.println("YOU CAN REMOVE ONE RING");
+        // }
+
         gameEngine.currentState.resetTurn();
         gameEngine.currentState.selectedChipVertex = -1;
         // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;

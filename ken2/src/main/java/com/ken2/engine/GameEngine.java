@@ -218,11 +218,9 @@ public class GameEngine {
                 System.out.print("WIN--------------");
                 System.out.println("------------K:"+k);
                 winningRing=win;
-
                 setRingSelectionMode(true);
                 setWinningColor(color);
                 ringSelection(color);
-                GameAlerts.alertRowCompletion(color);
 
                 break;
             }
@@ -491,14 +489,14 @@ public class GameEngine {
         System.out.println();
 
         for(int i = 0 ; i < 85; i++){
-            double vX = vertexCoordinates[i][0] + 18;
-            double vY = vertexCoordinates[i][1] + 18;
+            double vX = vertexCoordinates[i][0] + 20;
+            double vY = vertexCoordinates[i][1] + 20;
 
             double xDist = Math.abs(xCoordinate - vX);
             double yDist = Math.abs(yCoordinate - vY);
 
             if(xDist<=10 && yDist <=10){
-                System.out.println("Vertex Clicked: " + i);
+                // System.out.println("Vertex Clicked: " + i);
                 return i;
             }
         }

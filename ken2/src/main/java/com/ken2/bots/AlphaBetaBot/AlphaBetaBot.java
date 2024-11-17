@@ -47,7 +47,7 @@ public class AlphaBetaBot extends BotAbstract{
 
         Move bestMove = null;
 
-        if(state.currentPlayerColor().equals("White")){
+        if(state.currentPlayerColor().equals(this.getColor())){
             double value = Double.NEGATIVE_INFINITY;
 
             ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());  // all of the this colour ring positions
