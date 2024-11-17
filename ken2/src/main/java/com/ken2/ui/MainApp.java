@@ -13,6 +13,7 @@ import com.ken2.engine.Direction;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
+import com.ken2.ui.GameAlerts;
 import com.ken2.utils.BotFactory;
 import com.ken2.utils.Player;
 
@@ -245,7 +246,6 @@ public class MainApp extends Application {
         blackScoreCircle[1] = makeScoreCircle();
         blackScoreCircle[2] = makeScoreCircle();
 
-
         root.add(whitePlayerLabel, 0, 0);
         root.add(blackPlayerLabel, 7, 0);
         root.add(whitePlayerComboBox, 0, 1);
@@ -296,10 +296,6 @@ public class MainApp extends Application {
 
     }
 
-    /**
-     * Handle the game start button
-     * // * @param gc GraphicsContext
-     */
     private void startGame(GraphicsContext gcP) {
         this.isGameStarted = true;
         if (whitePlayer == null) {
@@ -330,7 +326,7 @@ public class MainApp extends Application {
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
             pause.setOnFinished(event -> {
                 botTurn(gc);
             });
@@ -349,23 +345,13 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * switch current player
-     * // * @param color
-     * // * @param comboBox
-     */
+
     private void switchPlayer() {
         gameEngine.currentState.isWhiteTurn = !gameEngine.currentState.isWhiteTurn;
         currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
     }
 
 
-    /**
-     * combobox handler
-     *
-     * @param color
-     * @param comboBox
-     */
     private void selectPlayer(String color, ComboBox<String> comboBox) {
         String selectedItem = comboBox.getSelectionModel().getSelectedItem();
         BotFactory botFactory = new BotFactory();
@@ -386,12 +372,7 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Handle mouse clicks
-     *
-     * @param e  MouseEvent
-     * @param gc GraphicsContext
-     */
+
     private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
 
         int vertex = gameEngine.findClosestVertex(e.getX(), e.getY());
@@ -563,10 +544,8 @@ public class MainApp extends Application {
             gameEngine.setChipRemovalMode(true);
             //chipsToRemove = 5;
             chipsToRemove = winningChips.size();
-            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
-                if(!currentPlayer.isBot()){
-                    showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
-                }
+            showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
+
         }
 
     }
@@ -601,11 +580,7 @@ public class MainApp extends Application {
     }
 
 
-    /**
-     * To place rings at the start of the game
-     *
-     * @param vertex vertex number
-     */
+
     private void GUIplaceStartingRing(int vertex, GraphicsContext gc) {
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
@@ -623,11 +598,7 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Displays available vertices for the starting rings to be placed
-     *
-     * @param gc GraphicsContext
-     */
+
     private void GUIavailablePlacesForStartRings(GraphicsContext gc) {
 
         ArrayList<Vertex> aVertices = gameEngine.availablePlacesForStartingRings();
@@ -639,12 +610,7 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Handles game logic between chips and rings placement
-     *
-     * @param vertex vertex clicked
-     * @param gc     GraphicsContext
-     */
+
     private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
         Vertex boardVertex = gameEngine.currentState.gameBoard.getVertex(vertex);
         // If the player clicks on their own ring
@@ -683,11 +649,7 @@ public class MainApp extends Application {
 
     }
 
-    /**
-     * Highlight the possible moves of the ring
-     *
-     * @param possibleMoves posiible moves
-     */
+
     private void highlightPossibleMoves(ArrayList<Move> possibleMoves) {
         highlightedVertices.clear();
         for (Move move : possibleMoves) {
@@ -699,15 +661,6 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Logic for the Move ring method
-     *
-     * @param fromVertex
-     * @param toVertex
-     * @param gc
-     * @param Move_Valid
-     * @param currentMove // * @param possibleMoves
-     */
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         Vertex sourceVertex = gameEngine.currentState.gameBoard.getVertex(fromVertex);
         Vertex targetVertex = gameEngine.currentState.gameBoard.getVertex(toVertex);
@@ -769,21 +722,9 @@ public class MainApp extends Application {
             gameEngine.currentState.updateChipsRingCountForEach();
             String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
             // gameEngine.checkWinning(fromVertex, color);
-
-            // future logic to bot remove the ring TODO:finish it and move to the resetTurn()
             System.out.println("---------------------- STARTING FROM HERE ----------------------");
             if (gameEngine.win(fromVertex, color)){
-                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
-                if(currentPlayer.isBot()){
-                    Bot activeBot = currentPlayer.getBot();
-                    Vertex vertexToRemoveBOT = activeBot.removeRing(gameEngine.currentState);
-                    handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
-
-                } else{
-                    GameAlerts.alertRowCompletion(color);
-
-                    System.out.println("YOU CAN REMOVE ONE RING");
-                }
+                System.out.println("YOU CAN REMOVE ONE RING");
             }
 
             System.out.println(gameEngine.currentState.gameBoard.strMaker());
@@ -816,10 +757,7 @@ public class MainApp extends Application {
 
 
 
-    /**
-     * Draw the game board for the GUI
-     * @param gc GraphicsContext object for drawing the board
-     */
+
     private void drawBoard(GraphicsContext gc) {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
         gc.setStroke(Color.BLACK);
@@ -870,6 +808,7 @@ public class MainApp extends Application {
 
         gc.strokeLine(vertexCoordinates[19][0]+pieceDimension/2, vertexCoordinates[19][1]+pieceDimension/2,
                 vertexCoordinates[82][0]+pieceDimension/2, vertexCoordinates[82][1]+pieceDimension/2);
+
 
         gc.strokeLine(vertexCoordinates[11][0]+pieceDimension/2, vertexCoordinates[11][1]+pieceDimension/2,
                 vertexCoordinates[83][0]+pieceDimension/2, vertexCoordinates[83][1]+pieceDimension/2);
@@ -929,7 +868,8 @@ public class MainApp extends Application {
         gc.strokeLine(vertexCoordinates[81][0]+pieceDimension/2, vertexCoordinates[81][1]+pieceDimension/2,
                 vertexCoordinates[84][0]+pieceDimension/2, vertexCoordinates[84][1]+pieceDimension/2);
 
-        // // for demo
+
+// // for demo
         // gc.drawImage(ringBImage, vertexCoordinates[39][0], vertexCoordinates[39][1], pieceDimension, pieceDimension);
         // gc.drawImage(ringWImage, vertexCoordinates[61][0], vertexCoordinates[61][1], pieceDimension, pieceDimension);
         // gc.drawImage(chipBImage, vertexCoordinates[43][0], vertexCoordinates[43][1], pieceDimension, pieceDimension);
@@ -953,8 +893,7 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Method to draw rings and coins
+    /* Method to draw rings and coins
      * @param img image to draw
      * @param vertex vertex to draw image at
      * @param gc GraphicsContext
@@ -973,11 +912,7 @@ public class MainApp extends Application {
     }
 
 
-    /**
-     * Draws the highlighter for the available moves
-     * @param vertex vertex number
-     * @param availability true for green and false for red
-     */
+
     public void drawHighlighter( int vertex, boolean availability){
         if (availability){highlightedVertices.add(vertex);}
         Color highLighterColor = (availability) ? Color.GREEN : Color.RED;
@@ -990,18 +925,13 @@ public class MainApp extends Application {
     }
 
 
-    /**
-     * Removes the highlighters
-     */
+
     private void removeCircleIndicators(){
         fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
 
 
-    /**
-     * Draw the inactive score circles
-     * @return a circle object
-     */
+
     private Circle makeScoreCircle() {
         Circle circle = new Circle(35);
         circle.setStroke(inactiveScoreRingColor);
@@ -1011,9 +941,7 @@ public class MainApp extends Application {
         return circle;
     }
 
-    /**
-     * Reset the Board for a new game
-     */
+
     private void resetBoard(GraphicsContext gc) {
         System.out.println();
         System.out.println(whitePlayerComboBox.getValue());
@@ -1026,6 +954,7 @@ public class MainApp extends Application {
         selectPlayer("White", whitePlayerComboBox);
         selectPlayer("Black", blackPlayerComboBox);
 
+
         startGameButton.setDisable(false);
 
         // get a new game
@@ -1037,7 +966,7 @@ public class MainApp extends Application {
 
     }
 
-    // /**
+    // /
     //  * created bot for the player if bot is selected
     //  * @param color
     //  * @param comboBox
@@ -1136,18 +1065,8 @@ public class MainApp extends Application {
 
     }
 
-    /**
-     * reset the turn for the next player
-     */
+
     private void resetTurn(){
-
-        // String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
-        // will change from vertex on the array of passed coins TODO: implement it
-        // System.out.println("---------------------- STARTING FROM HERE ----------------------");
-        // if (gameEngine.win(fromVertex, color)){
-        //     System.out.println("YOU CAN REMOVE ONE RING");
-        // }
-
         gameEngine.currentState.resetTurn();
         gameEngine.currentState.selectedChipVertex = -1;
         // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
@@ -1191,9 +1110,7 @@ public class MainApp extends Application {
         gc.strokeLine(width / 2, 0, width / 2, height);
     }
 
-    /**
-     * Updates onscreen text
-     */
+
     private void updateOnscreenText(){
         chipsWhiteText.setText("Chips White on board: " + gameEngine.currentState.chipsWhite);
         chipsBlackText.setText("Chips Black on board: " + gameEngine.currentState.chipsBlack);

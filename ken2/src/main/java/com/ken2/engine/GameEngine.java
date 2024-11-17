@@ -1,5 +1,6 @@
 package com.ken2.engine;
 
+
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
@@ -22,9 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-/**
- * All decision-making of the game
- */
 public class GameEngine {
 
     public GameState currentState;
@@ -41,9 +39,7 @@ public class GameEngine {
     private List<Integer> winningChips = new ArrayList<>();
 
 
-    /**
-     * Contructor
-     */
+
     public GameEngine(){
         currentState=new GameState();
         gameSimulation=new GameSimulation();
@@ -53,11 +49,6 @@ public class GameEngine {
         this.currentState.gameBoard = this.gameBoard;
     }
 
-    /**
-     * Method for placing the Starting rings
-     * @param vertex vertex we want to place the rings
-     * @return returns true or false for ring placement in GUI
-     */
     public boolean placeStartingRing(int vertex,String ringColor) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
         if (boardVertex != null && !boardVertex.hasRing()) {
@@ -85,22 +76,13 @@ public class GameEngine {
         return false;
     }
 
-    /**
-     * Returns available places for the starting ring
-     * @return available vertices for starting ring placement
-     */
+
     public ArrayList<Vertex> availablePlacesForStartingRings() {
         Vertex[][] board = currentState.gameBoard.getBoard();
         return this.gameSimulation.getAllPossibleStartingRingPlaces(board);
     }
 
 
-    /**
-     * Place chip logic checker
-     * @param vertex vertex where we check for chip placement
-     * @param gc GraphicsContext
-     * @return true if rules are conditions are right and false if not
-     */
     public boolean placeChip(int vertex, GraphicsContext gc) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
 
@@ -130,25 +112,20 @@ public class GameEngine {
 
     }
 
-    /**
-     * Initial check if the vertices are valid for ringMove method
-     * @param frmVertex initial vertex
-     * @param toVertex target vertex
-     * @param availableMoves list of available moves
-     * @return true if vertices valid for ringMove and false otherwise
-     */
-    public boolean checkPlaceRingVertex(int frmVertex,int toVertex,ArrayList<Integer> availableMoves) {
-        Vertex targetVertex = currentState.gameBoard.getVertex(toVertex);
-        if (!availableMoves.contains(toVertex)){
-            showAlert("INVALID", "JJDJDJD");
-            return false;
-        }
-        else if (targetVertex.hasRing() || currentState.chipNumber.contains(toVertex)) {
-            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
-            return false;
-        }
-        return true;
-    }
+
+//    public boolean checkPlaceRingVertex(int frmVertex,int toVertex,ArrayList<Integer> availableMoves) {
+//        Vertex targetVertex = currentState.gameBoard.getVertex(toVertex);
+//        if (!availableMoves.contains(toVertex)){
+//            showAlert("INVALID", "JJDJDJD");
+//            return false;
+//        }
+//
+//      else if (targetVertex.hasRing().currentState.chipNumber.contains(toVertex)) {
+//            showAlert("Invalid Move", "Cannot move ring here as it already has an object.");
+//            return false;
+//        }
+//        return true;
+//    }
 
 
     /**
@@ -218,9 +195,11 @@ public class GameEngine {
                 System.out.print("WIN--------------");
                 System.out.println("------------K:"+k);
                 winningRing=win;
+
                 setRingSelectionMode(true);
                 setWinningColor(color);
                 ringSelection(color);
+                GameAlerts.alertRowCompletion(color);
 
                 break;
             }
@@ -478,36 +457,27 @@ public class GameEngine {
         }
     }
 
-    /**
-     * A function to select a vertex when give player Clicks the screen
-     * @param xCoordinate X coordinate of the clicked location
-     * @param yCoordinate Y coordinate of the clicked location
-     * @return vertex number as a integer
-     */
+
     public int findClosestVertex(double xCoordinate, double yCoordinate){
 
         System.out.println();
 
         for(int i = 0 ; i < 85; i++){
-            double vX = vertexCoordinates[i][0] + 20;
-            double vY = vertexCoordinates[i][1] + 20;
+            double vX = vertexCoordinates[i][0] + 18;
+            double vY = vertexCoordinates[i][1] + 18;
 
             double xDist = Math.abs(xCoordinate - vX);
             double yDist = Math.abs(yCoordinate - vY);
 
             if(xDist<=10 && yDist <=10){
-                // System.out.println("Vertex Clicked: " + i);
+                System.out.println("Vertex Clicked: " + i);
                 return i;
             }
         }
         return -1;
     }
 
-    /**
-     * A helper function for pushing alerts during gameplay
-     * @param title
-     * @param message
-     */
+
     public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -515,10 +485,7 @@ public class GameEngine {
         alert.showAndWait();
     }
 
-    /**
-     * Return the vertex coordinates array
-     * @return integer matrix
-     */
+
     public int[][] getVertexCoordinates() {
         return vertexCoordinates;
     }
@@ -528,9 +495,7 @@ public class GameEngine {
         return vertexCoordinates[vertex];
     }
 
-    /**
-     * Set the parameters of the game
-     */
+
     public void resetGame(){
         currentState=new GameState();
         vertexCoordinates = new int[85][2];
