@@ -3,20 +3,12 @@ package com.ken2.engine;
 
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
-import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
-import com.ken2.bots.RuleBased.RuleBasedBot;
-import com.ken2.ui.GameAlerts;
 
-import com.ken2.ui.MainApp;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -238,6 +230,7 @@ public class GameEngine {
         return win;
 
     }
+
     private boolean winningRing = false;
     private String winningColor = "";
 
@@ -466,9 +459,6 @@ public class GameEngine {
         return winningChips;
     }
 
-
-
-
     public List<Integer> findWinningChipsFromVertex(int startVertex, String chipColor) {
         List<Integer> winningChips = new ArrayList<>();
         System.out.println("Finding winning chips from vertex: " + startVertex);
@@ -506,10 +496,6 @@ public class GameEngine {
         }
         return adjacentVertices;
     }
-
-
-
-
 
     /**
      * Initializes the coordinates of the vertices, Maps the vertex number with coordinates
@@ -593,9 +579,6 @@ public class GameEngine {
         return -1;
     }
 
-
-
-
     public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -603,16 +586,13 @@ public class GameEngine {
         alert.showAndWait();
     }
 
-
     public int[][] getVertexCoordinates() {
         return vertexCoordinates;
     }
 
-
     public int[] getcoordinates(int vertex){
         return vertexCoordinates[vertex];
     }
-
 
     public void resetGame(){
         currentState=new GameState();

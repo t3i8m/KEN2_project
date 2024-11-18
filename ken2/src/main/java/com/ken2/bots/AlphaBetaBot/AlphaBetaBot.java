@@ -53,12 +53,12 @@ public class AlphaBetaBot extends BotAbstract{
             ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());  // all of the this colour ring positions
             HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions); // for each vertex list of all possible moves
 
-            // itterate over the hashmap of vertex:array<Moves>
+            // iterate over the hashmap of vertex:array<Moves>
             for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 Vertex key = entry.getKey();
                 ArrayList<Move> possibleMovesFromThisVertex = entry.getValue();
 
-                // itterate over all of the possible moves for this vertex
+                // iterate over all the possible moves for this vertex
                 for (Move m : possibleMovesFromThisVertex) {
                     // here we need to simulate a move and get a new state
 
@@ -82,6 +82,46 @@ public class AlphaBetaBot extends BotAbstract{
             // TODO: same for the black
         }
         return null;
+    }
+
+    /**
+     * Gives a given state a value for pruning later
+     * @param state current game state
+     * @param ge game engine
+     * @param color current player color
+     * @return value of the function
+     */
+    private double evaluate(GameState state, GameEngine ge, String color){
+        double valuation = 0;
+        String opponentColor = color.equals("white") ? "black" : "white";
+
+        /** Purpose of the variables below
+         * number of coins of our colour
+         * number of coins in a row of our colour
+
+         * number of coins of opposite colour
+         * number of coins in a row of opposite colour
+
+         * Same with the rings
+
+         * if we will get a win if we move
+         * Then bonus points will be awarded LESSGOOOOO
+         */
+        double inOurfavour = 0.50;
+        double notOurfavour= -0.25;
+        double ourWin = 1;
+        double theirWin = -1;
+
+        // Calculating the chip calculation
+        valuation += state.getChipsCountForColor(color)*inOurfavour + state.getChipsCountForColor(opponentColor)*notOurfavour;
+
+        // Calculating the ring calculation
+        valuation += state.getRingCountForColor(color)*inOurfavour + state.getRingCountForColor(opponentColor)*notOurfavour;
+
+        // Calculating the win calculation
+        valuation += ge.win(ge.currentState.getVertexesOfFlippedCoins()) ? ourWin : theirWin;
+
+        return valuation;
     }
 
 

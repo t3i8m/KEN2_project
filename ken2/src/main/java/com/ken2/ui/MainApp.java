@@ -52,9 +52,7 @@ import static com.ken2.ui.GameAlerts.showAlert;
 
 public class MainApp extends Application {
 
-    public GameState currentState;
     private GameEngine gameEngine;
-    public Game_Board gameBoard;
 
     // ASSETS
     private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
@@ -271,7 +269,7 @@ public class MainApp extends Application {
         whiteScoreCircle[1] = makeScoreCircle();
         whiteScoreCircle[2] = makeScoreCircle();
 
-// Initialize black score rings
+        // Initialize black score rings
         blackScoreCircle[0] = makeScoreCircle();
         blackScoreCircle[1] = makeScoreCircle();
         blackScoreCircle[2] = makeScoreCircle();
