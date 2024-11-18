@@ -84,6 +84,8 @@ public class MainApp extends Application {
     private Text whiteWinsText;
     private Text blackWinsText;
     private Text drawText;
+    private Text gamesPlayedText;
+
 
     private Text turnIndicator = new Text("White's Turn");
 
@@ -118,6 +120,8 @@ public class MainApp extends Application {
     private int whiteWins = 0; 
     private int blackWins = 0; 
     private int draws = 0;
+    private int gamesPlayed = 0;
+
 
 
 
@@ -219,6 +223,9 @@ public class MainApp extends Application {
 
         Text whitePlayerLabel = new Text();
         whitePlayerLabel.setText("White");
+        gamesPlayedText = new Text("Games Played: 0");
+        gamesPlayedText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        root.add(gamesPlayedText, 5, 6);
 
         Text blackPlayerLabel = new Text();
         blackPlayerLabel.setText("Black");
@@ -1316,8 +1323,8 @@ public class MainApp extends Application {
         updateStrengthIndicator();  
     
         if (whitePlayer.isBot() && blackPlayer.isBot()) {
-            selectPlayer("White", whitePlayer.getName());
-            selectPlayer("Black", blackPlayer.getName());
+            // selectPlayer("White", whitePlayer.getName());
+            // selectPlayer("Black", blackPlayer.getName());
             startGame(gcP);
         }
     }
@@ -1325,10 +1332,18 @@ public class MainApp extends Application {
 
     private void showGameOverAlert(String message) {
         turnIndicator.setText(message);
+        gamesPlayed++;  
+        updateGamesPlayedText();
 
         if(whitePlayer.isBot() && blackPlayer.isBot()){
-            restartGame();
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+            pause.setOnFinished(event -> {
+                restartGame();
+            });
+            pause.play();
             return;
+            // restartGame();
+            // return;
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1348,6 +1363,10 @@ public class MainApp extends Application {
             System.exit(0); 
         }
     }
+
+    private void updateGamesPlayedText() {
+        gamesPlayedText.setText("Games Played: " + gamesPlayed);
+    }
     
     
     private void updateWinsText() {
@@ -1356,6 +1375,8 @@ public class MainApp extends Application {
     }
 
     private void showDrawAlert() {
+        gamesPlayed++;  
+        updateGamesPlayedText();
         turnIndicator.setText("It's a draw!");
         draws++; 
         drawText.setText("Draws: " + draws);
