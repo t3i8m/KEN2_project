@@ -4,7 +4,11 @@ package com.ken2.bots.AlphaBetaBot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
+import com.ken2.Game_Components.Board.Game_Board;
+import com.ken2.Game_Components.Board.PlayObj;
+import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
@@ -24,16 +28,37 @@ public class AlphaBetaBot extends BotAbstract{
         double beta = Double.POSITIVE_INFINITY;
         GameState stateClone = state.clone(); //clone pattern (prototype)
         GameEngine ge = new GameEngine();
+        Game_Board board = state.getGameBoard(); 
+        Random random = new Random();
 
-        AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
+        ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
 
-        if (result != null && result.getMove() != null) {
-            System.out.println("Bro executed move: " + result.getMove());
-            return result.getMove();
-        } else {
-            System.out.println("wtf, no valid move found.");
+        if (allFreePositions.isEmpty()) {
+            System.out.println("No free positions available on the board.");
             return null;
         }
+
+        if (state.ringsPlaced < 10) { 
+            Vertex targetVertex = allFreePositions.get(random.nextInt(allFreePositions.size()));
+
+            int vertexNumber = targetVertex.getVertextNumber();
+            int[] targetPosition = board.getVertexPositionByNumber(vertexNumber);
+            PlayObj ring = new Ring(super.getColor());
+            board.updateBoard(vertexNumber, ring);
+            state.ringsPlaced++;  
+            return new Move(targetPosition[0], targetPosition[1], null);
+        }
+        else {
+            AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
+            if (result != null && result.getMove() != null) {
+                System.out.println("Bro executed move: " + result.getMove());
+                return result.getMove();
+            } else {
+                System.out.println("wtf, no valid move found.");
+                return null;
+            }
+        }
+        
     }
 
 
