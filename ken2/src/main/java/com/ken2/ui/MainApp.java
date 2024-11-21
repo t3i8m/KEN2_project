@@ -102,8 +102,7 @@ public class MainApp extends Application {
     private boolean FirstClickOnCoin = true;
     private Circle[] whiteScoreCircle = new Circle[3];
     private Circle[] blackScoreCircle = new Circle[3];
-    // List <Integer> nadoEtiChips  = new ArrayList<>();
-
+//     List <Integer> nadoEtiChips  = new ArrayList<>();
 
     // BOT COMPONENTS
     // ArrayList<Bot> bots = new ArrayList<>();
@@ -1174,8 +1173,6 @@ public class MainApp extends Application {
             if (move != null) {
                 resetTurn();
 
-
-
                 // updateGameBoard(gameBoard, gc);
                 updateOnscreenText();
             }}
@@ -1258,9 +1255,13 @@ public class MainApp extends Application {
         GameState gs = gameEngine.getGameState();
         gc.clearRect(0, 0, strengthIndicator.getWidth(), strengthIndicator.getHeight());
 
-        int whiteStrength = gs.calculateStrength("white");
-        int blackStrength = gs.calculateStrength("black");
-        int totalStrength = whiteStrength + blackStrength;
+//        int whiteStrength = gs.calculateStrength("white");
+//        int blackStrength = gs.calculateStrength("black");
+
+        double whiteStrength = gs.evaluate(gameEngine.currentState,gameEngine,"white");
+        double blackStrength = gs.evaluate(gameEngine.currentState,gameEngine,"black");
+
+        double totalStrength = whiteStrength + blackStrength;
 
         double whiteRatio = totalStrength == 0 ? 0.5 : (double) whiteStrength / totalStrength;
         double blackRatio = 1 - whiteRatio;

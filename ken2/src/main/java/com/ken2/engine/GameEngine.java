@@ -224,11 +224,62 @@ public class GameEngine {
             
         }
 
+
+
         // setRingSelectionMode(win);
 
         System.out.println("WIN STATE: "+win);
         return win;
 
+    }
+
+    public String winningColor(ArrayList<Vertex> vertexesOfFlippedCoins) {
+        String color = getWinningColor();
+        if (vertexesOfFlippedCoins == null) {
+            return null;
+        }
+        for (Vertex v : vertexesOfFlippedCoins) {
+            int vertex = v.getVertextNumber();
+            System.out.println("VERTEX BEING CHECKED: " + vertex);
+            if (v.hasCoin()) {
+                System.out.println("COLOR " + v.getCoin().getColour());
+                color = v.getCoin().getColour();
+                for (Direction direction : Direction.values()) {
+                    int k = 1;
+
+                    int first = 0;
+                    int second = 0;
+                    System.out.println("CURRENT DIRECTION: " + direction.name());
+                    first = countChipsInOneDirection(vertex, color, direction.getDeltaX(), direction.getDeltaY());
+                    second = countChipsInOneDirection(vertex, color, -direction.getDeltaX(), -direction.getDeltaY());
+                    if (first >= 0 || second >= 0) {
+                        k += (first + second);
+                    }
+                    System.out.println("TOTAL K:" + k);
+                    if (k >= WIN_CONDITION) {
+
+//                        win = true;
+                        System.out.print("WIN--------------");
+                        System.out.println("------------K:" + k);
+//                        winningRing = win;
+
+//                        setRingSelectionMode(true);
+//                        findAndSetAllWinningChips(color);
+//                        setWinningColor(color);
+//                        ringSelection(color);
+
+                        return color;
+                    }
+                    // win = false;
+                }
+
+            }
+
+        }
+        // setRingSelectionMode(win);
+
+//        System.out.println("WIN STATE: "+win);
+        return color;
     }
 
     private boolean winningRing = false;

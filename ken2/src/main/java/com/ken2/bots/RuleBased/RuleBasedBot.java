@@ -35,7 +35,8 @@ public class RuleBasedBot extends BotAbstract {
             board.updateBoard(vertexNumber, ring);
             state.ringsPlaced++;  
             return new Move(targetPosition[0], targetPosition[1], null);
-        } else {
+        }
+        else {
             boolean work = true;
             while(work){
                 ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(super.getColor());

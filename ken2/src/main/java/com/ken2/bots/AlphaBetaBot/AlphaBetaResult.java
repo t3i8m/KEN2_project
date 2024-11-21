@@ -2,6 +2,9 @@ package com.ken2.bots.AlphaBetaBot;
 
 import com.ken2.engine.Move;
 
+/**
+ * Class for the results from the Alpha Beta bots
+ */
 public class AlphaBetaResult {
     private double value;
     private Move bestMove;

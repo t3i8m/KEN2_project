@@ -3,14 +3,11 @@ package com.ken2.bots.AlphaBetaBot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.ken2.Game_Components.Board.Vertex;
-import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
-import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
@@ -42,7 +39,7 @@ public class AlphaBetaBot extends BotAbstract{
 
     public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge){
         if (depth==0){
-            //return new AlphaBetaResult(evaluate(state), null); //TODO: evaluation function takes state-> returns double (Nikhil)
+            return new AlphaBetaResult(evaluate(state,ge, state.currentPlayerColor()), null); //TODO: evaluation function takes state-> returns double (Nikhil)
         }
 
         Move bestMove = null;
@@ -62,7 +59,8 @@ public class AlphaBetaBot extends BotAbstract{
                 for (Move m : possibleMovesFromThisVertex) {
                     // here we need to simulate a move and get a new state
 
-                    GameState newState = null; //TODO: make a result function takes (state, move)-> new_state (Lera davaj)
+                    GameState newState = null;
+                    //TODO: make a result function takes (state, move)-> new_state (Lera davaj)
 
                     AlphaBetaResult result = alphaBeta(newState, alpha, beta, depth - 1, ge);
 
@@ -119,9 +117,19 @@ public class AlphaBetaBot extends BotAbstract{
         valuation += state.getRingCountForColor(color)*inOurfavour + state.getRingCountForColor(opponentColor)*notOurfavour;
 
         // Calculating the win calculation
-        valuation += ge.win(ge.currentState.getVertexesOfFlippedCoins()) ? ourWin : theirWin;
+        valuation += ge.winningColor(ge.currentState.getVertexesOfFlippedCoins()).equals(color)? ourWin : theirWin;
 
         return valuation;
+    }
+
+
+    private GameState moveState(GameState state, Move move){
+        GameEngine tempEngine = new GameEngine();
+        tempEngine.currentState=state.clone();
+
+
+
+        return tempEngine.currentState;
     }
 
 
