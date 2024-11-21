@@ -1,6 +1,5 @@
 package com.ken2.Game_Components.Board;
 
-import javafx.scene.paint.Color;
 
 public class Coin implements PlayObj{
     private String colour;
@@ -18,6 +17,7 @@ public class Coin implements PlayObj{
     public void setColour(String colour){
         this.colour = colour;
     }
+
     public void flipCoin() {
         if (this.colour.equalsIgnoreCase("black")) {
             this.colour = "white";

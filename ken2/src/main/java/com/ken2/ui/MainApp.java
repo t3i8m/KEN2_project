@@ -352,7 +352,7 @@ public class MainApp extends Application {
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
             pause.setOnFinished(event -> {
                 botTurn(gc);
             });
@@ -811,7 +811,7 @@ public class MainApp extends Application {
             }
     
             Move_Valid[0] = 1;
-            gameEngine.placeChip(fromVertex, gc);
+            gameEngine.placeChip(fromVertex);
             Ring ringToMove = (Ring) sourceVertex.getRing();
             if (ringToMove != null) {
                 sourceVertex.setRing(null);
