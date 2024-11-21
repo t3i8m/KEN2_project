@@ -87,7 +87,7 @@ public class GameEngine {
     }
 
 
-    public boolean placeChip(int vertex, GraphicsContext gc) {
+    public boolean placeChip(int vertex) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
 
 

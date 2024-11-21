@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.ken2.Game_Components.Board.Game_Board;
-import com.ken2.Game_Components.Board.PlayObj;
-import com.ken2.Game_Components.Board.Ring;
-import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.Game_Components.Board.*;
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
@@ -28,7 +25,9 @@ public class AlphaBetaBot extends BotAbstract{
         double beta = Double.POSITIVE_INFINITY;
         GameState stateClone = state.clone(); //clone pattern (prototype)
         GameEngine ge = new GameEngine();
-        Game_Board board = state.getGameBoard(); 
+
+        // new
+        Game_Board board = state.getGameBoard();
         Random random = new Random();
 
         ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
@@ -38,27 +37,26 @@ public class AlphaBetaBot extends BotAbstract{
             return null;
         }
 
-        if (state.ringsPlaced < 10) { 
+        if (state.ringsPlaced < 10) {
             Vertex targetVertex = allFreePositions.get(random.nextInt(allFreePositions.size()));
 
             int vertexNumber = targetVertex.getVertextNumber();
             int[] targetPosition = board.getVertexPositionByNumber(vertexNumber);
             PlayObj ring = new Ring(super.getColor());
             board.updateBoard(vertexNumber, ring);
-            state.ringsPlaced++;  
+            state.ringsPlaced++;
             return new Move(targetPosition[0], targetPosition[1], null);
         }
-        else {
-            AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
-            if (result != null && result.getMove() != null) {
-                System.out.println("Bro executed move: " + result.getMove());
-                return result.getMove();
-            } else {
-                System.out.println("wtf, no valid move found.");
-                return null;
-            }
+        // new
+        AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
+
+        if (result != null && result.getMove() != null) {
+            System.out.println("Bro executed move: " + result.getMove());
+            return result.getMove();
+        } else {
+            System.out.println("wtf, no valid move found.");
+            return null;
         }
-        
     }
 
 
@@ -84,7 +82,7 @@ public class AlphaBetaBot extends BotAbstract{
                 for (Move m : possibleMovesFromThisVertex) {
                     // here we need to simulate a move and get a new state
 
-                    GameState newState = null;
+                    GameState newState = moveState(state,m);
                     //TODO: make a result function takes (state, move)-> new_state (Lera davaj)
 
                     AlphaBetaResult result = alphaBeta(newState, alpha, beta, depth - 1, ge);
@@ -151,8 +149,39 @@ public class AlphaBetaBot extends BotAbstract{
     private GameState moveState(GameState state, Move move){
         GameEngine tempEngine = new GameEngine();
         tempEngine.currentState=state.clone();
+        Game_Board board = new Game_Board();
+        int toVertex = board.getVertexNumberFromPosition(move.getXposition(),move.getXposition());
 
+        if (tempEngine.currentState.ringsPlaced<10){
+            //Place rings
+            tempEngine.placeStartingRing(toVertex, state.currentPlayerColor());
+        }
+        else {
+            //Place chips
+            if (!tempEngine.currentState.gameBoard.getVertex(toVertex).hasRing() &
+                ! tempEngine.currentState.gameBoard.getVertex(toVertex).hasCoin()){
 
+                // Basically checking if the toVertex is
+                int[] moveValid = {1};
+                tempEngine.placeChip(move.getStartingVertex().getVertextNumber());
+
+                // flip coins
+                ArrayList<Coin> coinsToFlip = move.getFlippedCoins();
+                ArrayList<Vertex> flippedVertices = new ArrayList<>();
+                if (!coinsToFlip.isEmpty()) {
+                    for (Coin c : coinsToFlip) {
+                        flippedVertices.add(tempEngine.currentState.gameBoard.getVertexByCoin(c));
+                    }
+                }
+                tempEngine.currentState.setVertexesOfFlippedCoins(flippedVertices);
+            }
+            tempEngine.currentState.chipRingVertex=-1;
+            tempEngine.currentState.chipsRemaining-=1;
+            tempEngine.currentState.chipPlaced=false;
+            tempEngine.currentState.selectedRingVertex=-1;
+            tempEngine.currentState.updateChipsRingCountForEach();
+
+        }
 
         return tempEngine.currentState;
     }
