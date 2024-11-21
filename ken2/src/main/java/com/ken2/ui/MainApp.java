@@ -55,10 +55,10 @@ public class MainApp extends Application {
     private GameEngine gameEngine;
 
     // ASSETS
-    private Image ringBImage = new Image("file:ken2\\assets\\black ring.png");
-    private static Image chipBImage = new Image("file:ken2\\assets\\black chip.png");
-    private Image ringWImage = new Image("file:ken2\\assets\\white ring.png");
-    private static Image chipWImage = new Image("file:ken2\\assets\\white chip.png");
+    private Image ringBImage = new Image("file:ken2/assets/black ring.png");
+    private static Image chipBImage = new Image("file:ken2/assets/black chip.png");
+    private Image ringWImage = new Image("file:ken2/assets/white ring.png");
+    private static Image chipWImage = new Image("file:ken2/assets/white chip.png");
 
     // COMPONENTS
     private static int fieldDimension = 470;
