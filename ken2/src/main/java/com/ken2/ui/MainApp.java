@@ -1086,14 +1086,8 @@ public class MainApp extends Application {
     private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
         int x = gameEngine.vertexCoordinates[vertex][0];
         int y = gameEngine.vertexCoordinates[vertex][1];
-        int dimension = resol ? pieceDimension : pieceDimension / 2;
 
-        if (!resol) {
-            x += pieceDimension / 4;
-            y += pieceDimension / 4;
-        }
-
-        gc.drawImage(img, x, y, dimension, dimension);
+        gc.drawImage(img, x, y, pieceDimension, pieceDimension);
     }
 
 
@@ -1102,9 +1096,10 @@ public class MainApp extends Application {
         if (availability){highlightedVertices.add(vertex);}
         Color highLighterColor = (availability) ? Color.GREEN : Color.RED;
         Circle availableCircle = new Circle();
-        availableCircle.setCenterX(gameEngine.getcoordinates(vertex)[0] + pieceDimension / 2);
-        availableCircle.setCenterY(gameEngine.getcoordinates(vertex)[1] + pieceDimension / 2);
-        availableCircle.setRadius(7);
+        int radius = 12;
+        availableCircle.setCenterX(gameEngine.getcoordinates(vertex)[0] + radius + 5);
+        availableCircle.setCenterY(gameEngine.getcoordinates(vertex)[1] + radius);
+        availableCircle.setRadius(radius);
         availableCircle.setFill(highLighterColor);
         fieldPane.getChildren().add(availableCircle);
     }
