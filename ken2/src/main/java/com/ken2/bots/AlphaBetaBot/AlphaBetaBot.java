@@ -149,39 +149,45 @@ public class AlphaBetaBot extends BotAbstract{
     private GameState moveState(GameState state, Move move){
         GameEngine tempEngine = new GameEngine();
         tempEngine.currentState=state.clone();
-        Game_Board board = new Game_Board();
-        int toVertex = board.getVertexNumberFromPosition(move.getXposition(),move.getXposition());
+        int toVertex = tempEngine.currentState.gameBoard.getVertexNumberFromPosition(move.getXposition(),move.getXposition());
+
+        move = tempEngine.gameSimulation.simulateMove(tempEngine.gameBoard,move.getStartingVertex(),new Vertex(move.getXposition(),move.getYposition()));
 
         if (tempEngine.currentState.ringsPlaced<10){
             //Place rings
             tempEngine.placeStartingRing(toVertex, state.currentPlayerColor());
         }
-        else {
+        else if (toVertex>0){
             //Place chips
+            System.out.println("A-B CHIPS PLACE TESTING PRINTY: "+toVertex+" ");
             if (!tempEngine.currentState.gameBoard.getVertex(toVertex).hasRing() &
-                ! tempEngine.currentState.gameBoard.getVertex(toVertex).hasCoin()){
+                ! tempEngine.currentState.gameBoard.getVertex(toVertex).hasCoin()) {
 
-                // Basically checking if the toVertex is
+                // Basically checking if the toVertex is empty AND is starting vertex is not empty
+
                 int[] moveValid = {1};
-                tempEngine.placeChip(move.getStartingVertex().getVertextNumber());
+                if (move != null) {
 
-                // flip coins
-                ArrayList<Coin> coinsToFlip = move.getFlippedCoins();
-                ArrayList<Vertex> flippedVertices = new ArrayList<>();
-                if (!coinsToFlip.isEmpty()) {
-                    for (Coin c : coinsToFlip) {
-                        flippedVertices.add(tempEngine.currentState.gameBoard.getVertexByCoin(c));
+                    tempEngine.placeChip(move.getStartingVertex().getVertextNumber());
+
+                    // flip coins
+                    ArrayList<Coin> coinsToFlip = move.getFlippedCoins();
+                    ArrayList<Vertex> flippedVertices = new ArrayList<>();
+                    if (!coinsToFlip.isEmpty()) {
+                        for (Coin c : coinsToFlip) {
+                            flippedVertices.add(tempEngine.currentState.gameBoard.getVertexByCoin(c));
+                        }
                     }
+                    tempEngine.currentState.setVertexesOfFlippedCoins(flippedVertices);
                 }
-                tempEngine.currentState.setVertexesOfFlippedCoins(flippedVertices);
+                tempEngine.currentState.chipRingVertex = -1;
+                tempEngine.currentState.chipsRemaining -= 1;
+                tempEngine.currentState.chipPlaced = false;
+                tempEngine.currentState.selectedRingVertex = -1;
+                tempEngine.currentState.updateChipsRingCountForEach();
             }
-            tempEngine.currentState.chipRingVertex=-1;
-            tempEngine.currentState.chipsRemaining-=1;
-            tempEngine.currentState.chipPlaced=false;
-            tempEngine.currentState.selectedRingVertex=-1;
-            tempEngine.currentState.updateChipsRingCountForEach();
-
         }
+        else System.out.println("LOLZZZ");
 
         return tempEngine.currentState;
     }

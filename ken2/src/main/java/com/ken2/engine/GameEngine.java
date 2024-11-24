@@ -151,6 +151,9 @@ public class GameEngine {
         HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<Vertex, ArrayList<Move>>();
         for(Vertex v: allRingPositions){
             allMoves.put(v, this.possibleMoves(v));
+            for(Move m: allMoves.get(v)){
+                m.setStartingVertex(v);
+            }
         }
         return allMoves;
     }

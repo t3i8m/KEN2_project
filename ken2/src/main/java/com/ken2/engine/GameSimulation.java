@@ -150,7 +150,7 @@ public class GameSimulation {
         int[] startPosition = board.getVertexPositionByNumber(startVertex.getVertextNumber());
 
         if (targetPosition == null || startPosition==null) {
-            System.out.println("Invalid vertex number: " + targetVertex.getVertextNumber() + startVertex.getVertextNumber());
+            System.out.println("Invalid vertex number: " + targetVertex.getVertextNumber() +" "+ startVertex.getVertextNumber());
             return null;
         }
 

@@ -742,7 +742,6 @@ public class MainApp extends Application {
             Vertex selectedVertex = gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex);
 
             Move currentMove = gameEngine.gameSimulation.simulateMove(gameEngine.currentState.gameBoard,
-
                     gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex),
                     gameEngine.currentState.gameBoard.getVertex(vertex));
 
