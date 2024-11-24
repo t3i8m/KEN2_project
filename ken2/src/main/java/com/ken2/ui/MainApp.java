@@ -807,13 +807,13 @@ public class MainApp extends Application {
                 System.out.println("MOVE WAS unsuccessfull!");
                 // GameAlerts.alertRingPlacement();
                 Move_Valid[0] = 0;
-                botTurn(gc);
+                // botTurn(gc);
                 return;
             }
     
             if (targetVertex.hasCoin()) {
                 System.out.println("MOVE WAS unsuccessfull!");
-                botTurn(gc);
+                // botTurn(gc);
                 // GameAlerts.alertPositionHasChip();
                 Move_Valid[0] = 0;
                 return;
@@ -1166,22 +1166,22 @@ public class MainApp extends Application {
                 gameEngine.currentState.selectedChipVertex = -1;
                 currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
             } else {
-                // move = activeBot.makeMove(gameEngine.getGameState());
-                // Vertex vertexFrom = move.getStartingVertex();
+                move = activeBot.makeMove(gameEngine.getGameState());
+                vertexFrom = move.getStartingVertex();
 
-                // int vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                // System.out.println("from "+vertexFrom.getVertextNumber());
-                // System.out.println("to "+vertexTo);
+                vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                System.out.println("from "+vertexFrom.getVertextNumber());
+                System.out.println("to "+vertexTo);
                 // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){
-                    while(true){
-                        move = activeBot.makeMove(gameEngine.getGameState());
-                        vertexFrom = move.getStartingVertex();
+                    // while(true){
+                    //     move = activeBot.makeMove(gameEngine.getGameState());
+                    //     vertexFrom = move.getStartingVertex();
 
-                        vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                        if(vertexTo!=-1 & vertexFrom.getVertextNumber()!=-1){
-                            break;
-                        }
-                    }
+                    //     vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                    //     if(vertexTo!=-1 & vertexFrom.getVertextNumber()!=-1){
+                    //         break;
+                    //     }
+                    // }
                     int[] moveValid = {1};
                     moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
                 }
