@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * The class that builds the board object for the game
  */
 public class Game_Board {
-    private Vertex[][] the_Board;   // initialize a blank 2d array of vertices for the board
+    public Vertex[][] the_Board;   // initialize a blank 2d array of vertices for the board
 
     private int[][] blanks = {{0,1,2,8,9,10},{0,1,9,10},{0,10},{0,10},{0,10}};  // blank spaces to shape the board
 
@@ -23,19 +23,24 @@ public class Game_Board {
 
     // constructor for cloning
     public Game_Board(Game_Board other) {
-        this.the_Board = new Vertex[other.the_Board.length][other.the_Board[0].length];
-        for (int i = 0; i < other.the_Board.length; i++) {
-            for (int j = 0; j < other.the_Board[i].length; j++) {
-                if (other.the_Board[i][j] != null) {
-                    this.the_Board[i][j] = new Vertex(other.the_Board[i][j]); 
+        if (other.the_Board != null) {
+            this.the_Board = new Vertex[other.the_Board.length][other.the_Board[0].length];
+            for (int i = 0; i < other.the_Board.length; i++) {
+                for (int j = 0; j < other.the_Board[i].length; j++) {
+                    if (other.the_Board[i][j] != null) {
+                        this.the_Board[i][j] = new Vertex(other.the_Board[i][j]); 
+                    }
                 }
             }
         }
-        this.blanks = new int[other.blanks.length][];
-        for (int i = 0; i < other.blanks.length; i++) {
-            this.blanks[i] = other.blanks[i].clone();
+        if (other.blanks != null) {
+            this.blanks = new int[other.blanks.length][];
+            for (int i = 0; i < other.blanks.length; i++) {
+                this.blanks[i] = other.blanks[i].clone();
+            }
         }
     }
+    
 
     public Vertex[][] getBoard(){
         return the_Board;
@@ -90,7 +95,7 @@ public class Game_Board {
             }
         }
         for (int i=0; i<blanks.length; i++){                // defines the shape of the board by eliminating the 'blanks' spaces
-            System.out.println(i+" "+(19-i));
+            // System.out.println(i+" "+(19-i));
             for(int j: blanks[i]){
                 the_Board[i][j]=null;
                 the_Board[18-i][j]=null;

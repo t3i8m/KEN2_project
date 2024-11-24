@@ -351,12 +351,18 @@ public class MainApp extends Application {
 
         if (currentPlayer.isBot()) {
             System.out.println("BOT");
+            System.out.println(currentPlayer.getName().toLowerCase());
             // TODO: remove for the adversial search
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
-            pause.setOnFinished(event -> {
+            if(currentPlayer.getName().toLowerCase().equals("rulebased bot")){
+                PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
+                pause.setOnFinished(event -> {
+                    botTurn(gc);
+                });
+                pause.play();
+            } else{
                 botTurn(gc);
-            });
-            pause.play();
+            }
+
             // botTurn(gc);
         } else {
             if (gameEngine.currentState.ringsPlaced < 10) {
@@ -798,13 +804,17 @@ public class MainApp extends Application {
             // }
     
             if (targetVertex.hasRing()) {
-                GameAlerts.alertRingPlacement();
+                System.out.println("MOVE WAS unsuccessfull!");
+                // GameAlerts.alertRingPlacement();
                 Move_Valid[0] = 0;
+                botTurn(gc);
                 return;
             }
     
             if (targetVertex.hasCoin()) {
-                GameAlerts.alertPositionHasChip();
+                System.out.println("MOVE WAS unsuccessfull!");
+                botTurn(gc);
+                // GameAlerts.alertPositionHasChip();
                 Move_Valid[0] = 0;
                 return;
             }
@@ -1140,6 +1150,8 @@ public class MainApp extends Application {
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
         Bot activeBot = currentPlayer.getBot();
+        Vertex vertexFrom;
+        int vertexTo;
         Move move = null;
         if (activeBot != null) {
 
@@ -1154,14 +1166,27 @@ public class MainApp extends Application {
                 gameEngine.currentState.selectedChipVertex = -1;
                 currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
             } else {
-                move = activeBot.makeMove(gameEngine.getGameState());
-                Vertex vertexFrom = move.getStartingVertex();
+                // move = activeBot.makeMove(gameEngine.getGameState());
+                // Vertex vertexFrom = move.getStartingVertex();
 
-                int vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                System.out.println("from "+vertexFrom.getVertextNumber());
-                System.out.println("to "+vertexTo);
-                int[] moveValid = {1};
-                moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
+                // int vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                // System.out.println("from "+vertexFrom.getVertextNumber());
+                // System.out.println("to "+vertexTo);
+                // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){
+                    while(true){
+                        move = activeBot.makeMove(gameEngine.getGameState());
+                        vertexFrom = move.getStartingVertex();
+
+                        vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                        if(vertexTo!=-1 & vertexFrom.getVertextNumber()!=-1){
+                            break;
+                        }
+                    }
+                    int[] moveValid = {1};
+                    moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
+                }
+
+                
                 // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
 
             }
@@ -1174,9 +1199,10 @@ public class MainApp extends Application {
 
                 // updateGameBoard(gameBoard, gc);
                 updateOnscreenText();
-            }}
+            }
+        }
 
-    }
+    
 
     private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
 

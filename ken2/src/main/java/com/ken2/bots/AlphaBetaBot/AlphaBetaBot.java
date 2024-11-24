@@ -11,22 +11,23 @@ import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
+import com.ken2.ui.GameAlerts;
 
 
 public class AlphaBetaBot extends BotAbstract{
+    private GameState StateRightNow;
+    // public int depth = 3;
 
     public AlphaBetaBot(String color){
         super(color);
     }
 
-    public Move makeMove(GameState state){
-        int depth = 3;
+    public Move makeMove(GameState state) {
+        this.StateRightNow = state.clone();
         double alpha = Double.NEGATIVE_INFINITY;
         double beta = Double.POSITIVE_INFINITY;
-        GameState stateClone = state.clone(); //clone pattern (prototype)
+        GameState stateClone = state.clone(); // clone pattern (prototype)
         GameEngine ge = new GameEngine();
-
-        // new
         Game_Board board = state.getGameBoard();
         Random random = new Random();
 
@@ -45,10 +46,11 @@ public class AlphaBetaBot extends BotAbstract{
             PlayObj ring = new Ring(super.getColor());
             board.updateBoard(vertexNumber, ring);
             state.ringsPlaced++;
+            this.StateRightNow = state;
             return new Move(targetPosition[0], targetPosition[1], null);
         }
-        // new
-        AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
+
+        AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 3, ge);
 
         if (result != null && result.getMove() != null) {
             System.out.println("Bro executed move: " + result.getMove());
@@ -59,31 +61,42 @@ public class AlphaBetaBot extends BotAbstract{
         }
     }
 
+    public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge) {
+        // System.out.println("AAAAAAAA state after move:");
+        // System.out.println(this.StateRightNow.getGameBoard().strMaker());
+        state = this.StateRightNow;
 
-    public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge){
-        if (depth==0){
-            return new AlphaBetaResult(evaluate(state,ge, state.currentPlayerColor()), null); //TODO: evaluation function takes state-> returns double (Nikhil)
+        // System.out.println("Entering alphaBeta with depth: " + depth + ", player: " + state.currentPlayerColor());
+        // System.out.println("depth: " + depth);
+
+        if (depth == 0) {
+            // System.out.println("Reached base case at depth 0");
+            return new AlphaBetaResult(evaluate(this.StateRightNow, ge, this.StateRightNow.currentPlayerColor()), null);
         }
 
         Move bestMove = null;
+        double value;
+        ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
+        HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions);
 
-        if(state.currentPlayerColor().equals(this.getColor())){
-            double value = Double.NEGATIVE_INFINITY;
+        if (vertexMove.isEmpty()) {
+            System.out.println("No moves available, evaluating...");
+            return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
+        }
 
-            ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());  // all of the this colour ring positions
-            HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions); // for each vertex list of all possible moves
+        if (state.currentPlayerColor().toLowerCase().equals(this.getColor().toLowerCase())) {
+            value = Double.NEGATIVE_INFINITY;
 
-            // iterate over the hashmap of vertex:array<Moves>
             for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 Vertex key = entry.getKey();
                 ArrayList<Move> possibleMovesFromThisVertex = entry.getValue();
 
-                // iterate over all the possible moves for this vertex
                 for (Move m : possibleMovesFromThisVertex) {
-                    // here we need to simulate a move and get a new state
-
-                    GameState newState = moveState(state,m);
-                    //TODO: make a result function takes (state, move)-> new_state (Lera davaj)
+                    GameState newState = moveState(state, m);
+                    if (newState.equals(state)) {
+                        continue;
+                    }
+                    newState.switchPlayer();
 
                     AlphaBetaResult result = alphaBeta(newState, alpha, beta, depth - 1, ge);
 
@@ -91,106 +104,143 @@ public class AlphaBetaBot extends BotAbstract{
                         value = result.getValue();
                         bestMove = m;
                     }
-                    alpha = Math.max(alpha, value); // maximizer 
-                    if (alpha >= beta) break; // alpha prune
-
+                    alpha = Math.max(alpha, value);
+                    if (alpha >= beta) break;
                 }
-               
             }
             return new AlphaBetaResult(value, bestMove);
 
-        } else{
-            // TODO: same for the black
+        } else {
+            value = Double.POSITIVE_INFINITY;
+
+            for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
+                Vertex key = entry.getKey();
+                ArrayList<Move> possibleMovesFromThisVertex = entry.getValue();
+                if (possibleMovesFromThisVertex.isEmpty()) {
+                    continue;
+                }
+                for (Move m : possibleMovesFromThisVertex) {
+                    GameState newState = moveState(state, m);
+                    if (newState.equals(state)) {
+                        continue;
+                    }
+                    newState.switchPlayer();
+
+                    AlphaBetaResult result = alphaBeta(newState, alpha, beta, depth - 1, ge);
+
+                    if (result.getValue() < value) {
+                        value = result.getValue();
+                        bestMove = m;
+                    }
+                    beta = Math.min(beta, value);
+                    if (alpha >= beta) break;
+                }
+            }
+            return new AlphaBetaResult(value, bestMove);
         }
-        return null;
     }
 
-    /**
-     * Gives a given state a value for pruning later
-     * @param state current game state
-     * @param ge game engine
-     * @param color current player color
-     * @return value of the function
-     */
-    private double evaluate(GameState state, GameEngine ge, String color){
+    private double evaluate(GameState state, GameEngine ge, String color) {
         double valuation = 0;
         String opponentColor = color.equals("white") ? "black" : "white";
 
-        /** Purpose of the variables below
-         * number of coins of our colour
-         * number of coins in a row of our colour
-
-         * number of coins of opposite colour
-         * number of coins in a row of opposite colour
-
-         * Same with the rings
-
-         * if we will get a win if we move
-         * Then bonus points will be awarded LESSGOOOOO
-         */
         double inOurfavour = 0.50;
-        double notOurfavour= -0.25;
+        double notOurfavour = -0.25;
         double ourWin = 1;
         double theirWin = -1;
 
-        // Calculating the chip calculation
-        valuation += state.getChipsCountForColor(color)*inOurfavour + state.getChipsCountForColor(opponentColor)*notOurfavour;
+        valuation += state.getChipsCountForColor(color) * inOurfavour
+                + state.getChipsCountForColor(opponentColor) * notOurfavour;
 
-        // Calculating the ring calculation
-        valuation += state.getRingCountForColor(color)*inOurfavour + state.getRingCountForColor(opponentColor)*notOurfavour;
+        valuation += state.getRingCountForColor(color) * inOurfavour
+                + state.getRingCountForColor(opponentColor) * notOurfavour;
 
-        // Calculating the win calculation
-        valuation += ge.winningColor(ge.currentState.getVertexesOfFlippedCoins()).equals(color)? ourWin : theirWin;
+        valuation += ge.winningColor(state.getVertexesOfFlippedCoins()).equals(color) ? ourWin : theirWin;
 
         return valuation;
     }
 
+    private GameState moveState(GameState state, Move move) {
+        GameState newState = this.StateRightNow.clone();
 
-    private GameState moveState(GameState state, Move move){
         GameEngine tempEngine = new GameEngine();
-        tempEngine.currentState=state.clone();
-        int toVertex = tempEngine.currentState.gameBoard.getVertexNumberFromPosition(move.getXposition(),move.getXposition());
+        tempEngine.currentState = newState;
+        tempEngine.gameBoard = newState.gameBoard;
 
-        move = tempEngine.gameSimulation.simulateMove(tempEngine.gameBoard,move.getStartingVertex(),new Vertex(move.getXposition(),move.getYposition()));
+        // System.out.println("Current board: " + newState.gameBoard.strMaker());
+        // System.out.println(move.getXposition());
+        // System.out.println(move.getYposition());
+        // System.out.println(move.getStartingVertex().getVertextNumber());
 
-        if (tempEngine.currentState.ringsPlaced<10){
-            //Place rings
-            tempEngine.placeStartingRing(toVertex, state.currentPlayerColor());
+        int toVertex = tempEngine.gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+        if (toVertex == -1) {
+            // System.out.println("Invalid target vertex.");
+            return tempEngine.currentState;
         }
-        else if (toVertex>0){
-            //Place chips
-            System.out.println("A-B CHIPS PLACE TESTING PRINTY: "+toVertex+" ");
-            if (!tempEngine.currentState.gameBoard.getVertex(toVertex).hasRing() &
-                ! tempEngine.currentState.gameBoard.getVertex(toVertex).hasCoin()) {
 
-                // Basically checking if the toVertex is empty AND is starting vertex is not empty
+        Vertex sourceVertex = move.getStartingVertex();
+        Vertex targetVertex = tempEngine.currentState.gameBoard.getVertex(toVertex);
+        // System.out.println(toVertex);
+        // System.out.println(targetVertex.getVertextNumber());
+        if (targetVertex == null || targetVertex.hasRing() || targetVertex.hasCoin()) {
+            // System.out.println("Invalid move: target vertex is not empty.");
+            return tempEngine.currentState;
+        }
 
-                int[] moveValid = {1};
-                if (move != null) {
+        if (sourceVertex.getVertextNumber() == targetVertex.getVertextNumber()) {
+            // System.out.println("SAME");
+            return tempEngine.currentState;
+        }
 
-                    tempEngine.placeChip(move.getStartingVertex().getVertextNumber());
+        if (!tempEngine.placeChipAB(sourceVertex.getVertextNumber())) {
+            return tempEngine.currentState;
+        }
+        // tempEngine.placeChipAB(sourceVertex.getVertextNumber());
+        Ring ringToMove = (Ring) sourceVertex.getRing();
+        // System.out.println(ringToMove);
+        if (ringToMove != null) {
+            sourceVertex.setRing(null);
 
-                    // flip coins
-                    ArrayList<Coin> coinsToFlip = move.getFlippedCoins();
-                    ArrayList<Vertex> flippedVertices = new ArrayList<>();
-                    if (!coinsToFlip.isEmpty()) {
-                        for (Coin c : coinsToFlip) {
-                            flippedVertices.add(tempEngine.currentState.gameBoard.getVertexByCoin(c));
-                        }
-                    }
-                    tempEngine.currentState.setVertexesOfFlippedCoins(flippedVertices);
+            tempEngine.gameBoard.the_Board[sourceVertex.getXposition()][sourceVertex.getYposition()].setRing(null);
+
+            ArrayList<Coin> flippedCoins = move.getFlippedCoins();
+            ArrayList<Vertex> vertexesOfFlippedCoins = new ArrayList<>();
+            if (!flippedCoins.isEmpty()) {
+                tempEngine.gameSimulation.flipCoins(flippedCoins, tempEngine.currentState.gameBoard);
+
+                for (Coin c : flippedCoins) {
+                    Vertex currVertex = tempEngine.currentState.gameBoard.getVertexByCoin(c);
+                    vertexesOfFlippedCoins.add(currVertex);
                 }
-                tempEngine.currentState.chipRingVertex = -1;
-                tempEngine.currentState.chipsRemaining -= 1;
-                tempEngine.currentState.chipPlaced = false;
-                tempEngine.currentState.selectedRingVertex = -1;
-                tempEngine.currentState.updateChipsRingCountForEach();
             }
-        }
-        else System.out.println("LOLZZZ");
 
-        return tempEngine.currentState;
+            targetVertex.setRing(ringToMove);
+            tempEngine.currentState.chipRingVertex = -1;
+            tempEngine.currentState.chipsRemaining -= 1;
+            tempEngine.currentState.chipPlaced = false;
+            tempEngine.currentState.selectedRingVertex = -1;
+            tempEngine.currentState.updateChipsRingCountForEach();
+            vertexesOfFlippedCoins.add(sourceVertex);
+            tempEngine.currentState.setVertexesOfFlippedCoins(vertexesOfFlippedCoins);
+            newState = tempEngine.currentState;
+            newState.gameBoard = tempEngine.currentState.gameBoard;
+            newState.gameBoard.updateBoard(toVertex, new Ring(state.currentPlayerColor()));
+            // System.out.println("New state after move: " + newState.gameBoard.strMaker());
+            this.StateRightNow = tempEngine.currentState;
+            return tempEngine.currentState;
+
+        } else {
+            // System.out.println("New state after move DID NOT MAKE CHANGES: " + newState.gameBoard.strMaker());
+            this.StateRightNow = tempEngine.currentState;
+            return tempEngine.currentState;
+        }
     }
 
+    public void setState(GameState state) {
+        this.StateRightNow = state;
+    }
 
+    public GameState getState() {
+        return this.StateRightNow;
+    }
 }

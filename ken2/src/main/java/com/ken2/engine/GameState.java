@@ -41,6 +41,7 @@ public class GameState implements Cloneable{
     public boolean isRingSelectionMode;
     private ArrayList<Vertex >vertexesOfFlippedCoins;
     private List<Integer> allPossibleCoinsToRemove;
+    private String currentPlayer;
 
 
     /**
@@ -61,7 +62,16 @@ public class GameState implements Cloneable{
         gameBoard=new Game_Board();
         vertexesOfFlippedCoins=new ArrayList<>();
         allPossibleCoinsToRemove = new ArrayList<>();
+        this.currentPlayer = "white";
     }
+
+    public void switchPlayer() {
+
+        this.currentPlayer = this.currentPlayer.toLowerCase().equals("white") ? "black" : "white";
+        this.isWhiteTurn = this.currentPlayer.equalsIgnoreCase("white");
+        // isWhiteTurn = !isWhiteTurn;
+    }
+    
 
     public void setAllPossibleCoinsToRemove(List<Integer> llPossibleCoinsToRemove){
         this.allPossibleCoinsToRemove = llPossibleCoinsToRemove;
@@ -250,14 +260,24 @@ public class GameState implements Cloneable{
     public GameState clone() {
         try {
             GameState copy = (GameState) super.clone();
+    
             copy.gameBoard = new Game_Board(this.gameBoard); 
+    
             copy.chipNumber = this.chipNumber != null ? new ArrayList<>(this.chipNumber) : new ArrayList<>();
             copy.ringVertexNumbers = this.ringVertexNumbers != null ? new ArrayList<>(this.ringVertexNumbers) : new ArrayList<>();
+            copy.vertexesOfFlippedCoins = this.vertexesOfFlippedCoins != null 
+                ? new ArrayList<>(this.vertexesOfFlippedCoins) : new ArrayList<>();
+            copy.allPossibleCoinsToRemove = this.allPossibleCoinsToRemove != null 
+                ? new ArrayList<>(this.allPossibleCoinsToRemove) : new ArrayList<>();
+    
+            copy.currentPlayer = this.currentPlayer;
+    
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Cloning not supported", e);
         }
     }
+    
     
 
     public boolean isBotTurn(ArrayList<Bot> bots) {
