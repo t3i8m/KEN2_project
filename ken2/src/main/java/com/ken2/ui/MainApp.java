@@ -804,6 +804,8 @@ public class MainApp extends Application {
             // }
     
             if (targetVertex.hasRing()) {
+                System.out.println("FROM: "+sourceVertex.getVertextNumber());
+                System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
                 System.out.println("MOVE WAS unsuccessfull!");
                 // GameAlerts.alertRingPlacement();
                 Move_Valid[0] = 0;
@@ -812,6 +814,8 @@ public class MainApp extends Application {
             }
     
             if (targetVertex.hasCoin()) {
+                System.out.println("FROM: "+sourceVertex.getVertextNumber());
+                System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
                 System.out.println("MOVE WAS unsuccessfull!");
                 // botTurn(gc);
                 // GameAlerts.alertPositionHasChip();
