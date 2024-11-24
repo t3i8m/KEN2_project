@@ -46,7 +46,7 @@ public class AlphaBetaBot extends BotAbstract {
             return new Move(targetPosition[0], targetPosition[1], null);
         }
 
-        AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 3, ge);
+        AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 5, ge);
 
         if (result != null && result.getMove() != null) {
             System.out.println("Executed move: " + result.getMove());
