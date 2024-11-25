@@ -206,7 +206,7 @@ public class Game_Board {
         if (vertex != null) {
             vertex.setPlayObject(playObject);  // Directly set the play object on the vertex
         } else {
-            System.out.println("Vertex not found for vertex number: " + vertexNumber);
+            // System.out.println("Vertex not found for vertex number: " + vertexNumber);
         }
     }
 
@@ -257,7 +257,7 @@ public class Game_Board {
                 }
             }
         }
-        System.out.println("Coin not found on the board.");
+        // System.out.println("Coin not found on the board.");
         return null;
     }
 

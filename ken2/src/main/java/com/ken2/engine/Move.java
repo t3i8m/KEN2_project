@@ -63,7 +63,13 @@ public class Move {
     }
 
     public Vertex getStartingVertex(){
-        return this.startingVertex;
+        try{
+            return this.startingVertex;
+        }catch(Exception ex){
+            GameEngine ge = new GameEngine();
+            return ge.gameBoard.getVertex(ge.gameBoard.getVertexNumberFromPosition(xPosition, yPosition));
+        }
+        
     }
 
     /**

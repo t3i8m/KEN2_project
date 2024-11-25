@@ -33,7 +33,7 @@ public class AlphaBetaBotTEST extends BotAbstract{
         ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
 
         if (allFreePositions.isEmpty()) {
-            System.out.println("No free positions available on the board.");
+            // System.out.println("No free positions available on the board.");
             return null;
         }
 
@@ -51,10 +51,10 @@ public class AlphaBetaBotTEST extends BotAbstract{
         AlphaBetaResult result= alphaBeta(stateClone, alpha, beta, depth, ge);
 
         if (result != null && result.getMove() != null) {
-            System.out.println("Bro executed move: " + result.getMove());
+            // System.out.println("Bro executed move: " + result.getMove());
             return result.getMove();
         } else {
-            System.out.println("wtf, no valid move found.");
+            // System.out.println("wtf, no valid move found.");
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class AlphaBetaBotTEST extends BotAbstract{
         }
         else if (toVertex>0){
             //Place chips
-            System.out.println("A-B CHIPS PLACE TESTING PRINTY: "+toVertex+" ");
+            // System.out.println("A-B CHIPS PLACE TESTING PRINTY: "+toVertex+" ");
             if (!tempEngine.currentState.gameBoard.getVertex(toVertex).hasRing() &
                 ! tempEngine.currentState.gameBoard.getVertex(toVertex).hasCoin()) {
 
@@ -187,7 +187,7 @@ public class AlphaBetaBotTEST extends BotAbstract{
                 tempEngine.currentState.updateChipsRingCountForEach();
             }
         }
-        else System.out.println("LOLZZZ");
+        // else System.out.println("LOLZZZ");
 
         return tempEngine.currentState;
     }

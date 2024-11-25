@@ -44,7 +44,7 @@ public class GameEngine {
         if (newState != null) {
             this.currentState = newState;
         } else {
-            System.out.println("New state is null, cannot update current state.");
+            // System.out.println("New state is null, cannot update current state.");
         }
     }
 
@@ -104,7 +104,7 @@ public class GameEngine {
 
             //condition for same ring colors
             if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
-                System.out.println("HERE");
+                // System.out.println("HERE");
                 // showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
                 return false;
             }
@@ -112,14 +112,14 @@ public class GameEngine {
             Coin newChip = new Coin(chipColor.toLowerCase());
             boardVertex.setPlayObject(newChip);
             currentState.chipRingVertex = vertex;
-            System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
+            // System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
             currentState.chipNumber.add(vertex);
             // currentState.chipsRemaining--;
             currentState.chipPlaced = true;//after chip placement we can move the ring
             currentState.resetTurn();
             return true;
         } else {
-            System.out.println("HEasdasdsasdRE");
+            // System.out.println("HEasdasdsasdRE");
 
             // showAlert("Warning", "Cannot place a chip here");
         }
@@ -270,7 +270,7 @@ public class GameEngine {
 
         // setRingSelectionMode(win);
 
-        System.out.println("WIN STATE: "+win);
+        // System.out.println("WIN STATE: "+win);
         return win;
 
     }
@@ -430,7 +430,7 @@ public class GameEngine {
         Vertex currentVertex = currentState.gameBoard.getVertex(startVertex);
 
         if (currentVertex == null) {
-            System.out.println("Starting vertex is null for: " + startVertex);
+            // System.out.println("Starting vertex is null for: " + startVertex);
             return chips;
         }
 
@@ -443,22 +443,22 @@ public class GameEngine {
 
             int next = currentState.gameBoard.getVertexNumberFromPosition(x, y);
             if (next == -1) {
-                System.out.println("Reached invalid position.");
+                // System.out.println("Reached invalid position.");
                 break;
             }
 
             Vertex v = currentState.gameBoard.getVertex(next);
             if (v == null) {
-                System.out.println("Vertex " + next + " is null.");
+                // System.out.println("Vertex " + next + " is null.");
                 break;
             }
 
             if (!v.hasCoin() || !v.getCoin().getColour().toLowerCase().equalsIgnoreCase(chipColor.toLowerCase())) {
-                System.out.println("Vertex " + next + " does not have the correct chip.");
+                // System.out.println("Vertex " + next + " does not have the correct chip.");
                 break;
             } else{
                 
-                System.out.println("Adding vertex " + next + " to chips.");
+                // System.out.println("Adding vertex " + next + " to chips.");
                 chips.add(next);
             }
 
@@ -491,7 +491,7 @@ public class GameEngine {
     public List<List<Integer>> findAllWinningChipsMOD(String chipColor) {
         List<List<Integer>> winningChips = new ArrayList<>();
         List<Vertex> allVertices = currentState.getVertexesOfFlippedCoins();
-        System.out.println(allVertices.get(0).getVertextNumber());
+        // System.out.println(allVertices.get(0).getVertextNumber());
 
         for(Vertex v: allVertices){
 
@@ -500,7 +500,7 @@ public class GameEngine {
                 List<Integer> chipsInOneDirection = getChipsInDirection(v.getVertextNumber(), v.getCoin().getColour(), direction.getDeltaX(), direction.getDeltaY());
                 List<Integer> chipsInSecondDirection = getChipsInDirection(v.getVertextNumber(), v.getCoin().getColour(), -direction.getDeltaX(), -direction.getDeltaY());
                 int result = chipsInOneDirection.size()+chipsInSecondDirection.size()+1;
-                System.out.println(result);
+                // System.out.println(result);
                 if(result>=5){
                     
                     List<Integer> currArray = new ArrayList<>();
@@ -554,7 +554,7 @@ public class GameEngine {
 
     public List<Integer> findWinningChipsFromVertex(int startVertex, String chipColor) {
         List<Integer> winningChips = new ArrayList<>();
-        System.out.println("Finding winning chips from vertex: " + startVertex);
+        // System.out.println("Finding winning chips from vertex: " + startVertex);
 
         for (Direction direction : Direction.values()) {
             // System.out.println("Checking direction: " + direction.name());
@@ -574,7 +574,7 @@ public class GameEngine {
     public void findAndSetAllWinningChips(String chipColor) {
         // List<Integer> allWinningChips = findAllWinningChips(chipColor);
         List<List<Integer>> a = findAllWinningChipsMOD(chipColor); // a has all of the positions that we can remove
-        System.out.println(a);
+        // System.out.println(a);
         setWinningChips(a.get(0));
         // System.out.println("Global Winning Chips Set: " + getWinningChips());
     }
@@ -655,7 +655,7 @@ public class GameEngine {
 
     public int findClosestVertex(double xCoordinate, double yCoordinate){
 
-        System.out.println();
+        // System.out.println();
 
         for(int i = 0 ; i < 85; i++){
             double vX = vertexCoordinates[i][0] + 18;
@@ -665,7 +665,7 @@ public class GameEngine {
             double yDist = Math.abs(yCoordinate - vY);
 
             if(xDist<=10 && yDist <=10){
-                System.out.println("Vertex Clicked: " + i);
+                // System.out.println("Vertex Clicked: " + i);
                 return i;
             }
         }

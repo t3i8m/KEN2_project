@@ -24,7 +24,7 @@ public class Coin implements PlayObj{
         } else {
             this.colour = "black";
         }
-        System.out.println("Coin color flipped to: " + this.colour);
+        // System.out.println("Coin color flipped to: " + this.colour);
     }
 
     @Override

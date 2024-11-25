@@ -196,7 +196,7 @@ public class MainApp extends Application {
             if (!isGameStarted) {
                 selectPlayer("White", (String)whitePlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
-                System.out.println("game has already started");
+                // System.out.println("game has already started");
                 whitePlayerComboBox.getSelectionModel().select(oldValue);
             }
         });
@@ -205,7 +205,7 @@ public class MainApp extends Application {
             if (!isGameStarted) {
                 selectPlayer("Black", (String)blackPlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
-                System.out.println("game has already started");
+                // System.out.println("game has already started");
                 blackPlayerComboBox.getSelectionModel().select(oldValue);
             }
         });
@@ -347,23 +347,23 @@ public class MainApp extends Application {
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
         GraphicsContext gc = playObjectCanvas.getGraphicsContext2D();
         removeCircleIndicators();
-        System.out.println("Current Player Index: " + currentPlayerIndex);
+        // System.out.println("Current Player Index: " + currentPlayerIndex);
 
         if (currentPlayer.isBot()) {
-            System.out.println("BOT");
-            System.out.println(currentPlayer.getName().toLowerCase());
+            // System.out.println("BOT");
+            // System.out.println(currentPlayer.getName().toLowerCase());
             // TODO: remove for the adversial search
-            if(currentPlayer.getName().toLowerCase().equals("rulebased bot")){
-                PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
-                pause.setOnFinished(event -> {
-                    botTurn(gc);
-                });
-                pause.play();
-            } else{
-                botTurn(gc);
-            }
+            // if(currentPlayer.getName().toLowerCase().equals("rulebased bot")){
+            //     PauseTransition pause = new PauseTransition(Duration.seconds(0.001));
+            //     pause.setOnFinished(event -> {
+            //         botTurn(gc);
+            //     });
+            //     pause.play();
+            // } else{
+            //     botTurn(gc);
+            // }
 
-            // botTurn(gc);
+            botTurn(gc);
         } else {
             if (gameEngine.currentState.ringsPlaced < 10) {
                 if (gameEngine.currentState.ringsPlaced == 10) {
@@ -372,7 +372,7 @@ public class MainApp extends Application {
                     GUIavailablePlacesForStartRings(gc);
                 }
 
-                System.out.println(currentPlayer.getColor() + " player's turn. Please make a move.");
+                // System.out.println(currentPlayer.getColor() + " player's turn. Please make a move.");
             }
         }
     }
@@ -455,7 +455,7 @@ public class MainApp extends Application {
                     }
                 }
             }
-            System.out.println(nadoEtiChips);
+            // System.out.println(nadoEtiChips);
             highlightRemovableChips(nadoEtiChips);
             CheckPossibleChipsToRemove = false;
         }
@@ -497,7 +497,7 @@ public class MainApp extends Application {
 
 
             // handleChipAndRingPlacement(vertex, gc);
-            System.out.println(nadoEtiChips);
+            // System.out.println(nadoEtiChips);
 
             if (ChipsRemoved == 0) {
                 gameEngine.setWinningRing(false);
@@ -513,9 +513,9 @@ public class MainApp extends Application {
 
     public void handleChipRemove(int vertex, GraphicsContext gc) {
         if (!gameEngine.getWinningChips().contains(vertex)) {
-            System.out.println("This chip is not part of the winning row.");
-            System.out.println("Winning Chips: " + winningChips);
-            System.out.println("Clicked Vertex: " + vertex);
+            // System.out.println("This chip is not part of the winning row.");
+            // System.out.println("Winning Chips: " + winningChips);
+            // System.out.println("Clicked Vertex: " + vertex);
             return;
         }
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
@@ -533,7 +533,7 @@ public class MainApp extends Application {
             chipsToRemove--;
             removeCircleIndicators();
             gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
-            System.out.println("Chip removed. Remaining chips to remove: " + chipsToRemove);
+            // System.out.println("Chip removed. Remaining chips to remove: " + chipsToRemove);
             List<Integer> adjacentVertices = gameEngine.getAdjacentVertices(vertex);
             List<Integer> validRemovableChips = new ArrayList<>();
             for (int adjVertex : adjacentVertices) {
@@ -557,8 +557,8 @@ public class MainApp extends Application {
                 gameEngine.getWinningChips().clear();
 /////Ne rabotaet
                 List<Integer> allchips =gameEngine.getWinningChips();
-                System.out.println("asdsad"+allchips);
-                System.out.println(nadoEtiChips);
+                // System.out.println("asdsad"+allchips);
+                // System.out.println(nadoEtiChips);
                 if(allchips.size()>=5){
                     String choice = showOptionDialog("Select Chips to Remove",
                             "There are more than 5 chips in the winning row. Choose which set to keep:",
@@ -572,10 +572,10 @@ public class MainApp extends Application {
                     }
 
                 }
-                System.out.println("curr color "+currColor);
+                // System.out.println("curr color "+currColor);
 
                 if(currColor.equals(currentPlayer.getColor().toLowerCase())){
-                    System.out.println("curr color "+currColor);
+                    // System.out.println("curr color "+currColor);
                     resetTurn();
 
                 }
@@ -583,7 +583,7 @@ public class MainApp extends Application {
             }
 
         } else {
-            System.out.println("No chip found at vertex " + vertex + " or color does not match.");
+            // System.out.println("No chip found at vertex " + vertex + " or color does not match.");
         }
     }
     public String showOptionDialog(String title, String header, String option1, String option2) {
@@ -607,9 +607,9 @@ public class MainApp extends Application {
 
 
     public void handleWinningRing(int vertex, GraphicsContext gc) {
-        System.out.println("snshsbsbsbsb");
+        // System.out.println("snshsbsbsbsb");
         
-        System.out.println("Clicked nnnasd "+vertex);
+        // System.out.println("Clicked nnnasd "+vertex);
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null && v.hasRing() && v.getRing().getColour().toLowerCase().equals(gameEngine.getWinningColor().toLowerCase())) {
             moveRingToThePanel(gameEngine.getWinningColor());
@@ -617,13 +617,13 @@ public class MainApp extends Application {
             gc.clearRect(gameEngine.vertexCoordinates[vertex][0], gameEngine.vertexCoordinates[vertex][1], pieceDimension, pieceDimension);
             ////CHIPS IN A ROW
             gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
-            System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
+            // System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
             gameEngine.currentState.setAllPossibleCoinsToRemove(gameEngine.getWinningChips());
             if (gameEngine.getWinningChips().size() > 5){
 
 
             }
-            System.out.println("Clicked Vertex: " + vertex);
+            // System.out.println("Clicked Vertex: " + vertex);
 
 
             gameEngine.setRingSelectionMode(false); // Exit ring selection mode
@@ -644,7 +644,7 @@ public class MainApp extends Application {
         // removeCircleIndicators(); 
     
         for (Integer ringVertex : removableRings) {
-            System.out.println("qqqqqqqq");
+            // System.out.println("qqqqqqqq");
             drawHighlighter(ringVertex, true); 
         }
     }
@@ -713,7 +713,7 @@ public class MainApp extends Application {
             drawImage(ringImage, vertex, gc, true);
             // turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
             resetTurn();
-            System.out.println("now turn is" + ringColor);
+            // System.out.println("now turn is" + ringColor);
             // playerTurn();
             // gameEngine.currentState.ringsPlaced+=1;
             // drawHighlighter(vertex,false);
@@ -804,21 +804,21 @@ public class MainApp extends Application {
             // }
     
             if (targetVertex.hasRing()) {
-                System.out.println("FROM: "+sourceVertex.getVertextNumber());
-                System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
-                System.out.println("MOVE WAS unsuccessfull!");
-                // GameAlerts.alertRingPlacement();
+                // System.out.println("FROM: "+sourceVertex.getVertextNumber());
+                // System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
+                // System.out.println("MOVE WAS unsuccessfull!");
+                GameAlerts.alertRingPlacement();
                 Move_Valid[0] = 0;
                 // botTurn(gc);
                 return;
             }
     
             if (targetVertex.hasCoin()) {
-                System.out.println("FROM: "+sourceVertex.getVertextNumber());
-                System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
-                System.out.println("MOVE WAS unsuccessfull!");
+                // System.out.println("FROM: "+sourceVertex.getVertextNumber());
+                // System.out.println("WANTS TO GO: "+targetVertex.getVertextNumber());
+                // System.out.println("MOVE WAS unsuccessfull!");
                 // botTurn(gc);
-                // GameAlerts.alertPositionHasChip();
+                GameAlerts.alertPositionHasChip();
                 Move_Valid[0] = 0;
                 return;
             }
@@ -866,22 +866,22 @@ public class MainApp extends Application {
                 vertexesOfFlippedCoins.add(sourceVertex);
 
                 gameEngine.currentState.setVertexesOfFlippedCoins(vertexesOfFlippedCoins);
-                System.out.println("CHIPS REAMINING: "+gameEngine.currentState.chipsRemaining);
+                // System.out.println("CHIPS REAMINING: "+gameEngine.currentState.chipsRemaining);
                 if(gameEngine.currentState.chipsRemaining<=0){
                     showDrawAlert();
                 }
     
                 String color = gameEngine.currentState.isWhiteTurn ? "white" : "black";
                 // gameEngine.checkWinning(fromVertex, color);
-                System.out.println(flippedCoins);
-                System.out.println(gameEngine.currentState.gameBoard.strMaker());
-                System.out.println("---------------------- STARTING FROM HERE ----------------------");
+                // System.out.println(flippedCoins);
+                // System.out.println(gameEngine.currentState.gameBoard.strMaker());
+                // System.out.println("---------------------- STARTING FROM HERE ----------------------");
                 if (gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins())){
                     String currPlayerColor = gameEngine.getWinningColor(); 
                     Player currentPlayer;
                     
                     List<Integer> removableRings = getRemovableRings();
-                    System.out.println(removableRings);
+                    // System.out.println(removableRings);
                     highlightRemovableRings(removableRings);
     
                     if (whitePlayer.getColor().toLowerCase().equalsIgnoreCase(currPlayerColor.toLowerCase())) {
@@ -890,10 +890,10 @@ public class MainApp extends Application {
                         currentPlayer = blackPlayer;
                     }
     
-                    System.out.println("YOU CAN REMOVE ONE RING");
+                    // System.out.println("YOU CAN REMOVE ONE RING");
                     // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
                     if(currentPlayer.isBot()){
-                        System.out.println("BOT CAN REMOVE ONE RING");
+                        // System.out.println("BOT CAN REMOVE ONE RING");
                         
                         Bot activeBot = currentPlayer.getBot();
                             
@@ -901,7 +901,7 @@ public class MainApp extends Application {
 
                         Vertex vertexToRemoveBOT = activeBot.removeRing(gameEngine.currentState);
                         handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gc);
-                        System.out.println(gameEngine.currentState.gameBoard.strMaker());
+                        // System.out.println(gameEngine.currentState.gameBoard.strMaker());
                         ArrayList<Integer> allRemoveChips = activeBot.removeChips(gameEngine.currentState);
                         highlightRemovableChips(allRemoveChips);
                         for (Integer vert : allRemoveChips){
@@ -919,7 +919,7 @@ public class MainApp extends Application {
                     } else{
                         GameAlerts.alertRowCompletion(color);
     
-                        System.out.println("YOU CAN REMOVE ONE RING");
+                        // System.out.println("YOU CAN REMOVE ONE RING");
                     }
                 }
                 // gameEngine.currentState.setVertexesOfFlippedCoins(null);
@@ -1174,8 +1174,8 @@ public class MainApp extends Application {
                 vertexFrom = move.getStartingVertex();
 
                 vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                System.out.println("from "+vertexFrom.getVertextNumber());
-                System.out.println("to "+vertexTo);
+                // System.out.println("from "+vertexFrom.getVertextNumber());
+                // System.out.println("to "+vertexTo);
                 // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){
                     // while(true){
                     //     move = activeBot.makeMove(gameEngine.getGameState());
@@ -1194,9 +1194,9 @@ public class MainApp extends Application {
                 // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
 
             }
-            System.out.println("NUMBER OF "+gs.ringsPlaced);
-            System.out.println("NUMBER BLACK "+gs.ringsBlack);
-            System.out.println("NUMBER WHITE "+gs.ringsWhite);
+            // System.out.println("NUMBER OF "+gs.ringsPlaced);
+            // System.out.println("NUMBER BLACK "+gs.ringsBlack);
+            // System.out.println("NUMBER WHITE "+gs.ringsWhite);
 
             if (move != null) {
                 resetTurn();
@@ -1270,7 +1270,7 @@ public class MainApp extends Application {
             chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
             updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
-            System.out.println(gameEngine.currentState.isWhiteTurn);
+            // System.out.println(gameEngine.currentState.isWhiteTurn);
             turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
             drawDashedLine(playObjectCanvas.getGraphicsContext2D());
 
@@ -1318,7 +1318,51 @@ public class MainApp extends Application {
         ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
     }
 
+    private void displayGameStatistics() {
+        StringBuilder stats = new StringBuilder();
+    
+        stats.append("\n=======================================================\n");
+        stats.append("GAME STATISTICS\n");
+        stats.append("=======================================================\n");
+        stats.append(String.format("Total Games Played: %d\n", gamesPlayed));
+    
+        stats.append(String.format("\nWhite Player %s:\n", (String)whitePlayer.getName()));
+        stats.append(String.format("    Wins: %d\n", whiteWins));
+        stats.append(String.format("    Losses: %d\n", gamesPlayed - whiteWins - draws));
+        stats.append(String.format("    Draws: %d\n", draws));
+        stats.append(String.format("    Winning Rate: %.2f%%\n",
+                (gamesPlayed > 0 ? (double) whiteWins / gamesPlayed * 100 : 0)));
+    
+        stats.append(String.format("\nBlack Player %s:\n", (String)blackPlayer.getName()));
+        stats.append(String.format("    Wins: %d\n", blackWins));
+        stats.append(String.format("    Losses: %d\n", gamesPlayed - blackWins - draws));
+        stats.append(String.format("    Draws: %d\n", draws));
+        stats.append(String.format("    Winning Rate: %.2f%%\n",
+                (gamesPlayed > 0 ? (double) blackWins / gamesPlayed * 100 : 0)));
+    
+        stats.append("\nLast Game:\n");
+        stats.append(String.format("    Winner: %s\n", (whiteScore == 3 ? "White" : blackScore == 3 ? "Black" : "Draw")));
+    
+        stats.append("\nScore Summary:\n");
+        stats.append(String.format("    White Rings Captured: %d\n", whiteScore));
+        stats.append(String.format("    Black Rings Captured: %d\n", blackScore));
+    
+        stats.append("=======================================================\n");
+        stats.append("\n");
+        stats.append("=======================================================\n");
+    
+        System.out.println(stats.toString());
+    }
+    
+
     private void restartGame() {
+        // System.out.println("\n----------------------------");
+        // System.out.println("Games Played: "+gamesPlayed);
+        // System.out.println("Number of Black Wins"+whiteScore);
+        // System.out.println("Number of White wins: "+blackScore);
+        // System.out.println();
+        // System.out.println("----------------------------\n");
+        displayGameStatistics();
         isGameStarted = false; 
         startGameButton.setDisable(false); 
         whitePlayerComboBox.setDisable(false);

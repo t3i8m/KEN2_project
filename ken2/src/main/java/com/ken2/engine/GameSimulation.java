@@ -156,7 +156,7 @@ public class GameSimulation {
 
         Direction moveDirection = getDirectionBetween(startPosition[0], startPosition[1], targetPosition[0], targetPosition[1]);
         if (moveDirection == null) {
-            System.out.println("The move is not in a straight line direction.");
+            // System.out.println("The move is not in a straight line direction.");
             return null;
         } 
         Diagonal diagonal = new Diagonal(moveDirection, startPosition, new Game_Board());
@@ -174,7 +174,7 @@ public class GameSimulation {
         for (Coin coin : coinFlips) {
             coin.flipCoin();
             Vertex vertex = gameBoard.getVertexByCoin(coin);
-                System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+                // System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
 
         }
     }

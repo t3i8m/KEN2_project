@@ -27,12 +27,12 @@ public abstract class BotAbstract implements Bot{
         Random random = new Random();
         ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(this.getColor());
         if (coordinatesOfTheRings == null || coordinatesOfTheRings.isEmpty()) {
-            System.out.println("No rings available for the color: " + this.getColor());
+            // System.out.println("No rings available for the color: " + this.getColor());
             return null;
         }
-        System.out.println("-------------------------------");
+        // System.out.println("-------------------------------");
         Vertex potentialRing = coordinatesOfTheRings.get(random.nextInt(coordinatesOfTheRings.size()));
-        System.out.println("BOT WANTS TO REMOVE RING "+potentialRing.getVertextNumber());
+        // System.out.println("BOT WANTS TO REMOVE RING "+potentialRing.getVertextNumber());
 
         return potentialRing;
     }
@@ -41,7 +41,7 @@ public abstract class BotAbstract implements Bot{
     public ArrayList<Integer> removeChips(GameState state) {
         ArrayList<Integer> chipsToRemove = new ArrayList<>();
         List <Integer> allChips = state.getAllPossibleCoinsToRemove();
-        System.out.println(allChips);
+        // System.out.println(allChips);
 
         if(allChips.size()<5 ||allChips==null){
             return null;
@@ -52,7 +52,7 @@ public abstract class BotAbstract implements Bot{
             chipsToRemove.add(vert);
             if(chipsToRemove.size()==4){
                 chipsToRemove.add(allChips.getLast());
-                System.out.println("BOT SELECTED CHIPS TO REMOVE: " + chipsToRemove);
+                // System.out.println("BOT SELECTED CHIPS TO REMOVE: " + chipsToRemove);
 
                 return chipsToRemove;
             }

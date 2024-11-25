@@ -22,7 +22,7 @@ public class RuleBasedBot extends BotAbstract {
         ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
 
         if (allFreePositions.isEmpty()) {
-            System.out.println("No free positions available on the board.");
+            // System.out.println("No free positions available on the board.");
             return null;
         }
         
@@ -41,7 +41,7 @@ public class RuleBasedBot extends BotAbstract {
             while(work){
                 ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(super.getColor());
                 if (coordinatesOfTheRings == null || coordinatesOfTheRings.isEmpty()) {
-                    System.out.println("No rings available for the color: " + super.getColor());
+                    // System.out.println("No rings available for the color: " + super.getColor());
                     return null;
                 }
 
@@ -50,13 +50,13 @@ public class RuleBasedBot extends BotAbstract {
                 Move simulatedMove = selectRandomMove(gs, startingRing, board);
                 int vertexTo = board.getVertexNumberFromPosition(simulatedMove.getXposition(), simulatedMove.getYposition());
 
-                System.out.println("STARTING RING "+startingRing.getVertextNumber());
-                System.out.println("SIMULATED MOVE X "+simulatedMove.getXposition());
-                System.out.println("SIMULATED MOVE Y "+simulatedMove.getYposition());
+                // System.out.println("STARTING RING "+startingRing.getVertextNumber());
+                // System.out.println("SIMULATED MOVE X "+simulatedMove.getXposition());
+                // System.out.println("SIMULATED MOVE Y "+simulatedMove.getYposition());
 
                 // Move simulatedMove = gs.simulateMove(board, startingRing, ); 
                 if (simulatedMove == null || vertexTo<0) {
-                    System.out.println("Simulation of the move has returned null. Check the GameSimulation class.");
+                    // System.out.println("Simulation of the move has returned null. Check the GameSimulation class.");
                 } else {
                     work=false;
                     simulatedMove.setStartingVertex(startingRing);
@@ -83,7 +83,7 @@ public class RuleBasedBot extends BotAbstract {
         }
 
         if (allMoves.isEmpty()) {
-            System.out.println("No possible moves available.");
+            // System.out.println("No possible moves available.");
             return null; 
         }
 

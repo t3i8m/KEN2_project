@@ -31,7 +31,7 @@ public class AlphaBetaBot extends BotAbstract {
         ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
 
         if (allFreePositions.isEmpty()) {
-            System.out.println("No free positions available on the board.");
+            // System.out.println("No free positions available on the board.");
             return null;
         }
 
@@ -49,10 +49,10 @@ public class AlphaBetaBot extends BotAbstract {
         AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 5, ge);
 
         if (result != null && result.getMove() != null) {
-            System.out.println("Executed move: " + result.getMove());
+            // System.out.println("Executed move: " + result.getMove());
             return result.getMove();
         } else {
-            System.out.println("No valid move found.");
+            // System.out.println("No valid move found.");
             return null;
         }
     }
