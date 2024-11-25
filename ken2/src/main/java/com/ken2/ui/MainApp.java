@@ -29,9 +29,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -55,9 +57,9 @@ public class MainApp extends Application {
     private GameEngine gameEngine;
 
     // ASSETS
-    private Image ringBImage = new Image("file:ken2/assets/black ring.png");
+    private Image ringBImage = new Image("file:ken2/assets/blackPiece.jpg");
     private static Image chipBImage = new Image("file:ken2/assets/black chip.png");
-    private Image ringWImage = new Image("file:ken2/assets/white ring.png");
+    private Image ringWImage = new Image("file:ken2/assets/WhitePiece.jpeg");
     private static Image chipWImage = new Image("file:ken2/assets/white chip.png");
 
     // COMPONENTS
@@ -150,22 +152,35 @@ public class MainApp extends Application {
         primaryStage.setHeight(600);
         primaryStage.setResizable(false);
 
+        // Load the background image
+        Image backgroundImage = new Image("file:ken2/assets/Background.png");
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        // Configure the background image to fill the scene
+        backgroundView.setFitWidth(800);
+        backgroundView.setFitHeight(600);
+        backgroundView.setPreserveRatio(false);
+
+        // Create the main GridPane
         root = new GridPane();
         root.setPadding(new Insets(5, 5, 5, 5));
         root.setVgap(10);
         root.setHgap(10);
 
-        Scene scene = new Scene(root, 800, 600, Color.GRAY);
-        Canvas gameBoardCanvas = new Canvas();
+        // Wrap the GridPane in a StackPane
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(backgroundView, root);
 
+        Scene scene = new Scene(stackPane, 800, 600);
+
+        // Initialize the game board canvas
+        Canvas gameBoardCanvas = new Canvas();
         gameBoardCanvas.setWidth(fieldDimension);
         gameBoardCanvas.setHeight(fieldDimension);
 
         this.playObjectCanvas = new Canvas();
-
         playObjectCanvas.setWidth(fieldDimension);
         playObjectCanvas.setHeight(fieldDimension);
-
 
         GraphicsContext gcB = gameBoardCanvas.getGraphicsContext2D();
         GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
@@ -177,40 +192,36 @@ public class MainApp extends Application {
             }
         });
 
-        // info elements
+        // Setup ComboBoxes for player selection
         whitePlayerComboBox = new ComboBox<>();
         whitePlayerComboBox.getItems().add("Human Player");
         whitePlayerComboBox.getItems().add("RuleBased Bot");
         whitePlayerComboBox.getItems().add("AlphaBeta Bot");
-
         whitePlayerComboBox.getSelectionModel().selectFirst();
 
         blackPlayerComboBox = new ComboBox<>();
         blackPlayerComboBox.getItems().add("Human Player");
         blackPlayerComboBox.getItems().add("RuleBased Bot");
         blackPlayerComboBox.getItems().add("AlphaBeta Bot");
-
         blackPlayerComboBox.getSelectionModel().selectFirst();
 
         whitePlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
             if (!isGameStarted) {
-                selectPlayer("White", (String)whitePlayerComboBox.getSelectionModel().getSelectedItem());
+                selectPlayer("White", (String) whitePlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
-                // System.out.println("game has already started");
                 whitePlayerComboBox.getSelectionModel().select(oldValue);
             }
         });
 
         blackPlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
             if (!isGameStarted) {
-                selectPlayer("Black", (String)blackPlayerComboBox.getSelectionModel().getSelectedItem());
+                selectPlayer("Black", (String) blackPlayerComboBox.getSelectionModel().getSelectedItem());
             } else {
-                // System.out.println("game has already started");
                 blackPlayerComboBox.getSelectionModel().select(oldValue);
             }
         });
 
-
+        // Add UI elements to the root
         strengthIndicator = new Canvas(fieldDimension, 20);
         root.add(strengthIndicator, 1, 0, 5, 1);
         updateStrengthIndicator();
@@ -218,14 +229,12 @@ public class MainApp extends Application {
         startGameButton = new Button("Start Game");
         startGameButton.setOnAction(e -> startGame(gcP));
 
-        Text whitePlayerLabel = new Text();
-        whitePlayerLabel.setText("White");
+        Text whitePlayerLabel = new Text("White");
         gamesPlayedText = new Text("Games Played: 0");
         gamesPlayedText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         root.add(gamesPlayedText, 5, 6);
 
-        Text blackPlayerLabel = new Text();
-        blackPlayerLabel.setText("Black");
+        Text blackPlayerLabel = new Text("Black");
         chipsRemainText = new Text();
 
         chipsBlackText = new Text();
@@ -236,10 +245,10 @@ public class MainApp extends Application {
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> restartGame());
+
         drawText = new Text("Draws: 0");
         drawText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         root.add(drawText, 3, 6);
-
 
         whiteWinsText = new Text("White Wins: 0");
         whiteWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
@@ -247,31 +256,11 @@ public class MainApp extends Application {
         blackWinsText = new Text("Black Wins: 0");
         blackWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        //undoButton.setOnAction(e -> undoToLastState());
-
         turnIndicator.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         fieldPane = new Pane();
         fieldPane.setPrefSize(fieldDimension, fieldDimension);
         root.add(fieldPane, 1, 1, 5, 5);
-
-        // score elements
-        Circle scoreRingeW1 = makeScoreCircle();
-        Circle scoreRingeW2 = makeScoreCircle();
-        Circle scoreRingeW3 = makeScoreCircle();
-        Circle scoreRingeB1 = makeScoreCircle();
-        Circle scoreRingeB2 = makeScoreCircle();
-        Circle scoreRingeB3 = makeScoreCircle();
-
-        // Initialize white score rings
-        whiteScoreCircle[0] = makeScoreCircle();
-        whiteScoreCircle[1] = makeScoreCircle();
-        whiteScoreCircle[2] = makeScoreCircle();
-
-        // Initialize black score rings
-        blackScoreCircle[0] = makeScoreCircle();
-        blackScoreCircle[1] = makeScoreCircle();
-        blackScoreCircle[2] = makeScoreCircle();
 
         root.add(whitePlayerLabel, 0, 0);
         root.add(blackPlayerLabel, 7, 0);
@@ -283,43 +272,17 @@ public class MainApp extends Application {
         root.add(blackWinsText, 7, 6);
         root.add(chipsWhiteText, 0, 5);
         root.add(chipsBlackText, 7, 5);
-        //////////
-        root.add(chipsRemainText,3,1);
-        //////////////////////////
+        root.add(chipsRemainText, 3, 1);
         root.add(ringWhiteRemainingText, 1, 1);
         root.add(ringBlackRemainingText, 5, 1);
-        root.add(scoreRingeW1, 0, 2);
-        root.add(scoreRingeW2, 0, 3);
-        root.add(scoreRingeW3, 0, 4);
-        root.add(scoreRingeB1, 7, 2);
-        root.add(scoreRingeB2, 7, 3);
-        root.add(scoreRingeB3, 7, 4);
-        // root.add(chipsRemainText, 4, 0);
-        // root.add(ringWhiteRemainingText, 1, 0);
-        //   root.add(ringBlackRemainingText, 5, 0);
-//        root.add(scoreRingeW1, 0, 2);
-//        root.add(scoreRingeW2, 0, 3);
-//        root.add(scoreRingeW3, 0, 4);
-//        root.add(scoreRingeB1, 7, 2);
-//        root.add(scoreRingeB2, 7, 3);
-//        root.add(scoreRingeB3, 7, 4);
-        root.add(whiteScoreCircle[0], 0, 2);
-        root.add(whiteScoreCircle[1], 0, 3);
-        root.add(whiteScoreCircle[2], 0, 4);
-
-        root.add(blackScoreCircle[0], 7, 2);
-        root.add(blackScoreCircle[1], 7, 3);
-        root.add(blackScoreCircle[2], 7, 4);
-
         root.add(resetButton, 0, 7);
         root.add(turnIndicator, 3, 7);
-
         root.add(startGameButton, 7, 7);
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
         highlightedVertices = new ArrayList<>();
-
     }
 
     private void startGame(GraphicsContext gcP) {
