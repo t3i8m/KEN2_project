@@ -73,6 +73,8 @@ public class MainApp extends Application {
     private Canvas strengthIndicator;
 
 
+
+
     // TEXTS
     private Text ringBlackRemainingText;
     private Text ringWhiteRemainingText;
@@ -138,15 +140,14 @@ public class MainApp extends Application {
     private int chipsToRemove = 5;
 
 
-
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         gameEngine = new GameEngine();
 
-        primaryStage.setTitle("Compare Players with Yinsh");
-        primaryStage.setWidth(800);
+        primaryStage.setTitle("Yinsh Game");
+        primaryStage.setWidth(1010);
         primaryStage.setHeight(600);
         primaryStage.setResizable(false);
 
@@ -155,7 +156,11 @@ public class MainApp extends Application {
         root.setVgap(10);
         root.setHgap(10);
 
-        Scene scene = new Scene(root, 800, 600, Color.GRAY);
+        root.setStyle("-fx-background-image: url('file:ken2/assets/board4.jpg'); " +
+                "-fx-background-size: cover; " +
+                "-fx-background-position: center;");
+
+        Scene scene = new Scene(root, 1010, 600, Color.GRAY);
         Canvas gameBoardCanvas = new Canvas();
 
         gameBoardCanvas.setWidth(fieldDimension);
@@ -184,6 +189,16 @@ public class MainApp extends Application {
         whitePlayerComboBox.getItems().add("AlphaBeta Bot");
 
         whitePlayerComboBox.getSelectionModel().selectFirst();
+        whitePlayerComboBox.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #D7CCC8, #8D6E63);" + // Dark brown gradient
+                        "-fx-text-fill: white;" + // White text
+                        "-fx-font-weight: bold;" + // Bold text
+                        "-fx-font-size: 12px;" + // Text size
+                        "-fx-border-radius: 5;" + // Rounded corners
+                        "-fx-background-radius: 5;" + // Rounded background
+                        "-fx-padding: 5 10;" + // Padding
+                        "-fx-cursor: hand;" // Pointer cursor
+        );
 
         blackPlayerComboBox = new ComboBox<>();
         blackPlayerComboBox.getItems().add("Human Player");
@@ -191,6 +206,16 @@ public class MainApp extends Application {
         blackPlayerComboBox.getItems().add("AlphaBeta Bot");
 
         blackPlayerComboBox.getSelectionModel().selectFirst();
+        blackPlayerComboBox.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #D7CCC8, #8D6E63);" + // Dark brown gradient
+                        "-fx-text-fill: white;" + // White text
+                        "-fx-font-weight: bold;" + // Bold text
+                        "-fx-font-size: 12px;" + // Text size
+                        "-fx-border-radius: 5;" + // Rounded corners
+                        "-fx-background-radius: 5;" + // Rounded background
+                        "-fx-padding: 5 10;" + // Padding
+                        "-fx-cursor: hand;" // Pointer cursor
+        );
 
         whitePlayerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
             if (!isGameStarted) {
@@ -211,21 +236,47 @@ public class MainApp extends Application {
         });
 
 
+        Button helpButton = new Button("?");
+        helpButton.setStyle(
+                "-fx-background-color: #0073e6; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-padding: 5;"
+        );
+        helpButton.setOnAction(e -> showGameRules());
+        root.add(helpButton, 8, 0);
+
+
+
         strengthIndicator = new Canvas(fieldDimension, 20);
         root.add(strengthIndicator, 1, 0, 5, 1);
         updateStrengthIndicator();
 
         startGameButton = new Button("Start Game");
+        startGameButton.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #D7CCC8, #8D6E63);" + // Dark brown gradient
+                        "-fx-text-fill: white;" + // White text
+                        "-fx-font-weight: bold;" + // Bold text
+                        "-fx-font-size: 14px;" + // Text size
+                        "-fx-border-radius: 5;" + // Rounded corners
+                        "-fx-background-radius: 5;" + // Rounded background
+                        "-fx-padding: 5 10;" + // Padding
+                        "-fx-cursor: hand;" // Pointer cursor
+        );
         startGameButton.setOnAction(e -> startGame(gcP));
 
         Text whitePlayerLabel = new Text();
-        whitePlayerLabel.setText("White");
+        whitePlayerLabel.setText("WHITE SIDE");
+        whitePlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+
         gamesPlayedText = new Text("Games Played: 0");
         gamesPlayedText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        root.add(gamesPlayedText, 5, 6);
+        root.add(gamesPlayedText, 4, 6);
 
         Text blackPlayerLabel = new Text();
-        blackPlayerLabel.setText("Black");
+        blackPlayerLabel.setText("BLACK SIDE ");
+        blackPlayerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20)); // Adjust size (20)
         chipsRemainText = new Text();
 
         chipsBlackText = new Text();
@@ -236,16 +287,27 @@ public class MainApp extends Application {
 
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> restartGame());
+        resetButton.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #D7CCC8, #8D6E63);" + // Dark brown gradient
+                        "-fx-text-fill: white;" + // White text
+                        "-fx-font-weight: bold;" + // Bold text
+                        "-fx-font-size: 14px;" + // Text size
+                        "-fx-border-radius: 5;" + // Rounded corners
+                        "-fx-background-radius: 5;" + // Rounded background
+                        "-fx-padding: 5 10;" + // Padding
+                        "-fx-cursor: hand;" // Pointer cursor
+        );
+
         drawText = new Text("Draws: 0");
         drawText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         root.add(drawText, 3, 6);
 
 
         whiteWinsText = new Text("White Wins: 0");
-        whiteWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        whiteWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
         blackWinsText = new Text("Black Wins: 0");
-        blackWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        blackWinsText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
         //undoButton.setOnAction(e -> undoToLastState());
 
@@ -284,10 +346,27 @@ public class MainApp extends Application {
         root.add(chipsWhiteText, 0, 5);
         root.add(chipsBlackText, 7, 5);
         //////////
-        root.add(chipsRemainText,3,1);
+        chipsRemainText = new Text("Chips Remaining number: 51 ");
+        chipsRemainText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        root.add(chipsRemainText,1,6);
+
+
+
+
         //////////////////////////
-        root.add(ringWhiteRemainingText, 1, 1);
-        root.add(ringBlackRemainingText, 5, 1);
+        //root.add(ringWhiteRemainingText, 1, 1);
+        ringWhiteRemainingText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        ringWhiteRemainingText.setText("Black Rings Placed: 0");
+        GridPane.setMargin(ringWhiteRemainingText, new Insets(0, 0, -60, 20));
+        root.add(ringWhiteRemainingText, 1, 0);
+
+
+        ringBlackRemainingText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        ringBlackRemainingText.setText("Black Rings Placed: 0");
+        GridPane.setMargin(ringBlackRemainingText, new Insets(0, 0, -60, -90));
+        root.add(ringBlackRemainingText, 4, 0);
+
+
         root.add(scoreRingeW1, 0, 2);
         root.add(scoreRingeW2, 0, 3);
         root.add(scoreRingeW3, 0, 4);
@@ -321,6 +400,51 @@ public class MainApp extends Application {
         highlightedVertices = new ArrayList<>();
 
     }
+    private void showGameRules() {
+        Alert rulesAlert = new Alert(Alert.AlertType.INFORMATION);
+        rulesAlert.setTitle("Game Rules");
+        rulesAlert.setHeaderText("Yinsh Gameplay Rules");
+
+        rulesAlert.setContentText(
+                "Gameplay Overview\n" +
+                        "The game is played in turns. Players take turns performing the following steps:\n\n" +
+
+                        "Step 1: Place a Marker\n" +
+                        "1. The player chooses one of their rings.\n" +
+                        "2. A marker (chip) of their color is placed inside the chosen ring and flipped to the player's color.\n\n" +
+
+                        "Step 2: Move the Ring\n" +
+                        "- The player then moves the chosen ring in a straight line to another empty intersection.\n" +
+                        "- The ring can move over any number of empty intersections but cannot jump over other rings.\n\n" +
+
+                        "Flipping Markers\n" +
+                        "- If a ring moves over one or more markers, all the markers it jumps over get flipped to the opposite color.\n" +
+                        "- The flipping happens only if the markers are in a straight line and continuous without any gaps.\n\n" +
+
+                        "Forming a Row of Five\n" +
+                        "- If a player forms a row of five consecutive markers of their color (horizontally, vertically, or diagonally):\n" +
+                        "  1. The player removes those five markers from the board and put them back in the pool.\n" +
+                        "  2. The player then removes one of their rings from the board.\n" +
+                        "- The removed markers are not returned to the game.\n" +
+                        "- Removing a ring is the main objective; once a player removes three rings, they win the game.\n\n" +
+
+                        "Game End\n" +
+                        "- The game ends when a player successfully removes three of their own rings from the board.\n" +
+                        "- That player is declared the winner.\n\n" +
+
+                        "Special Rules and Details\n" +
+                        "- Move Restrictions: You cannot move a ring if it would land on another ring. The movement must end on an empty intersection.\n" +
+                        "- Double Rows: If creating a row of five simultaneously creates more rows, you must first complete the actions for the primary row before handling the additional rows.\n" +
+                        "- Tie Handling: If both players remove the third ring during the same turn, the game results in a tie."
+        );
+
+        rulesAlert.setResizable(true);
+        rulesAlert.getDialogPane().setMinWidth(600); // Adjust width to fit the content
+        rulesAlert.getDialogPane().setMinHeight(400); // Adjust height to fit the content
+
+        rulesAlert.showAndWait();
+    }
+
 
     private void startGame(GraphicsContext gcP) {
         this.isGameStarted = true;
@@ -528,7 +652,7 @@ public class MainApp extends Application {
                     gameEngine.vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
 
             gameEngine.currentState.chipsRemaining+=1;
-            chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+           // chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
             chipsToRemove--;
             removeCircleIndicators();
@@ -555,24 +679,6 @@ public class MainApp extends Application {
                 winningChips.clear();
 
                 gameEngine.getWinningChips().clear();
-/////Ne rabotaet
-                List<Integer> allchips =gameEngine.getWinningChips();
-                // System.out.println("asdsad"+allchips);
-                // System.out.println(nadoEtiChips);
-                if(allchips.size()>=5){
-                    String choice = showOptionDialog("Select Chips to Remove",
-                            "There are more than 5 chips in the winning row. Choose which set to keep:",
-                            "First 5: " + allchips.subList(0, 5),
-                            "Last 5: " + allchips.subList(allchips.size() - 5, allchips.size()));
-
-                    if(choice.startsWith("First")){
-                        gameEngine.setWinningChips(allchips.subList(0,5));
-                    }else{
-                        gameEngine.setWinningChips(allchips.subList(allchips.size()-5,allchips.size()));
-                    }
-
-                }
-                // System.out.println("curr color "+currColor);
 
                 if(currColor.equals(currentPlayer.getColor().toLowerCase())){
                     // System.out.println("curr color "+currColor);
@@ -586,24 +692,6 @@ public class MainApp extends Application {
             // System.out.println("No chip found at vertex " + vertex + " or color does not match.");
         }
     }
-    public String showOptionDialog(String title, String header, String option1, String option2) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-
-        ButtonType buttonTypeOne = new ButtonType(option1);
-        ButtonType buttonTypeTwo = new ButtonType(option2);
-
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == buttonTypeOne) {
-            return option1;
-        } else {
-            return option2;
-        }
-    }
-
 
 
     public void handleWinningRing(int vertex, GraphicsContext gc) {
@@ -668,7 +756,7 @@ public class MainApp extends Application {
     private void moveRingToThePanel(String playerColor) {
         if (playerColor.equalsIgnoreCase("white")) {
             if (whiteScore < 3) {
-                whiteScoreCircle[whiteScore].setStroke(activeScoreRingColor); // Make the ring appear active
+                whiteScoreCircle[whiteScore].setStroke(Color.WHITE);
                 whiteScore++;
 
                 // Check if White has won
@@ -683,7 +771,7 @@ public class MainApp extends Application {
             }
         } else {
             if (blackScore < 3) {
-                blackScoreCircle[blackScore].setStroke(activeScoreRingColor); // Make the ring appear active
+                blackScoreCircle[blackScore].setStroke(Color.BLACK); // Make the ring appear active
                 blackScore++;
 
                 // Check if Black has won
@@ -959,7 +1047,7 @@ public class MainApp extends Application {
     private void drawBoard(GraphicsContext gc) {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(2);
+        gc.setLineWidth(3);
 
         int[][] vertexCoordinates = gameEngine.getVertexCoordinates();
 
@@ -1115,8 +1203,8 @@ public class MainApp extends Application {
         if (availability){highlightedVertices.add(vertex);}
         Color highLighterColor = (availability) ? Color.GREEN : Color.RED;
         Circle availableCircle = new Circle();
-        availableCircle.setCenterX(gameEngine.getcoordinates(vertex)[0] + pieceDimension / 2);
-        availableCircle.setCenterY(gameEngine.getcoordinates(vertex)[1] + pieceDimension / 2);
+        availableCircle.setCenterX(gameEngine.getcoordinates(vertex)[0]  + pieceDimension / 2);
+        availableCircle.setCenterY(gameEngine.getcoordinates(vertex)[1]-13 + pieceDimension / 2);
         availableCircle.setRadius(7);
         availableCircle.setFill(highLighterColor);
         fieldPane.getChildren().add(availableCircle);
@@ -1268,6 +1356,8 @@ public class MainApp extends Application {
             // lastMoveEndVertex = null;
             updateStrengthIndicator();
             chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+            //chipsRemainText.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+
 
             updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
             // System.out.println(gameEngine.currentState.isWhiteTurn);
@@ -1312,10 +1402,18 @@ public class MainApp extends Application {
 
     private void updateOnscreenText(){
         chipsWhiteText.setText("Chips White on board: " + gameEngine.currentState.chipsWhite);
-        chipsBlackText.setText("Chips Black on board: " + gameEngine.currentState.chipsBlack);
+        chipsWhiteText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 
-        ringWhiteRemainingText.setText("White Rings Remaining: " + gameEngine.currentState.ringsWhite);
-        ringBlackRemainingText.setText("Black Rings Remaining: " + gameEngine.currentState.ringsBlack);
+        chipsBlackText.setText("Chips Black on board: " + gameEngine.currentState.chipsBlack);
+        chipsBlackText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+
+
+        ringWhiteRemainingText.setText("White Rings Placed: " + gameEngine.currentState.ringsWhite);
+        ringWhiteRemainingText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+
+        ringBlackRemainingText.setText("Black Rings Placed: " + gameEngine.currentState.ringsBlack);
+        ringBlackRemainingText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+
     }
 
     private void displayGameStatistics() {
