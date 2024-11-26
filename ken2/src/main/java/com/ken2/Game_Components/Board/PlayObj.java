@@ -1,13 +1,7 @@
 package com.ken2.Game_Components.Board;
 
-// THIS IS TEMPORARY !! DELETE ONCE THE PLAYER OBJECT INTERFACE IS CREATED !!
-
-public class PlayObj {
-
-    private String string1;
-
-    public PlayObj(String string1){
-        this.string1=string1;
-    }
-
+public interface PlayObj {
+    public String getColour();
+    public void setColour(String color);
+    public PlayObj clone();
 }

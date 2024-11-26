@@ -1,20 +1,44 @@
 package com.ken2.Game_Components.Board;
 
+import java.util.ArrayList;
+
 /** Vertex is a simple placeholder for the playing object (ring or coin)
  *
  */
 public class Vertex {
 
-    private Object playObject; // the current player object, either ring or tile
-    private String label;
+    private PlayObj[] playObjects; // the current player object, either ring or tile
     private int xIndex;
     private int yIndex;
+    private int vertexNumber;
 
     public Vertex(int xIndex, int yIndex){
-        playObject = null;
-        label=null;
+        playObjects = new PlayObj[2];
         this.xIndex = xIndex;
         this.yIndex = yIndex;
+        this.vertexNumber = -1;
+    }
+
+    public Vertex(Vertex other) {
+        this.xIndex = other.xIndex;
+        this.yIndex = other.yIndex;
+        this.vertexNumber = other.vertexNumber;
+
+        this.playObjects = new PlayObj[2];
+        if (other.playObjects[0] != null) {
+            this.playObjects[0] = other.playObjects[0].clone(); 
+        }
+        if (other.playObjects[1] != null) {
+            this.playObjects[1] = other.playObjects[1].clone();
+        }
+    }
+
+    public void setVertexNumber(int vertexNumber){
+        this.vertexNumber = vertexNumber;
+    }
+
+    public int getVertextNumber(){
+        return this.vertexNumber;
     }
 
     public int getXposition(){
@@ -25,19 +49,60 @@ public class Vertex {
         return yIndex;
     }
 
+    public void setRing(PlayObj newRing) {
+        this.playObjects[0] = newRing;
+
+    }
+
+
+    public void setCoin(PlayObj newCoin) {
+
+            this.playObjects[1] = newCoin;
+
+    }
 
     /** Returns the play object currently at the vertex
+     * 0 - Ring, 1 - Coin
      * @return the play object
      */
-    public Object getPlayObject() {
-        return playObject;
+    public PlayObj[] getPlayObject() {
+        return playObjects;
+    }
+
+
+    public PlayObj getRing(){
+        return (Ring)playObjects[0];
+    }
+    public PlayObj getCoin() {
+        return playObjects[1];
+    }
+    public boolean hasRing() {
+        boolean result = playObjects[0] instanceof Ring;
+        return result;
+    }
+
+    public boolean hasCoin() {
+        // System.out.println(playObjects[1]);
+        boolean result = playObjects[1] instanceof Coin;
+        // System.out.println(result);
+        return result;
     }
 
     /** Sets the play object currently held in it
      * @param playObject the player object we want to place in a vertex
      */
-    public void setPlayObject(Object playObject) {
-        this.playObject = playObject;
-//        label=playObject.type;
+    public void setPlayObject(PlayObj playObject) {
+        if (playObject instanceof Ring) {
+            playObjects[0] = playObject;
+        } else if (playObject instanceof Coin) {
+            playObjects[1] = playObject;
+        } else if (playObject == null) {
+            playObjects[0] = null;
+            playObjects[1] = null;
+
+        }
     }
+
+
+
 }
