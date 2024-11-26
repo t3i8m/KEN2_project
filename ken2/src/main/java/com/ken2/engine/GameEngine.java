@@ -30,7 +30,6 @@ public class GameEngine {
     private List<Integer> winningChips = new ArrayList<>();
 
 
-
     public GameEngine(){
         currentState=new GameState();
         gameSimulation=new GameSimulation();
@@ -176,23 +175,48 @@ public class GameEngine {
      * @param boardVertex the starting vertex
      */
     public ArrayList<Move> possibleMoves(Vertex boardVertex) {
-        ArrayList<Move> possibleMoves = new ArrayList<>();
+        ArrayList<Move> possibleMovesTR = new ArrayList<>();
 
         for (Direction direction : Direction.values()) {
             Diagonal diagonal = new Diagonal(direction, new int[]{boardVertex.getXposition(), boardVertex.getYposition()}, currentState.gameBoard);
-            possibleMoves.addAll(diagonal.moveAlongDiagonal(currentState.gameBoard.getBoard()));
+            possibleMovesTR.addAll(diagonal.moveAlongDiagonal(currentState.gameBoard.getBoard()));
         }
-        return possibleMoves;
+        return possibleMovesTR;
     }
 
     // gets ring positions and returns all of the moves from these positions
     public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions){
+
         HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<Vertex, ArrayList<Move>>();
+
         for(Vertex v: allRingPositions){
-            allMoves.put(v, this.possibleMoves(v));
-            for(Move m: allMoves.get(v)){
-                m.setStartingVertex(v);
+
+//            allMoves.put(v, this.possibleMoves(v));
+            ArrayList<Move> bufferMoves = possibleMoves(v);
+            ArrayList<Move> simulatedMoves = new ArrayList<>();
+            GameSimulation gameSimulation = new GameSimulation();
+
+            for (Move m: bufferMoves){
+                Game_Board tempGboard1 = currentState.gameBoard;
+
+                Vertex tempStartV = tempGboard1.getVertex(m.getXposition());
+                Vertex tempEndV = tempGboard1.getVertex(m.getYposition());
+
+                Move newMove = gameSimulation.simulateMove(tempGboard1,tempStartV,tempEndV);
+//                newMove.setStartingVertex(v);
+                if (newMove != null) {
+                    simulatedMoves.add(newMove);
+                }
             }
+
+            if (simulatedMoves.size() > 0) {
+                allMoves.put(v, simulatedMoves);
+            }
+
+//            for(Move m: allMoves.get(v)){
+//                m.setStartingVertex(v);
+//            }
+
         }
         return allMoves;
     }

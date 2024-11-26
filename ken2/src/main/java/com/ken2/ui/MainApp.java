@@ -492,7 +492,7 @@ public class MainApp extends Application {
             // } else{
             //     botTurn(gc);
             // }
-            PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
+            PauseTransition pause = new PauseTransition(Duration.seconds(0.4));
             pause.setOnFinished(event -> botTurn(gc));
             pause.play();
             // botTurn(gc);
@@ -1289,12 +1289,14 @@ public class MainApp extends Application {
                 } else {
                     try{
                         move = activeBot.makeMove(gameEngine.getGameState());
-                        vertexFrom = move.getStartingVertex();
+//                        vertexFrom = move.getStartingVertex();
+                        vertexFrom = gameBoard.getVertex(move.getXposition());
                         // if(move==null){
                         //     return;
                         // }
         
-                        vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+//                        vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                        vertexTo = move.getYposition();
                         // System.out.println("from "+vertexFrom.getVertextNumber());
                         // System.out.println("to "+vertexTo);
                         // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){

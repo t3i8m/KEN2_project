@@ -150,13 +150,16 @@ public class GameSimulation {
         int[] startPosition = board.getVertexPositionByNumber(startVertex.getVertextNumber());
 
         if (targetPosition == null || startPosition==null) {
-            // System.out.println("Invalid vertex number: " + targetVertex.getVertextNumber() +" "+ startVertex.getVertextNumber());
+             System.out.println("Invalid vertex number: " + targetVertex.getVertextNumber() +" "+ startVertex.getVertextNumber());
             return null;
         }
 
+        System.out.println("Starting position: " + startPosition[0] + " " + startPosition[1]);
+        System.out.println("Target position: "+ targetPosition[0] + " " + targetPosition[1]);
+
         Direction moveDirection = getDirectionBetween(startPosition[0], startPosition[1], targetPosition[0], targetPosition[1]);
         if (moveDirection == null) {
-            // System.out.println("The move is not in a straight line direction.");
+             System.out.println("The move is not in a straight line direction.");
             return null;
         } 
         Diagonal diagonal = new Diagonal(moveDirection, startPosition, new Game_Board());

@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="" />
+    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Diagonal.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Diagonal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBotTEST.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBotTEST.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/BotAbstract.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/BotAbstract.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/RuleBased/RuleBasedBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/RuleBased/RuleBasedBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Diagonal.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Diagonal.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,9 +29,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2p9klCeXjgBf6Wjs5q8VpXlUavi" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -23,23 +39,25 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.MainApp.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Tim/Documents/UM/project2_1/KEN2_project",
+    "last_opened_file_path": "D:/Coding stuff/ProjKen2 4",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.General",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
       </set>
     </attachedChunks>
   </component>

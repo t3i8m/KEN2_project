@@ -81,6 +81,7 @@ public class Diagonal {
                 hasPassedMarker = true;
             } else {
                 if (hasPassedMarker) {
+                    // newX is start and newY is end !!! ONLY FOR THIS CONSTRUCTOR
                     possibleMoves.add(new Move(newX, newY, new ArrayList<>(coinFlip), direction));
 
                 } else {

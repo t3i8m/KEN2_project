@@ -46,13 +46,13 @@ public class AlphaBetaBot extends BotAbstract {
             return new Move(targetPosition[0], targetPosition[1], null);
         }
 
-        AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 5, ge);
+        AlphaBetaResult result = alphaBeta(this.StateRightNow, alpha, beta, 1, ge);
 
         if (result != null && result.getMove() != null) {
-            // System.out.println("Executed move: " + result.getMove());
+             System.out.println("Executed move: " + result.getMove());
             return result.getMove();
         } else {
-            // System.out.println("No valid move found.");
+             System.out.println("No valid move found.");
             return null;
         }
     }
@@ -75,9 +75,15 @@ public class AlphaBetaBot extends BotAbstract {
             value = Double.NEGATIVE_INFINITY;
 
             for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
+
                 for (Move m : entry.getValue()) {
-                    int vertexFrom = m.getStartingVertex().getVertextNumber();
-                    int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
+
+//                    int vertexFrom = m.getStartingVertex().getVertextNumber();
+//                    int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
+
+                    int vertexFrom = m.getXposition();
+                    int vertexTo = m.getYposition();
+
                     if (!isValidMove(state, m)) {
                         continue; 
                     }
@@ -85,9 +91,8 @@ public class AlphaBetaBot extends BotAbstract {
                         continue;
                     }
 
-                    Vertex targetVertex = state.getGameBoard().getVertex(
-                        state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
-                    );
+//                    Vertex targetVertex = state.getGameBoard().getVertex(state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition()));
+                    Vertex targetVertex = state.getGameBoard().getVertex(vertexTo);
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
 
                     GameState newState = moveState(state, m);
