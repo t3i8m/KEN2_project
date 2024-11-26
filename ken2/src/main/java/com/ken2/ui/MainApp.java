@@ -1256,25 +1256,34 @@ public class MainApp extends Application {
     }
 
 
+
     private void resetTurn(){
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
 
             gameEngine.currentState.resetTurn();
             gameEngine.currentState.selectedChipVertex = -1;
             // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
-            switchPlayer();
-            chipsToRemove=5;
-            // lastMoveStartVertex = null;
-            // lastMoveEndVertex = null;
-            updateStrengthIndicator();
-            chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
-            updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
-            // System.out.println(gameEngine.currentState.isWhiteTurn);
-            turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
-            drawDashedLine(playObjectCanvas.getGraphicsContext2D());
+            PauseTransition pause = new PauseTransition(new Duration(1));
+            pause.setOnFinished(event -> {
+                switchPlayer();
+                chipsToRemove=5;
+                // lastMoveStartVertex = null;
+                // lastMoveEndVertex = null;
+                updateStrengthIndicator();
+                chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
-            playerTurn();
+                updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
+                // System.out.println(gameEngine.currentState.isWhiteTurn);
+                turnIndicator.setText(gameEngine.currentState.isWhiteTurn ? "White's Turn" : "Black's Turn");
+                drawDashedLine(playObjectCanvas.getGraphicsContext2D());
+
+
+
+                playerTurn();
+            });
+            pause.play();
+
         }
         
     }
