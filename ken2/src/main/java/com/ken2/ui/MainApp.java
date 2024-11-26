@@ -160,7 +160,7 @@ public class MainApp extends Application {
         root.setVgap(10);
         root.setHgap(10);
 
-        root.setStyle("-fx-background-image: url('file:ken2/assets/board4.jpg'); " +
+        root.setStyle("-fx-background-image: url('file:ken2/assets/bg_pic.jpg'); " +
                 "-fx-background-size: cover; " +
                 "-fx-background-position: center;");
 
