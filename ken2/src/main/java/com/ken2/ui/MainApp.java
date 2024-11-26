@@ -62,7 +62,7 @@ public class MainApp extends Application {
 
     // COMPONENTS
     private static int fieldDimension = 470;
-    private static int pieceDimension = 37;
+    private static int pieceDimension = 40;
 
     private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
     private Color activeScoreRingColor = Color.rgb(90, 150, 220);
@@ -294,8 +294,8 @@ public class MainApp extends Application {
                         "-fx-font-size: 14px;" + // Text size
                         "-fx-border-radius: 5;" + // Rounded corners
                         "-fx-background-radius: 5;" + // Rounded background
-                        "-fx-padding: 5 10;" + // Padding
-                        "-fx-cursor: hand;" // Pointer cursor
+                        "-fx-padding: 5 10;" +
+                        "-fx-cursor: hand;"
         );
 
         drawText = new Text("Draws: 0");
@@ -1187,11 +1187,17 @@ public class MainApp extends Application {
     private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
         int x = gameEngine.vertexCoordinates[vertex][0];
         int y = gameEngine.vertexCoordinates[vertex][1];
-        int dimension = resol ? pieceDimension : pieceDimension / 2;
+        int dimension = resol ? pieceDimension : (int) (pieceDimension / 1.5);
 
         if (!resol) {
-            x += pieceDimension / 4;
-            y += pieceDimension / 4;
+            int offsetX = 3;
+            int offsetY = 2;
+
+
+            x += (pieceDimension - dimension) / 4 + offsetX;
+            y += (pieceDimension - dimension) / 4 + offsetY;
+//            x += pieceDimension / 4;
+//            y += pieceDimension / 4;
         }
 
         gc.drawImage(img, x, y, dimension, dimension);
