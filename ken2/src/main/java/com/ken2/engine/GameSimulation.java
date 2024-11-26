@@ -178,4 +178,14 @@ public class GameSimulation {
 
         }
     }
+
+    public void flipCoinsByVertex(ArrayList<Vertex> coinFlips, Game_Board gameBoard) {
+        for (Vertex vertex : coinFlips) {
+            Coin coin = (Coin)vertex.getCoin();
+            coin.flipCoin();
+            // Vertex vertex = gameBoard.getVertexByCoin(coin);
+                // System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
+
+        }
+    }
 }

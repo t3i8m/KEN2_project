@@ -8,6 +8,7 @@ import java.util.Random;
 import com.ken2.Game_Components.Board.*;
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameEngine;
+import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
@@ -61,12 +62,12 @@ public class AlphaBetaBot extends BotAbstract {
         if (depth == 0) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
-
+        GameEngine ge2 = new GameEngine();
         Move bestMove = null;
         double value;
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
-        HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions);
-
+        HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
+        GameSimulation gs = new GameSimulation();
         if (vertexMove.isEmpty()) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
@@ -76,8 +77,13 @@ public class AlphaBetaBot extends BotAbstract {
 
             for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 for (Move m : entry.getValue()) {
+                    if(entry==null){
+                        continue;
+                    }
+
                     int vertexFrom = m.getStartingVertex().getVertextNumber();
                     int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
+
                     if (!isValidMove(state, m)) {
                         continue; 
                     }
@@ -89,6 +95,8 @@ public class AlphaBetaBot extends BotAbstract {
                         state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
                     );
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
+
+                    // m = gs.simulateMove(state.gameBoard, m.getStartingVertex(), state.gameBoard.getVertex(vertexTo));
 
                     GameState newState = moveState(state, m);
                     newState.switchPlayer();
@@ -111,8 +119,12 @@ public class AlphaBetaBot extends BotAbstract {
 
             for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 for (Move m : entry.getValue()) {
+                    if(entry==null){
+                        continue;
+                    }
                     int vertexFrom = m.getStartingVertex().getVertextNumber();
                     int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
+
                     if (!isValidMove(state, m)) {
                         continue; 
                     }
@@ -123,6 +135,7 @@ public class AlphaBetaBot extends BotAbstract {
                         state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
                     );
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
+                    // m = gs.simulateMove(state.gameBoard, m.getStartingVertex(), state.gameBoard.getVertex(vertexTo));
 
                     GameState newState = moveState(state, m);
                     newState.switchPlayer();

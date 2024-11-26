@@ -110,6 +110,9 @@ public class GameEngine {
             }
 
             Coin newChip = new Coin(chipColor.toLowerCase());
+            // System.out.println("WE ADD TO THE COIN VERTEX: "+ vertex);
+            newChip.setVertex(vertex);
+
             boardVertex.setPlayObject(newChip);
             currentState.chipRingVertex = vertex;
             // System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
@@ -186,10 +189,30 @@ public class GameEngine {
     }
 
     // gets ring positions and returns all of the moves from these positions
-    public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions){
+    public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions, Game_Board board){
+        GameSimulation gs  = new GameSimulation();
+
         HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<Vertex, ArrayList<Move>>();
         for(Vertex v: allRingPositions){
-            allMoves.put(v, this.possibleMoves(v));
+
+            gs.startSimulation(board.getBoard().clone(), v.getXposition(), v.getYposition());
+            ArrayList<ArrayList<Move>> possibleMoves = gs.getAllPossibleMoves();
+            ArrayList<Move> allMovesdig = new ArrayList<>();
+            for (ArrayList<Move> moveList : possibleMoves) {
+                if(moveList.isEmpty()){
+                    continue;
+                }
+                allMovesdig.addAll(moveList);
+            }
+            if (allMovesdig.isEmpty()) {
+                // System.out.println("No possible moves available.");
+                // allMoves.put(v, null);
+
+            } else{
+                allMoves.put(v, allMovesdig);
+
+            }
+
             for(Move m: allMoves.get(v)){
                 m.setStartingVertex(v);
             }

@@ -76,6 +76,7 @@ public class Diagonal {
             if (board[newX][newY] != null && board[newX][newY].hasCoin()) {
                 PlayObj playObject = board[newX][newY].getPlayObject()[1];
                 if (playObject instanceof Coin) {
+                    ((Coin)playObject).setVertex(board[newX][newY].getVertextNumber());
                     coinFlip.add((Coin) playObject);
                 }
                 hasPassedMarker = true;

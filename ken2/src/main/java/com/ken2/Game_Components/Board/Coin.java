@@ -3,6 +3,7 @@ package com.ken2.Game_Components.Board;
 
 public class Coin implements PlayObj{
     private String colour;
+    private int vertex;
 
     public Coin(String color){
         this.colour = color;
@@ -30,5 +31,13 @@ public class Coin implements PlayObj{
     @Override
     public PlayObj clone() {
         return new Coin(this.colour); 
+    }
+
+    public void setVertex(int vertex) {
+        this.vertex = vertex;
+    }
+
+    public int getVertex() {
+        return this.vertex;
     }
 }
