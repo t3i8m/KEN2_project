@@ -1241,14 +1241,9 @@ public class MainApp extends Application {
     private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
         int x = gameEngine.vertexCoordinates[vertex][0];
         int y = gameEngine.vertexCoordinates[vertex][1];
-        int dimension = resol ? pieceDimension : pieceDimension / 2;
+        
 
-        if (!resol) {
-            x += pieceDimension / 4;
-            y += pieceDimension / 4;
-        }
-
-        gc.drawImage(img, x, y, dimension, dimension);
+        gc.drawImage(img, x, y, pieceDimension, pieceDimension);
     }
 
 
