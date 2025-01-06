@@ -566,83 +566,88 @@ public class MainApp extends Application {
     List <Integer> nadoEtiChips  = new ArrayList<>();
 
     public void WinningCase(int vertex, GraphicsContext gc){
-
-        if(isGameOver){
-            restartGame();
-        }
-        handleWinningRing(vertex, gc);
-        String WinningColor = gameEngine.getWinningColor();
-        if(CheckPossibleChipsToRemove){
-            this.winningChips = new ArrayList<>(gameEngine.getWinningChips());
-            for (Integer chip : this.winningChips){
-                for(Direction direction: Direction.values()) {
-                    int ChipCounter = gameEngine.countChipsInOneDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY());
-                    if (ChipCounter >= 4) {
-                        if (!nadoEtiChips.contains(chip)) {
-                            nadoEtiChips.add(chip);
-                        }
-                        for (Integer thisChips : gameEngine.getChipsInDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY())) {
-                            if (!nadoEtiChips.contains(thisChips)) {
-                                nadoEtiChips.add(thisChips);
+        //  || (whiteScore == 3) || (blackScore==3)
+        // if(this.isGameOver){
+            // restartGame();
+        // }
+        try{
+            handleWinningRing(vertex, gc);
+            String WinningColor = gameEngine.getWinningColor();
+            if(CheckPossibleChipsToRemove){
+                this.winningChips = new ArrayList<>(gameEngine.getWinningChips());
+                for (Integer chip : this.winningChips){
+                    for(Direction direction: Direction.values()) {
+                        int ChipCounter = gameEngine.countChipsInOneDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY());
+                        if (ChipCounter >= 4) {
+                            if (!nadoEtiChips.contains(chip)) {
+                                nadoEtiChips.add(chip);
+                            }
+                            for (Integer thisChips : gameEngine.getChipsInDirection(chip, WinningColor, direction.getDeltaX(), direction.getDeltaY())) {
+                                if (!nadoEtiChips.contains(thisChips)) {
+                                    nadoEtiChips.add(thisChips);
+                                }
                             }
                         }
                     }
                 }
+                // System.out.println(nadoEtiChips);
+                highlightRemovableChips(nadoEtiChips);
+                CheckPossibleChipsToRemove = false;
             }
-            // System.out.println(nadoEtiChips);
-            highlightRemovableChips(nadoEtiChips);
-            CheckPossibleChipsToRemove = false;
-        }
 
-        Integer RemoveChipVertex = vertex;
-        if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex) && nadoEtiChips.contains(RemoveChipVertex)) {
-            if(FirstClickOnCoin){
-                for(Direction direction: Direction.values()) {
-                    int ChipCounter = gameEngine.countChipsInOneDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY());
-                    if (ChipCounter >= 4) {
-                        nadoEtiChips.clear();
-                        nadoEtiChips.addAll(gameEngine.getChipsInDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY()));
-                        nadoEtiChips = new ArrayList<>(nadoEtiChips.subList(0, 4));
-                        FirstClickOnCoin = false;
+            Integer RemoveChipVertex = vertex;
+            if (gameEngine.currentState.chipNumber.contains(RemoveChipVertex) && nadoEtiChips.contains(RemoveChipVertex)) {
+                if(FirstClickOnCoin){
+                    for(Direction direction: Direction.values()) {
+                        int ChipCounter = gameEngine.countChipsInOneDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY());
+                        if (ChipCounter >= 4) {
+                            nadoEtiChips.clear();
+                            nadoEtiChips.addAll(gameEngine.getChipsInDirection(vertex, WinningColor, direction.getDeltaX(), direction.getDeltaY()));
+                            nadoEtiChips = new ArrayList<>(nadoEtiChips.subList(0, 4));
+                            FirstClickOnCoin = false;
+                        }
                     }
+                    if(FirstClickOnCoin) return;
                 }
-                if(FirstClickOnCoin) return;
-            }
-            //System.out.print("remove");
-            // gameEngine.currentState.setAllPossibleCoinsToRemove(nadoEtiChips);
-            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
-            if(currentPlayer.isBot()){
-                // Bot activeBot = currentPlayer.getBot();
-                // ArrayList<Integer> allRemoveChips = activeBot.removeChips(gameEngine.currentState);
-                
-                // for (Integer vert : allRemoveChips){
-                //     handleChipRemove(vert, gc);
+                //System.out.print("remove");
+                // gameEngine.currentState.setAllPossibleCoinsToRemove(nadoEtiChips);
+                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                if(currentPlayer.isBot()){
+                    // Bot activeBot = currentPlayer.getBot();
+                    // ArrayList<Integer> allRemoveChips = activeBot.removeChips(gameEngine.currentState);
                     
-                //     gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
-                //     ChipsRemoved--;
+                    // for (Integer vert : allRemoveChips){
+                    //     handleChipRemove(vert, gc);
+                        
+                    //     gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
+                    //     ChipsRemoved--;
 
-                // }
-            } else{
-                handleChipRemove(vertex, gc);
-                ChipsRemoved--;
-                gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
+                    // }
+                } else{
+                    handleChipRemove(vertex, gc);
+                    ChipsRemoved--;
+                    gameEngine.currentState.chipNumber.remove(RemoveChipVertex);
 
+                }
+
+
+                // handleChipAndRingPlacement(vertex, gc);
+                // System.out.println(nadoEtiChips);
+
+                if (ChipsRemoved == 0) {
+                    gameEngine.setWinningRing(false);
+                    gameEngine.setChipRemovalMode(false);
+                    ChipsRemoved = 5;
+                    CheckPossibleChipsToRemove = true;
+                    FirstClickOnCoin = true;
+                    nadoEtiChips.clear();
+                    removeCircleIndicators();
+                }
             }
-
-
-            // handleChipAndRingPlacement(vertex, gc);
-            // System.out.println(nadoEtiChips);
-
-            if (ChipsRemoved == 0) {
-                gameEngine.setWinningRing(false);
-                gameEngine.setChipRemovalMode(false);
-                ChipsRemoved = 5;
-                CheckPossibleChipsToRemove = true;
-                FirstClickOnCoin = true;
-                nadoEtiChips.clear();
-                removeCircleIndicators();
-            }
+        } catch(Exception ex){
+            restartGame();
         }
+        
     }
 
     public void handleChipRemove(int vertex, GraphicsContext gc) {
@@ -1611,6 +1616,7 @@ public class MainApp extends Application {
         displayGameStatistics();
         this.isGameOver = false;
         isGameStarted = false;
+        gameEngine.currentState.chipsRemaining = 51;
         startGameButton.setDisable(false);
         whitePlayerComboBox.setDisable(false);
         blackPlayerComboBox.setDisable(false);

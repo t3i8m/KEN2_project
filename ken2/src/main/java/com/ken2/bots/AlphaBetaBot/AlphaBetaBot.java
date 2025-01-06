@@ -66,8 +66,10 @@ public class AlphaBetaBot extends BotAbstract {
         Move bestMove = null;
         double value;
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
+        // System.out.println(allRingPositions);
         HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
         GameSimulation gs = new GameSimulation();
+        
         if (vertexMove.isEmpty()) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
