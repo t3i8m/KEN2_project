@@ -67,8 +67,7 @@ public class MainApp extends Application {
     private static int fieldDimension = 470;
     private static int pieceDimension = 37;
 
-    private Color inactiveScoreRingColor = Color.rgb(200, 200, 200);
-    private Color activeScoreRingColor = Color.rgb(90, 150, 220);
+    private Color inactiveScoreRingColor = Color.rgb(100, 60, 0);
 
     private GridPane root;
     private Canvas playObjectCanvas;
@@ -151,7 +150,7 @@ public class MainApp extends Application {
         gameEngine = new GameEngine();
 
         primaryStage.setTitle("Yinsh Game");
-        primaryStage.setWidth(1010);
+        primaryStage.setWidth(950);
         primaryStage.setHeight(600);
         primaryStage.setResizable(false);
 
@@ -160,7 +159,7 @@ public class MainApp extends Application {
         root.setVgap(10);
         root.setHgap(10);
 
-        root.setStyle("-fx-background-image: url('file:ken2/assets/bg_pic.jpg'); " +
+        root.setStyle("-fx-background-image: url('file:ken2/assets/light_bg.jpg'); " +
                 "-fx-background-size: cover; " +
                 "-fx-background-position: center;");
 
@@ -369,7 +368,6 @@ public class MainApp extends Application {
         ringBlackRemainingText.setText("Black Rings Placed: 0");
         GridPane.setMargin(ringBlackRemainingText, new Insets(0, 0, -60, -90));
         root.add(ringBlackRemainingText, 4, 0);
-
 
         root.add(scoreRingeW1, 0, 2);
         root.add(scoreRingeW2, 0, 3);
@@ -663,8 +661,8 @@ public class MainApp extends Application {
         String currColor = v.getCoin().getColour().toLowerCase();
         if (v != null && v.hasCoin() && v.getCoin().getColour().toLowerCase().equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
-            gc.clearRect(gameEngine.vertexCoordinates[vertex][0] + pieceDimension / 4,
-                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension / 4, pieceDimension / 2, pieceDimension / 2);
+            gc.clearRect(gameEngine.vertexCoordinates[vertex][0] + pieceDimension/4 -1,
+                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension/4 -1, pieceDimension, pieceDimension);
 
             gameEngine.currentState.chipsRemaining+=1;
            // chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
@@ -1105,7 +1103,7 @@ public class MainApp extends Application {
 
     private void drawBoard(GraphicsContext gc) {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.rgb(0, 70, 0));
         gc.setLineWidth(3);
 
         int[][] vertexCoordinates = gameEngine.getVertexCoordinates();
@@ -1246,14 +1244,9 @@ public class MainApp extends Application {
     private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
         int x = gameEngine.vertexCoordinates[vertex][0];
         int y = gameEngine.vertexCoordinates[vertex][1];
-        int dimension = resol ? pieceDimension : pieceDimension / 2;
+        
 
-        if (!resol) {
-            x += pieceDimension / 4;
-            y += pieceDimension / 4;
-        }
-
-        gc.drawImage(img, x, y, dimension, dimension);
+        gc.drawImage(img, x, y, pieceDimension, pieceDimension);
     }
 
 
