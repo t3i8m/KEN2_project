@@ -74,13 +74,16 @@ public class Headless {
                 case "u":     notValid++;  break;
             }
         }
-
+        double whitePercent = 100.0 * whiteWins / games;
+        double blackPercent = 100.0 * blackWins / games;
+        double drawsPercent = 100.0 * draws / games;
+        double notValidPercent = 100.0 * notValid / games;
         System.out.println("=========================================");
         System.out.println("Games played:       " + games);
-        System.out.println("White wins:         " + whiteWins);
-        System.out.println("Black wins:         " + blackWins);
-        System.out.println("Draws:              " + draws);
-        System.out.println("Not Valid games:    " + notValid);
+        System.out.println(String.format("White wins:         %d (%.2f%%)", whiteWins, whitePercent));
+        System.out.println(String.format("Black wins:         %d (%.2f%%)", blackWins, blackPercent));
+        System.out.println(String.format("Draws:              %d (%.2f%%)", draws, drawsPercent));
+        System.out.println(String.format("Not Valid games:    %d (%.2f%%)", notValid, notValidPercent));
         System.out.println("=========================================");
     }
 
@@ -115,13 +118,19 @@ public class Headless {
                 }
             }
 
+            double whitePercent = 100.0 * whiteWins / games;
+            double blackPercent = 100.0 * blackWins / games;
+            double drawsPercent = 100.0 * draws / games;
+            double notValidPercent = 100.0 * notValid / games;
+
+
             System.out.println("=========================================");
             System.out.println("CSV Export completed: " + csvFilePath);
             System.out.println("Games played:       " + games);
-            System.out.println("White wins:         " + whiteWins);
-            System.out.println("Black wins:         " + blackWins);
-            System.out.println("Draws:              " + draws);
-            System.out.println("Not Valid games:    " + notValid);
+            System.out.println(String.format("White wins:         %d (%.2f%%)", whiteWins, whitePercent));
+            System.out.println(String.format("Black wins:         %d (%.2f%%)", blackWins, blackPercent));
+            System.out.println(String.format("Draws:              %d (%.2f%%)", draws, drawsPercent));
+            System.out.println(String.format("Not Valid games:    %d (%.2f%%)", notValid, notValidPercent));
             System.out.println("=========================================");
 
         } catch (IOException e) {
