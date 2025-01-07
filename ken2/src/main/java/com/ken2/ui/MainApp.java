@@ -1610,6 +1610,7 @@ public class MainApp extends Application {
         this.isGameOver = false;
         isGameStarted = false;
         gameEngine.currentState.chipsRemaining = 51;
+        chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
         startGameButton.setDisable(false);
         whitePlayerComboBox.setDisable(false);
         blackPlayerComboBox.setDisable(false);
