@@ -9,7 +9,7 @@ public class HeadlessMain {
         Bot whiteBot = factory.getBot("rulebased bot", "White");
         Bot blackBot = factory.getBot("rulebased bot", "Black");
 
-        Headless headless = new Headless(1000, whiteBot, blackBot);
+        Headless headless = new Headless(1, whiteBot, blackBot);
         // headless.runGames(); // without csv export
         headless.exportGamesToCsv();// with csv export
     }

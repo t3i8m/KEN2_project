@@ -2,6 +2,7 @@ package com.ken2.headless;
 
 
 import com.ken2.bots.Bot;
+import com.ken2.bots.MLbot.utils.BoardTransformation;
 import com.ken2.utils.Player;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -18,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,6 +105,7 @@ public class Headless {
                 try {
                     result = runSingleGame(whiteBot, blackBot, logs, i + 1);
                 } catch (Exception ex) {
+                    System.out.println(ex);
                     result = "u";
                 }
                 switch (result) {
@@ -162,6 +165,12 @@ public class Headless {
         while (true) {
             GameState state = gameEngine.currentState;
             Game_Board board = state.getGameBoard();
+            
+            // BoardTransformation boardToVector = new BoardTransformation(board);
+            // System.out.println("BEFORE: \n"+board.strMaker());
+            // int[] vectorBoard = boardToVector.toVector();
+            // System.out.println(Arrays.toString(vectorBoard));
+            // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
 
             if (state.chipsRemaining <= 0) {
                 return "draw";
