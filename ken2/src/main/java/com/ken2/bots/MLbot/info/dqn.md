@@ -44,3 +44,7 @@ The moves in a hexagonal grid are described by six basic directions:
 * Up-left: (-1,+1)
 * Down-right: (+1,-1)
 * Down-left:  (0,+1)
+
+## Q (Belman`s equation)
+
+![alt text](image-2.png)

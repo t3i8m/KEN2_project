@@ -1,4 +1,4 @@
-package com.ken2.bots.MLbot.neuralNetwork;
+package com.ken2.bots.MLbot.neuralNetworkComponents;
 
 import java.util.ArrayList;
 import java.util.Random;

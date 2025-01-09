@@ -98,5 +98,31 @@ public class Move {
     public ArrayList<Coin>getFlippedCoins(){
         return coinFlip;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Move other = (Move) obj;
+        return xPosition == other.xPosition &&
+            yPosition == other.yPosition &&
+            direction == other.direction &&
+            ((startingVertex == null && other.startingVertex == null) ||
+                (startingVertex != null && other.startingVertex != null && startingVertex.equals(other.startingVertex))) &&
+            ((coinFlip == null && other.coinFlip == null) ||
+                (coinFlip != null && other.coinFlip != null && coinFlip.equals(other.coinFlip)));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Integer.hashCode(xPosition);
+        result = 31 * result + Integer.hashCode(yPosition);
+        result = 31 * result + (direction != null ? direction.hashCode() : 0);
+        result = 31 * result + (startingVertex != null ? startingVertex.hashCode() : 0);
+        result = 31 * result + (coinFlip != null ? coinFlip.hashCode() : 0);
+        return result;
+    }
     
 }

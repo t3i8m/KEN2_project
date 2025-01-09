@@ -16,8 +16,12 @@ public class BoardTransformation {
     // 2 - BLACK RING
     // 3 - WHITE COIN
     // 4 - BLACK COIN
-    public int[] toVector(){
-        int[] finalVector = new int[85];
+    // LAST DIGIT:
+        // 5 - white player turn
+        // 6 - black player turn
+        
+    public int[] toVector(String currentPlayerColor){
+        int[] finalVector = new int[86];
         int index = 0;
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
@@ -47,6 +51,7 @@ public class BoardTransformation {
                 }
             }
         }
+        finalVector[index] = currentPlayerColor.toLowerCase().equals("white") ? 5:6;
         return finalVector;
     }
 

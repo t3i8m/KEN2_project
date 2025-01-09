@@ -1,4 +1,4 @@
-package com.ken2.bots.MLbot.neuralNetwork;
+package com.ken2.bots.MLbot.neuralNetworkComponents;
 
 public class Experience {
     private final int[] state;
