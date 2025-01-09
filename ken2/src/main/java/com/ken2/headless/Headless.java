@@ -165,7 +165,7 @@ public class Headless {
         while (true) {
             GameState state = gameEngine.currentState;
             Game_Board board = state.getGameBoard();
-            
+
 
 
             if (state.chipsRemaining <= 0) {
@@ -180,13 +180,13 @@ public class Headless {
 
             Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
             String currentPlayerColor = state.isWhiteTurn ? "white" : "black";
-            // BoardTransformation boardToVector = new BoardTransformation(board);
-            // System.out.println("BEFORE: \n"+board.strMaker());
-            // int[] vectorBoard = boardToVector.toVector(currentPlayerColor);
+            BoardTransformation boardToVector = new BoardTransformation(board);
+            System.out.println("BEFORE: \n"+board.strMaker());
+            double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
 
-            // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
-            // System.out.println(Arrays.toString(vectorBoard));
-            // System.out.println(currentPlayerColor);
+            System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
+            System.out.println(Arrays.toString(vectorBoard));
+            System.out.println(currentPlayerColor);
 
             if (state.ringsPlaced < 10) {
                 Move ringPlacement = currentBot.makeMove(state);

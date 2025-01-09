@@ -1,4 +1,4 @@
-package com.ken2.bots.MLbot.utils;
+package com.ken2.bots.DQN_BOT_ML.utils;
 
 import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
@@ -20,8 +20,8 @@ public class BoardTransformation {
         // 5 - white player turn
         // 6 - black player turn
         
-    public int[] toVector(String currentPlayerColor){
-        int[] finalVector = new int[86];
+    public double[] toVector(String currentPlayerColor){
+        double[] finalVector = new double[86];
         int index = 0;
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
@@ -56,7 +56,7 @@ public class BoardTransformation {
     }
 
 
-       public Game_Board fromVector(int[] vector) {
+       public Game_Board fromVector(double[] vector) {
             Vertex[][] reconstructedBoard = new Vertex[this.board.length][this.board[0].length];
             int index = 0;
             int vertexNumber=0;
@@ -65,7 +65,7 @@ public class BoardTransformation {
                     if (this.board[i][j] != null) {
                         Vertex vertex = new Vertex(i,j); 
                         vertex.setVertexNumber(vertexNumber);
-                        switch (vector[index]) {
+                        switch ((int)vector[index]) {
                             case 1: // WHITE RING
                                 Ring newRingW = new Ring("white");
                                 vertex.setPlayObject(newRingW);

@@ -1,4 +1,4 @@
-package com.ken2.bots.MLbot.botComponents;
+package com.ken2.bots.DQN_BOT_ML.botComponents;
 
 import com.ken2.bots.BotAbstract;
 import com.ken2.engine.GameState;

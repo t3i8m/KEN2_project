@@ -1,4 +1,4 @@
-package com.ken2.bots.MLbot.neuralNetworkComponents;
+package com.ken2.bots.DQN_BOT_ML.utils;
 
 public enum Rewards {
     WIN(10),
