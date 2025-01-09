@@ -277,9 +277,6 @@ public class GameState implements Cloneable{
             throw new AssertionError("Cloning not supported", e);
         }
     }
-    
-    
-
     public boolean isBotTurn(ArrayList<Bot> bots) {
         boolean isWhiteTurn = this.isWhiteTurn;
         for (Bot bot : bots) {
@@ -289,59 +286,5 @@ public class GameState implements Cloneable{
         }
         return false;
     }
-
-//    public boolean isWinningState(String color){
-//        GameState currentState = GameEngine.getGameState();
-//        int ringCount = color.equalsIgnoreCase("white")?currentState.ringsWhite:currentState.ringsBlack;
-//        return ringCount<=0;
-//
-//    }
-//    public boolean hasWinningRow(String color){
-//        List<Integer> winningChips = GameEngine.getWinningChips();
-//        return winningChips.size()>=5 && winningChips.stream().allMatch(chip ->GameEngine.getGameState().gameBoard.getVertex(chip).getCoin().equalsIgnoreCase(color));
-//    }
-//
-//    public boolean isWinningStateOverall(String color) {
-//        return isWinningState(color) || hasWinningRow(color);
-//    }
-     Vertex[][] board;
-    public int[] toVector(String currentPlayerColor){
-        int[] finalVector = new int[86];
-        int index = 0;
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[i].length; j++) {
-                if(board[i][j]!=null){
-                    if(board[i][j].hasRing()){
-                        switch (board[i][j].getRing().getColour().toLowerCase()) {
-                            case "white":
-                                finalVector[index] = 1;
-                                break;
-                            case "black":
-                                finalVector[index] = 2;
-                                break;
-                        }
-                    } else if(board[i][j].hasCoin()){
-                        switch (board[i][j].getCoin().getColour().toLowerCase()) {
-                            case "white":
-                                finalVector[index] = 3;
-                                break;
-                            case "black":
-                                finalVector[index] = 4;
-                                break;
-                        }
-                    } else{
-                        finalVector[index] = 0;
-                    }
-                    index+=1;
-                }
-            }
-        }
-        finalVector[index] = currentPlayerColor.toLowerCase().equals("white") ? 5:6;
-        return finalVector;
-    }
-
-
-
-
 
 }
