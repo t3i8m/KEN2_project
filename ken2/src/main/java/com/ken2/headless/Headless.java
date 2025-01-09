@@ -2,7 +2,7 @@ package com.ken2.headless;
 
 
 import com.ken2.bots.Bot;
-import com.ken2.bots.MLbot.utils.BoardTransformation;
+import com.ken2.bots.DQN_BOT_ML.utils.BoardTransformation;
 import com.ken2.utils.Player;
 
 import javafx.scene.canvas.GraphicsContext;

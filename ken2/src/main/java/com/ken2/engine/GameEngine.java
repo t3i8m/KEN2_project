@@ -220,7 +220,7 @@ public class GameEngine {
         return allMoves;
     }
 
-    public GameState getGameState(){
+    public  GameState getGameState(){
 
         return this.currentState;
     }
@@ -379,7 +379,7 @@ public class GameEngine {
         this.winningColor = color;
     }
 
-    public List<Integer> getWinningChips() {
+    public static List<Integer> getWinningChips() {
         return winningChips;
     }
 
