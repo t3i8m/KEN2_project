@@ -9,7 +9,7 @@ public enum Rewards {
     YOUR_RING_REMOVAL(10),
     OPPONENT_RING_REMOVAL(-10),
     SUCCESSFUL_MOVE(1),
-    COMPLEX_MOVE (5),///пересечение коинов
+    //COMPLEX_MOVE (5),///пересечение коинов
     DOUBLE_ROW_CREATION (15),
     FLIP_MARKERS(1),
     INVALID_MOVE(-100),
@@ -40,7 +40,7 @@ public enum Rewards {
         System.out.println("Reward applied: " + rewardType.name() + " | Value: " + rewardType.getValue() + " | Context: " + context);
     }
 
-    public static double normalizeReward(int reward) {
+    public static double normalizeReward(double reward) {
         final int MIN_REWARD = -100;
         final int MAX_REWARD = 50;
         return (double)(reward - MIN_REWARD) / (MAX_REWARD - MIN_REWARD) * 2 - 1;

@@ -47,7 +47,7 @@ public class DQN_BOT  extends BotAbstract{
     }
 
     public void storeExperience(double[] state, int action, double reward, double[] nextState) {
-        // TODO: implement 
+        // TODO: implement
 
     }
 
