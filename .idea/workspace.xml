@@ -6,10 +6,35 @@
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/LeakyReLu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_BOT.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_BOT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Experience.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Experience.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Rewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Rewards.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Reward.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Reward.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/HeadlessMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/HeadlessMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/result/moves_log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/result/moves_log.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Coin.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Coin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/NeuralNetwork.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/NeuralNetwork.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/Linear.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/Linear.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/ReLu.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/ReLu.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/Sigmoid.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/ActivationFunctions/Sigmoid.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/Layer.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/Layer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/LoosFunction/MAE.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/LoosFunction/MAE.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/LoosFunction/MSE.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/LoosFunction/MSE.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/Neuron.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/NeuralNetwork/neuralNetworkComponents/Neuron.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_BOT.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_BOT.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/ActionIndexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/ActionIndexer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/BoardTransformation.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/BoardTransformation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Experience.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Experience.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/ReplayBuffer.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/ReplayBuffer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Rewards.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Rewards.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Diagonal.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Diagonal.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Move.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Move.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/GameMoveRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/GameMoveRecord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/Headless.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/Headless.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +54,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8

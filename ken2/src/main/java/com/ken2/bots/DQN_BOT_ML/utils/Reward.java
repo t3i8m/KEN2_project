@@ -16,7 +16,7 @@ public class Reward {
             Rewards.logReward(Rewards.WIN, "VICTORY");
         } else if (isLose(newState)) {
             reward += Rewards.LOSE.getValue();
-            Rewards.logReward(Rewards.LOSE, "DEFEAT");
+            Rewards.logReward(Rewards.LOSE, "LOSS ЕЩКЕРЕ Я РАНЯЮ ЗАПАД УУУУУ");
         }
 
         if (isDraw(newState)) {
@@ -79,9 +79,16 @@ public class Reward {
     }
 
     public static boolean isLose(GameState state) {
-        String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
-        return state.getRingCountForColor(opponentColor) > 2;
+        if(state.ringsPlaced == 10){
+            String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
+            int initialRingCount = 5;
+            int ringsRemovedByOpponent = initialRingCount - state.getRingCountForColor(opponentColor);
+            return ringsRemovedByOpponent >= 3;
+        }
+        else return false;
     }
+
+
     public static boolean isDraw(GameState state) {
         return state.getChipsCountForColor("white") == 0 && state.getChipsCountForColor("black") == 0;
     }
@@ -112,8 +119,11 @@ public class Reward {
         return countLinesForPlayer(state, length, currentPlayerColor) > 0;
     }
 
-    public static boolean opponentCreatedLine(GameState previousState, GameState newState) {
-        String opponentColor = previousState.currentPlayerColor().equalsIgnoreCase("white") ? "black" : "white";
+    public static boolean opponentCreatedLine (GameState previousState, GameState newState) {
+        String opponentColor = newState.currentPlayerColor();
+        if(opponentColor.equalsIgnoreCase("white"))
+            opponentColor.equalsIgnoreCase("black");
+        else opponentColor.equalsIgnoreCase("white");
         return countLinesForPlayer(newState, 3, opponentColor) > countLinesForPlayer(previousState, 3, opponentColor);
     }
 
