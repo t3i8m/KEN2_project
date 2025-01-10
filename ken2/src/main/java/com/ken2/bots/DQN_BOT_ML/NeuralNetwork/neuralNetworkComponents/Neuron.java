@@ -41,13 +41,6 @@ public class Neuron {
         }
         bias-=learningRate* delta;
     }
-    public double[] computeInputGradient(){
-        double[] inputGradient = new double[weights.length];
-        for(int i =0; i < weights.length;i++){
-            inputGradient[i]=delta*weights[i];
-        }
-        return inputGradient;
-    }
 
 
     public double[] getWeights(){
