@@ -77,10 +77,9 @@ public class Reward {
     public static boolean isWin(GameEngine gameEngine, GameState state) {
         return gameEngine.win(state.getVertexesOfFlippedCoins());
     }
-
-    public static boolean isLose(GameState state) {
+ public static boolean isLose(GameState state) {
         String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
-        return state.getRingCountForColor(opponentColor) > 2;
+        return state.getRingCountForColor(opponentColor) <=2;
     }
     public static boolean isDraw(GameState state) {
         return state.getChipsCountForColor("white") == 0 && state.getChipsCountForColor("black") == 0;
