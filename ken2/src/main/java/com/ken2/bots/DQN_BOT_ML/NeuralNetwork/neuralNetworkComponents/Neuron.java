@@ -35,23 +35,28 @@ public class Neuron {
 
     }
 
-    public void updateWeights(double learningRate){
+    public void updateWeights(double[] gradients, double learningRate){
         for(int i = 0; i<weights.length;i++){
-            weights[i] -= learningRate*delta*this.lastInputs[i];
+            weights[i] -= learningRate*gradients[i];
         }
-        bias-=learningRate* delta;
+        bias-=learningRate*gradients[weights.length];
     }
-    public double[] computeInputGradient(){
-        double[] inputGradient = new double[weights.length];
-        for(int i =0; i < weights.length;i++){
-            inputGradient[i]=delta*weights[i];
-        }
-        return inputGradient;
-    }
+    
+    // public double[] computeInputGradient(){
+    //     double[] inputGradient = new double[weights.length];
+    //     for(int i =0; i < weights.length;i++){
+    //         inputGradient[i]=delta*weights[i];
+    //     }
+    //     return inputGradient;
+    // }
 
 
     public double[] getWeights(){
         return this.weights;
+    }
+
+    public double[] getLastInputs(){
+        return this.lastInputs;
     }
 
     public double getOutput(){

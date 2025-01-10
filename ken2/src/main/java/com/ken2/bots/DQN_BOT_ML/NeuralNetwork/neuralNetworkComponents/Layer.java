@@ -10,7 +10,7 @@ import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.Activation
 public class Layer {
     private ArrayList<Neuron> neurons;
     private ActivationFunction activationFunction;
-    private List<double[]> layerInputs;
+    private double[] lastInputs;
 
 
     public Layer(int numberOfNeurons, int inputSize, ActivationFunction activationFunction){
@@ -21,16 +21,15 @@ public class Layer {
             double bias = initializeBias();
             Neuron n = new Neuron(weights, bias, activationFunction);
             this.neurons.add(n);
-            this.layerInputs = new ArrayList<>();
 
         }
     }
 
     public double[] forward(double[] inputs){
-        layerInputs.add(inputs.clone());
+        lastInputs = inputs.clone();
 
         double[] outputs = new double[neurons.size()];
-        
+
         for(int i = 0; i<neurons.size();i++){
             try{
                 double outputValue = neurons.get(i).activate(inputs);
@@ -44,10 +43,24 @@ public class Layer {
 
     }
 
-    public double[] backward(double[] gradients, double learningRate){
-        // TODO: implement it
+    public double[] backward(double[] gradients){
+        double[] currentGradients = new double[neurons.size()];
 
-        throw new UnsupportedAddressTypeException();
+        for(int i = 0; i<neurons.size();i++){
+            Neuron neuron = neurons.get(i);
+            double neuronDelta = gradients[i]* activationFunction.derivative(neuron.getInput());
+            double[] neuronGradients = new double[neuron.getWeights().length];
+
+            for(int j =0; j<neuron.getWeights().length;j++){
+                currentGradients[j] +=neuronDelta*lastInputs[j];
+                neuronGradients[j] = neuronDelta * neuron.getLastInputs()[j];
+            }
+
+            neuron.updateWeights(neuronGradients, 0.01);
+
+        }
+        
+        return currentGradients;
     }
 
 
