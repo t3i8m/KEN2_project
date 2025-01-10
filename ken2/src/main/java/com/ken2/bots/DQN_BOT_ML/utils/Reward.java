@@ -77,7 +77,6 @@ public class Reward {
     public static boolean isWin(GameEngine gameEngine, GameState state) {
         return gameEngine.win(state.getVertexesOfFlippedCoins());
     }
-<<<<<<< HEAD
 
     public static boolean isLose(GameState state) {
         if(state.ringsPlaced == 10){
@@ -87,11 +86,6 @@ public class Reward {
             return ringsRemovedByOpponent >= 3;
         }
         else return false;
-=======
- public static boolean isLose(GameState state) {
-        String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
-        return state.getRingCountForColor(opponentColor) <=2;
->>>>>>> 27289d93ddd28298b8f027d0417fee3c1b6d0e7b
     }
 
 

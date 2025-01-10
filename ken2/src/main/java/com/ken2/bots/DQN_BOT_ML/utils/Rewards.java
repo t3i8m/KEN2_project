@@ -9,7 +9,7 @@ public enum Rewards {
     YOUR_RING_REMOVAL(10),
     OPPONENT_RING_REMOVAL(-10),
     SUCCESSFUL_MOVE(1),
-    //COMPLEX_MOVE (5),///пересечение коинов
+    //COMPLEX_MOVE (5),
     DOUBLE_ROW_CREATION (15),
     FLIP_MARKERS(1),
     INVALID_MOVE(-100),
