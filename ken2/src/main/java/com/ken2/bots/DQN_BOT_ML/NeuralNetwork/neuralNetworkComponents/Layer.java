@@ -4,7 +4,6 @@ import java.lang.reflect.Array;
 import java.nio.channels.UnsupportedAddressTypeException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.ActivationFunctions.ActivationFunction;
 
 public class Layer {
@@ -44,7 +43,7 @@ public class Layer {
     }
 
     public double[] backward(double[] gradients){
-        double[] currentGradients = new double[neurons.size()];
+        double[] newGradients = new double[neurons.size()];
 
         for(int i = 0; i<neurons.size();i++){
             Neuron neuron = neurons.get(i);
@@ -52,7 +51,7 @@ public class Layer {
             double[] neuronGradients = new double[neuron.getWeights().length];
 
             for(int j =0; j<neuron.getWeights().length;j++){
-                currentGradients[j] +=neuronDelta*lastInputs[j];
+                newGradients[j] +=neuronDelta*lastInputs[j];
                 neuronGradients[j] = neuronDelta * neuron.getLastInputs()[j];
             }
 
@@ -60,7 +59,7 @@ public class Layer {
 
         }
         
-        return currentGradients;
+        return newGradients;
     }
 
 
