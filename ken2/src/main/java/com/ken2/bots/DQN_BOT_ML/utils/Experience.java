@@ -4,10 +4,10 @@ public class Experience {
     private final int[] state;
     private final int[] newState;
     private final int action;
-    private final int reward;
+    private final double reward;
 
 
-    public Experience(int[] state, int action, int reward, int[] newState){
+    public Experience(int[] state, int action, double reward, int[] newState){
         this.state=state;
         this.newState = newState;
         this.action=action;
@@ -26,7 +26,7 @@ public class Experience {
         return this.action;
     }
 
-    public int getReward(){
+    public double getReward(){
         return this.reward;
     }
 }
