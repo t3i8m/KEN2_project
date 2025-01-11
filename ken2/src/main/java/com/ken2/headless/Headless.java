@@ -3,6 +3,7 @@ package com.ken2.headless;
 
 import com.ken2.bots.Bot;
 import com.ken2.bots.DQN_BOT_ML.utils.BoardTransformation;
+import com.ken2.bots.DQN_BOT_ML.utils.Reward;
 import com.ken2.utils.Player;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -161,6 +162,10 @@ public class Headless {
         int whiteScore = 0;
         int blackScore = 0;
         int moveNumber = 1;
+        //////
+        GameState previuos = gameEngine.currentState.clone();
+        GameState newState;
+        //////////
 
         while (true) {
             GameState state = gameEngine.currentState;
@@ -219,6 +224,12 @@ public class Headless {
                     rec.coinsFlippedVertices = "";
                     logs.add(rec);
                 }
+                ////////////
+                newState = gameEngine.currentState.clone();
+                double reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState);
+                System.out.println("Move " + moveNumber + ": Reward = " + reward);
+                previuos = newState.clone();
+                /////////////////////////
 
             } else {
                 Move move = currentBot.makeMove(state);
@@ -316,8 +327,13 @@ public class Headless {
                     }
                     return "draw";
                 }
-
+                ///////////////////////
                 boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
+                newState = gameEngine.currentState.clone();
+                double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
+                System.out.println("Move " + moveNumber + ": Reward = " + reward);
+                previuos = newState.clone();
+                /////////////////
 
                 String gameResult = null;
 
