@@ -276,6 +276,7 @@ public class GameEngine {
                             winningRing=win;
             
                             setRingSelectionMode(true);
+                            currentState.updateRingCount(color);
                             // findAndSetAllWinningChips(color);
                             setWinningColor(color);
                             ringSelection(color);
@@ -377,6 +378,12 @@ public class GameEngine {
     
         public void setWinningColor(String color) {
             this.winningColor = color;
+            // if(color.toLowerCase().equals("white")){
+            //     this.currentState.ringsWhite-=1;
+            // } else{
+            //     this.currentState.ringsBlack-=1;
+
+            // }
         }
     
         public static List<Integer> getWinningChips() {
@@ -714,6 +721,39 @@ public class GameEngine {
         currentState=new GameState();
         vertexCoordinates = new int[85][2];
         initialiseVertex();
+    }
+
+    @Override
+    public GameEngine clone() {
+        try {
+            GameEngine clonedEngine = new GameEngine();
+
+            clonedEngine.currentState = this.currentState.clone();
+
+            clonedEngine.gameSimulation = this.gameSimulation;
+
+            clonedEngine.vertexCoordinates = new int[this.vertexCoordinates.length][2];
+            for (int i = 0; i < this.vertexCoordinates.length; i++) {
+                clonedEngine.vertexCoordinates[i] = this.vertexCoordinates[i].clone();
+            }
+
+            // Clone the game board
+            clonedEngine.gameBoard = this.gameBoard.clone();
+
+            clonedEngine.direction = this.direction; 
+            clonedEngine.isRingSelectionMode = this.isRingSelectionMode;
+            clonedEngine.isChipRemovalMode = this.isChipRemovalMode;
+
+            clonedEngine.setWinningChips(new ArrayList<>(this.getWinningChips()));
+
+            clonedEngine.winningColor = this.winningColor;
+            clonedEngine.winningRing = this.winningRing;
+
+            return clonedEngine;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Cloning failed.", e);
+        }
     }
 
 

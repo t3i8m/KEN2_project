@@ -175,7 +175,6 @@ public class Headless {
 
 
 
-
             Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
 
             String currentPlayerColor = state.isWhiteTurn ? "white" : "black";
@@ -332,11 +331,13 @@ public class Headless {
                     return "draw";
                 }
 
+                // GameEngine newGE = gameEngine.clone();
 
                 String gameResult = null;
                 boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
-
+                
                 if (isWinningRow) {
+                    
                     String winnerColor = gameEngine.getWinningColor();
                     Bot currentPlayer = winnerColor.equalsIgnoreCase("white") ? whiteBot : blackBot;
 
@@ -365,6 +366,8 @@ public class Headless {
 
 
                 }
+                
+                
                 newState = gameEngine.currentState.clone();
                 System.out.println("\n"+"Move " + moveNumber +":");
                 reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);

@@ -10,14 +10,14 @@ public class Reward {
 
     public static double calculateReward(GameEngine engine, GameState previousState, Move move, GameState newState, String currentColor) {
         double reward = 0.0;
+
         if (isWin(engine,newState, currentColor)) {
             reward += Rewards.WIN.getValue();
             Rewards.logReward(Rewards.WIN, "VICTORY");
-        } else if (!isWin(engine,newState, currentColor)) {
+        } else if (isLose(engine,newState, currentColor)) {
             reward += Rewards.LOSE.getValue();
-            Rewards.logReward(Rewards.LOSE, "LOSE");
-        }
-        if (isDraw(newState)) {
+            Rewards.logReward(Rewards.LOSE, "LOOSE");
+        } else if (isDraw(newState) ) {
             reward += Rewards.DRAW.getValue();
             Rewards.logReward(Rewards.DRAW, "Draw");
         }
@@ -26,7 +26,7 @@ public class Reward {
             reward += Rewards.OPPONENT_RING_REMOVAL.getValue();
             Rewards.logReward(Rewards.OPPONENT_RING_REMOVAL, "Opponent ring removed");
         }
-        if (removedYourRing(previousState, newState)) {
+        if (removedYourRing(previousState, newState, currentColor)) {
             reward += Rewards.YOUR_RING_REMOVAL.getValue();
             Rewards.logReward(Rewards.YOUR_RING_REMOVAL, "Your ring removed");
         }
@@ -72,28 +72,52 @@ public class Reward {
         return Rewards.normalizeReward(reward);
     }
 
+    // public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
+    //     boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
+    //     System.out.println("Vertexes of flipped coins: " + gameEngine.currentState.getVertexesOfFlippedCoins());
+    //     System.out.println("Winning row detected by win(): " + gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins()));
+    //     System.out.println("Winning color: " + gameEngine.getWinningColor());
+    //     if (isWinningRow) {
+    //         String winnerColor = gameEngine.getWinningColor();
+    //         return winnerColor.equalsIgnoreCase(currentColor.toLowerCase());
+    //     }
+    //     return false;
+    // }
+
+    // public static boolean isLose(GameState state) {
+    //     if(state.ringsPlaced == 10){
+    //         String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
+    //         int initialRingCount = 5;
+    //         int ringsRemovedByOpponent = initialRingCount - state.getRingCountForColor(opponentColor);
+    //         return ringsRemovedByOpponent >= 3;
+    //     }
+    //     else return false;
+    // }
+
     public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
-        boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
-        String winnerColor = gameEngine.getWinningColor();
-        return winnerColor.equalsIgnoreCase(currentColor);
+        if(currentColor.toLowerCase().equals("white")){
+            return state.ringsWhite<=2;
+        } else{
+            return state.ringsWhite>2;
+        }
+        
     }
 
-    public static boolean isLose(GameState state) {
-        if(state.ringsPlaced == 10){
-            String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
-            int initialRingCount = 5;
-            int ringsRemovedByOpponent = initialRingCount - state.getRingCountForColor(opponentColor);
-            return ringsRemovedByOpponent >= 3;
+    public static boolean isLose(GameEngine gameEngine, GameState state, String currentColor) {
+        if(currentColor.toLowerCase().equals("white")){
+            return state.ringsBlack<=2;
+        } else{
+            return state.ringsBlack>2;
         }
-        else return false;
     }
 
 
     public static boolean isDraw(GameState state) {
         return state.chipsRemaining <= 0;
     }
-    public static boolean removedYourRing(GameState previousState, GameState newState) {
-        return newState.getRingCountForColor(newState.currentPlayerColor()) < previousState.getRingCountForColor(previousState.currentPlayerColor());
+    public static boolean removedYourRing(GameState previousState, GameState newState, String currentColor) {
+
+        return newState.getRingCountForColor(currentColor.toLowerCase()) < previousState.getRingCountForColor(currentColor.toLowerCase());
     }
     public static boolean doubleRowCreated(GameState state) {
         String currentPlayerColor = state.currentPlayerColor();

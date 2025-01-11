@@ -182,17 +182,17 @@ public class GameState implements Cloneable{
             Vertex[][] gboard = board.getBoard();
             this.chipsWhite=0;
             this.chipsBlack=0;
-            this.ringsWhite=0;
-            this.ringsBlack=0;
+            // this.ringsWhite=0;
+            // this.ringsBlack=0;
             for(int i = 0; i<gboard.length;i++){
                 for(int j = 0; j<gboard[i].length;j++){
                     if(gboard[i][j]!=null){
                         if(gboard[i][j].getPlayObject()[0]!=null){
                             PlayObj currRing = gboard[i][j].getPlayObject()[0];
                             if(currRing.getColour().toLowerCase().equals("white")){
-                                this.ringsWhite++;
+                                // this.ringsWhite++;
                             } else{
-                                this.ringsBlack++;
+                                // this.ringsBlack++;
                         }
                         }
                         if(gboard[i][j].getPlayObject()[1]!=null){

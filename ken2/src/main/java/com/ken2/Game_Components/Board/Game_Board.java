@@ -21,7 +21,6 @@ public class Game_Board {
         fillBoard();
     }
 
-    // constructor for cloning
     public Game_Board(Game_Board other) {
         if (other.the_Board != null) {
             this.the_Board = new Vertex[other.the_Board.length][other.the_Board[0].length];
@@ -40,6 +39,8 @@ public class Game_Board {
             }
         }
     }
+
+
     
 
     public Vertex[][] getBoard(){
@@ -284,7 +285,10 @@ public class Game_Board {
         return -1; 
     }
     
-    
+    @Override
+    public Game_Board clone() {
+        return new Game_Board(this);
+    }
 
 
 
