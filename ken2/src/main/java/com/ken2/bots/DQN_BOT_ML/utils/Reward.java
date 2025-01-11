@@ -40,12 +40,16 @@ public class Reward {
             Rewards.logReward(Rewards.FIVE_CHIPS_IN_A_ROW, "5 chips in a row");
         }
 
-        if (createdLine(newState, 4, currentColor)) {
-            reward += Rewards.FOUR_IN_A_ROW.getValue();
-            Rewards.logReward(Rewards.FOUR_IN_A_ROW, "4 chips in a row");
-        } else if (createdLine(newState, 3, currentColor)) {
-            reward += Rewards.THREE_IN_A_ROW.getValue();
-            Rewards.logReward(Rewards.THREE_IN_A_ROW, "3 chips in a row");
+        
+        if (createdLine(newState,previousState, 3, currentColor)) {
+            if (createdLine(newState,previousState, 4, currentColor)) {
+                reward += Rewards.FOUR_IN_A_ROW.getValue();
+                Rewards.logReward(Rewards.FOUR_IN_A_ROW, "4 chips in a row");}
+            else{
+                reward += Rewards.THREE_IN_A_ROW.getValue();
+                Rewards.logReward(Rewards.THREE_IN_A_ROW, "3 chips in a row");
+            }
+            
         }
         if (doubleRowCreated(newState, currentColor)) {
             reward += Rewards.DOUBLE_ROW_CREATION.getValue();
@@ -78,27 +82,6 @@ public class Reward {
         return Rewards.normalizeReward(reward);
     }
 
-    // public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
-    //     boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
-    //     System.out.println("Vertexes of flipped coins: " + gameEngine.currentState.getVertexesOfFlippedCoins());
-    //     System.out.println("Winning row detected by win(): " + gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins()));
-    //     System.out.println("Winning color: " + gameEngine.getWinningColor());
-    //     if (isWinningRow) {
-    //         String winnerColor = gameEngine.getWinningColor();
-    //         return winnerColor.equalsIgnoreCase(currentColor.toLowerCase());
-    //     }
-    //     return false;
-    // }
-
-    // public static boolean isLose(GameState state) {
-    //     if(state.ringsPlaced == 10){
-    //         String opponentColor = state.currentPlayerColor().equals("white") ? "black" : "white";
-    //         int initialRingCount = 5;
-    //         int ringsRemovedByOpponent = initialRingCount - state.getRingCountForColor(opponentColor);
-    //         return ringsRemovedByOpponent >= 3;
-    //     }
-    //     else return false;
-    // }
 
     public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
         if (currentColor.toLowerCase().equals("white")) {
@@ -147,8 +130,8 @@ public class Reward {
         return newState.getRingCountForColor(opponentColor) < previousState.getRingCountForColor(opponentColor);
     }
 
-    public static boolean createdLine(GameState state, int length, String currentColor) {
-        String currentPlayerColor = currentColor;
+    public static boolean createdLine(GameState state,GameState prevState, int length, String currentColor) {
+        String currentPlayerColor = currentColor.toLowerCase();
         return countLinesForPlayer(state, length, currentPlayerColor) >0;
     }
 
@@ -166,22 +149,24 @@ public class Reward {
     public static int countLinesForPlayer(GameState state, int length, String playerColor) {
         int count = 0; 
         Vertex[][] board = state.getGameBoard().getBoard();
-        Set<String> countedLines = new HashSet<>(); 
+        Set<String> countedLines = new HashSet<>();     
+        playerColor = playerColor.toLowerCase();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] != null && board[i][j].hasCoin()) {
                     if (board[i][j].getCoin().getColour().equalsIgnoreCase(playerColor)) {
                         int start = board[i][j].getVertextNumber(); 
-
+    
                         for (Direction dir : Direction.getPrimaryDirections()) { 
                             int lineLength = countChipsInOneDirection(state, start, playerColor, dir.getDeltaX(), dir.getDeltaY());
-
+    
                             if (lineLength + 1 == length) {
                                 String lineIdentifier = generateLineIdentifier(start, dir, length); 
                                 if (!countedLines.contains(lineIdentifier)) {
                                     countedLines.add(lineIdentifier); 
                                     count++;
+                                    // System.out.println("Line of length " + length + " found starting at vertex " + start + " in direction " + dir.name()+" "+playerColor);
                                 }
                             }
                         }
@@ -189,9 +174,10 @@ public class Reward {
                 }
             }
         }
-
+    
         return count;
     }
+    
 
     private static int countChipsInOneDirection(GameState state, int start, String chipColor, int dx, int dy) {
         int count = 0;

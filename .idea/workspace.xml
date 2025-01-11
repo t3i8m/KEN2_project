@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Reward.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Reward.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Rewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/DQN_BOT_ML/utils/Rewards.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Direction.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Direction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/result/moves_log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/result/moves_log.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Rewards.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Rewards.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Direction.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Direction.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/result/moves_log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/result/moves_log.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
