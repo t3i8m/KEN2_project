@@ -222,7 +222,6 @@ public class Headless {
                 ////////////
                 newState = state.clone();
 
-                reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState, currentPlayerColor);
                 System.out.println("\n"+"Move " + moveNumber +":");
                 reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState, currentPlayerColor);
                 System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());

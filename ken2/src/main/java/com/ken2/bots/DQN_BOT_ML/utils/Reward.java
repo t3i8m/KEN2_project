@@ -56,6 +56,22 @@ public class Reward {
             Rewards.logReward(Rewards.DOUBLE_ROW_CREATION, "Double row created");
         }
 
+        int[] flippedChips = countFlippedChips(previousState, newState, currentColor);
+        int ownFlips = flippedChips[0];
+        int opponentFlips = flippedChips[1];
+
+        if (ownFlips > 0) {
+            double flipReward = ownFlips * Rewards.FLIP_MARKERS.getValue();
+            reward += flipReward;
+            Rewards.logReward(Rewards.FLIP_MARKERS, "Flipped " + ownFlips + " chips to your color");
+        }
+
+        if (opponentFlips > 0) {
+            double flipPenalty = opponentFlips * Rewards.FLIP_MARKERS_OPPONENT.getValue();
+            reward += flipPenalty;
+            Rewards.logReward(Rewards.FLIP_MARKERS_OPPONENT, "Flipped " + opponentFlips + " chips to opponent's color");
+        }
+
 //        if (flippedMarkers(previousState, newState)) {
 //            reward += Rewards.FLIP_MARKERS.getValue();
 //            Rewards.logReward(Rewards.FLIP_MARKERS, "Markers flipped");
@@ -201,6 +217,33 @@ public class Reward {
             count++;
         }
         return count;
+    }
+
+    private static int[] countFlippedChips(GameState previousState, GameState newState, String currentColor) {
+        int ownFlips = 0;
+        int opponentFlips = 0;
+        Vertex[][] prevBoard = previousState.getGameBoard().getBoard();
+        Vertex[][] newBoard = newState.getGameBoard().getBoard();
+        String opponentColor = currentColor.equalsIgnoreCase("white") ? "black" : "white";
+
+        for (int i = 0; i < prevBoard.length; i++) {
+            for (int j = 0; j < prevBoard[i].length; j++) {
+                Vertex prevVertex = prevBoard[i][j];
+                Vertex newVertex = newBoard[i][j];
+
+                if (prevVertex != null && newVertex != null && prevVertex.hasCoin() && newVertex.hasCoin()) {
+                    if (prevVertex.getCoin().getColour().equalsIgnoreCase(opponentColor) &&
+                        newVertex.getCoin().getColour().equalsIgnoreCase(currentColor)) {
+                        ownFlips++;
+                    } else if (prevVertex.getCoin().getColour().equalsIgnoreCase(currentColor) &&
+                               newVertex.getCoin().getColour().equalsIgnoreCase(opponentColor)) {
+                        opponentFlips++;
+                    }
+                }
+            }
+        }
+
+        return new int[]{ownFlips, opponentFlips};
     }
 
     private static String generateLineIdentifier(int startVertex, Direction dir, int length) {

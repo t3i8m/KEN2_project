@@ -8,6 +8,7 @@ import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
+import com.ken2.bots.DQN_BOT_ML.utils.Reward;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.engine.Direction;
 import com.ken2.engine.Direction;
@@ -87,6 +88,9 @@ public class MainApp extends Application {
     private Text blackWinsText;
     private Text drawText;
     private Text gamesPlayedText;
+    private GameState newState; 
+    private GameState previuosState;
+    private double reward = 0.0;
 
 
     private Text turnIndicator = new Text("White's Turn");
@@ -148,6 +152,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         gameEngine = new GameEngine();
+        previuosState = gameEngine.currentState.clone();
 
         primaryStage.setTitle("Yinsh Game");
         primaryStage.setWidth(950);
@@ -864,6 +869,15 @@ public class MainApp extends Application {
                 // gameEngine.checkWinning(vertex, color);
                 // if (gameEngine.win(vertex, color)==false)
                 // if()
+
+                // GameEngine newG = gameEngine.clone();
+                newState = gameEngine.currentState.clone();
+                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+
+                System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+                reward = Reward.calculateReward(gameEngine, previuosState, currentMove, newState, currentPlayer.getColor().toLowerCase());
+                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+color);
+
                 resetTurn();
                 //resetTurn();
                 // gameEngine.currentState.selectedChipVertex = -1;
@@ -1432,6 +1446,8 @@ public class MainApp extends Application {
 
 
     private void resetTurn(){
+        previuosState = gameEngine.currentState.clone();
+
         if (isGameOver) {
             return;
         }

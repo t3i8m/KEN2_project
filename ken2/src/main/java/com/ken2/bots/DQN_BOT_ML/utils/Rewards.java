@@ -17,7 +17,8 @@ public enum Rewards {
     DRAW(-1),
     LOSE(-10),
     OPPONENT_ROW_CREATION_THREE(-4),
-    OPPONENT_ROW_CREATION_FIVE(-9);
+    OPPONENT_ROW_CREATION_FIVE(-9),
+    FLIP_MARKERS_OPPONENT(-1);
 
 
     private int value;
