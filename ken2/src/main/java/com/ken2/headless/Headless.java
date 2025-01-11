@@ -173,15 +173,7 @@ public class Headless {
 
 
 
-            if (state.chipsRemaining <= 0) {
-                return "draw";
-            }
-            if (whiteScore == 3) {
-                return "white";
-            }
-            if (blackScore == 3) {
-                return "black";
-            }
+
 
             Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
 
@@ -215,7 +207,7 @@ public class Headless {
                 if (logs != null) {
                     GameMoveRecord rec = new GameMoveRecord();
                     rec.gameIndex = gameIndex;
-                    rec.moveNumber = moveNumber++;
+                    rec.moveNumber = moveNumber;
                     rec.currentPlayer = currentPlayerColor;
                     rec.moveType = "RingPlacement";
                     rec.fromVertex = -1; // Not applicable
@@ -316,7 +308,7 @@ public class Headless {
                     if (logs != null) {
                         GameMoveRecord rec = new GameMoveRecord();
                         rec.gameIndex = gameIndex;
-                        rec.moveNumber = moveNumber++;
+                        rec.moveNumber = moveNumber;
                         rec.currentPlayer = currentPlayerColor;
                         rec.moveType = "RingMovement";
                         rec.fromVertex = fromIndex;
@@ -363,18 +355,18 @@ public class Headless {
                     }
 
                     ///////////////////////
-                    newState = gameEngine.currentState.clone();
-                    double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
-                    System.out.println("\n"+"Move " + moveNumber +":");
-                    System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+                    
                     
                     /////////////////
                 }
-
+                newState = gameEngine.currentState.clone();
+                double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
+                System.out.println("\n"+"Move " + moveNumber +":");
+                System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
                 if (logs != null) {
                     GameMoveRecord rec = new GameMoveRecord();
                     rec.gameIndex = gameIndex;
-                    rec.moveNumber = moveNumber++;
+                    rec.moveNumber = moveNumber;
                     rec.currentPlayer = currentPlayerColor;
                     rec.moveType = "RingMovement";
                     rec.fromVertex = fromIndex;
@@ -392,9 +384,23 @@ public class Headless {
                 }
             }
 
+            if (state.chipsRemaining <= 0) {
+                return "draw";
+            }
+            if (whiteScore == 3) {
+                return "white";
+            }
+            if (blackScore == 3) {
+                return "black";
+            }
+
             state.resetTurn();
             switchTurn(state);
+            moveNumber+=1;
+
         }
+
+
     }
 
     /**
