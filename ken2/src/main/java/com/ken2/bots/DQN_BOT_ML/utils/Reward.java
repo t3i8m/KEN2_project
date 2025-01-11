@@ -22,7 +22,7 @@ public class Reward {
             Rewards.logReward(Rewards.DRAW, "Draw");
         }
 
-        if (removedOpponentRing(previousState, newState)) {
+        if (removedOpponentRing(previousState, newState, currentColor)) {
             reward += Rewards.OPPONENT_RING_REMOVAL.getValue();
             Rewards.logReward(Rewards.OPPONENT_RING_REMOVAL, "Opponent ring removed");
         }
@@ -31,17 +31,17 @@ public class Reward {
             Rewards.logReward(Rewards.YOUR_RING_REMOVAL, "Your ring removed");
         }
 
-        if (createdLine(newState, 5)) {
+        if (createdLine(newState, 5, currentColor)) {
             reward += Rewards.FIVE_CHIPS_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.FIVE_CHIPS_IN_A_ROW, "5 chips in a row");
-        } else if (createdLine(newState, 4)) {
+        } else if (createdLine(newState, 4, currentColor)) {
             reward += Rewards.FOUR_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.FOUR_IN_A_ROW, "4 chips in a row");
-        } else if (createdLine(newState, 3)) {
+        } else if (createdLine(newState, 3, currentColor)) {
             reward += Rewards.THREE_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.THREE_IN_A_ROW, "3 chips in a row");
         }
-        if (doubleRowCreated(newState)) {
+        if (doubleRowCreated(newState, currentColor)) {
             reward += Rewards.DOUBLE_ROW_CREATION.getValue();
             Rewards.logReward(Rewards.DOUBLE_ROW_CREATION, "Double row created");
         }
@@ -50,7 +50,7 @@ public class Reward {
 //            reward += Rewards.FLIP_MARKERS.getValue();
 //            Rewards.logReward(Rewards.FLIP_MARKERS, "Markers flipped");
 //        }
-        if (selfBlock(previousState, newState)) {
+        if (selfBlock(previousState, newState, currentColor)) {
             reward += Rewards.SELF_BLOCK.getValue();
             Rewards.logReward(Rewards.SELF_BLOCK, "Blocked own move");
         }
@@ -64,7 +64,7 @@ public class Reward {
             Rewards.logReward(Rewards.SUCCESSFUL_MOVE, "Successful move made");
         }
 
-        if (opponentCreatedLine(previousState, newState)) {
+        if (opponentCreatedLine(previousState, newState, currentColor)) {
             reward += Rewards.OPPONENT_ROW_CREATION.getValue();
             Rewards.logReward(Rewards.OPPONENT_ROW_CREATION, "Opponent row created!");
         }
@@ -95,21 +95,24 @@ public class Reward {
     // }
 
     public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
-        if(currentColor.toLowerCase().equals("white")){
-            return state.ringsWhite<=2;
-        } else{
-            return state.ringsWhite>2;
+        if (currentColor.toLowerCase().equals("white")) {
+            return state.ringsWhite <= 2 && state.chipsRemaining >= 0; 
+        } else if (currentColor.toLowerCase().equals("black")) {
+            return state.ringsBlack <= 2 && state.chipsRemaining >= 0; 
         }
-        
+        return false;
     }
+    
 
     public static boolean isLose(GameEngine gameEngine, GameState state, String currentColor) {
-        if(currentColor.toLowerCase().equals("white")){
-            return state.ringsBlack<=2;
-        } else{
-            return state.ringsBlack>2;
+        if (currentColor.toLowerCase().equals("white")) {
+            return state.ringsBlack <= 2 && state.chipsRemaining >= 0; 
+        } else if (currentColor.toLowerCase().equals("black")) {
+            return state.ringsWhite <= 2 && state.chipsRemaining >= 0; 
         }
+        return false;
     }
+    
 
 
     public static boolean isDraw(GameState state) {
@@ -119,32 +122,32 @@ public class Reward {
 
         return newState.getRingCountForColor(currentColor.toLowerCase()) < previousState.getRingCountForColor(currentColor.toLowerCase());
     }
-    public static boolean doubleRowCreated(GameState state) {
-        String currentPlayerColor = state.currentPlayerColor();
+    public static boolean doubleRowCreated(GameState state, String currentColor) {
+        String currentPlayerColor = currentColor;
         return countLinesForPlayer(state, 5, currentPlayerColor) >= 2; // at least 2 rows of length 5
     }
 //    public static boolean flippedMarkers(GameState previousState, GameState newState) {
 //    }
 
-    public static boolean selfBlock(GameState previousState, GameState newState) {
+    public static boolean selfBlock(GameState previousState, GameState newState, String currentColor) {
         String currentPlayerColor = previousState.currentPlayerColor();
         return countLinesForPlayer(previousState, 3, currentPlayerColor) >
                 countLinesForPlayer(newState, 3, currentPlayerColor);
     }
 
 
-    public static boolean removedOpponentRing(GameState previousState, GameState newState) {
-        String opponentColor = previousState.currentPlayerColor().equals("white") ? "black" : "white";
+    public static boolean removedOpponentRing(GameState previousState, GameState newState, String currentColor) {
+        String opponentColor = currentColor.equals("white") ? "black" : "white";
         return newState.getRingCountForColor(opponentColor) < previousState.getRingCountForColor(opponentColor);
     }
 
-    public static boolean createdLine(GameState state, int length) {
-        String currentPlayerColor = state.currentPlayerColor();
+    public static boolean createdLine(GameState state, int length, String currentColor) {
+        String currentPlayerColor = currentColor;
         return countLinesForPlayer(state, length, currentPlayerColor) > 0;
     }
 
-    public static boolean opponentCreatedLine (GameState previousState, GameState newState) {
-        String opponentColor = newState.currentPlayerColor();
+    public static boolean opponentCreatedLine (GameState previousState, GameState newState, String currentColor) {
+        String opponentColor = currentColor;
         if(opponentColor.equalsIgnoreCase("white"))
             opponentColor.equalsIgnoreCase("black");
         else opponentColor.equalsIgnoreCase("white");
