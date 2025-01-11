@@ -18,7 +18,7 @@ public class HeadlessMain {
 
         Headless headless = new Headless(1, whiteBot, blackBot);
 
-        headless.runGames(); // without csv export
-        // headless.exportGamesToCsv();// with csv export
+        // headless.runGames(); // without csv export
+        headless.exportGamesToCsv();// with csv export
     }
 }

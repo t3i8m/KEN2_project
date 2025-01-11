@@ -14,7 +14,7 @@ public enum Rewards {
     FLIP_MARKERS(1),
     INVALID_MOVE(-100),
     SELF_BLOCK(-2),
-    DRAW(5),
+    DRAW(-1),
     LOSE(-10),
     OPPONENT_ROW_CREATION(-8);
 

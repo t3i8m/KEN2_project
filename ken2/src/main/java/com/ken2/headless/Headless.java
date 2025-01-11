@@ -221,11 +221,11 @@ public class Headless {
                 }
 
                 ////////////
-                newState = gameEngine.currentState.clone();
+                newState = state.clone();
 
-                reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState);
+                reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState, currentPlayerColor);
                 System.out.println("\n"+"Move " + moveNumber +":");
-                reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState);
+                reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState, currentPlayerColor);
                 System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
 
 
@@ -297,8 +297,8 @@ public class Headless {
                 }
                 targetV.setRing(ringToMove);
 
-                state.chipsRemaining--;
-                state.chipRingVertex = -1;
+                gameEngine.currentState.chipsRemaining--;
+                gameEngine.currentState.chipRingVertex = -1;
                 gameEngine.currentState.chipPlaced = false;
                 gameEngine.currentState.selectedRingVertex = -1;
                 gameEngine.currentState.updateChipsRingCountForEach();
@@ -323,6 +323,12 @@ public class Headless {
                         rec.gameResult = "draw";
                         logs.add(rec);
                     }
+                    newState = gameEngine.currentState.clone();
+                    System.out.println(gameEngine.currentState.chipsRemaining);
+                    System.out.println("\n"+"Move " + moveNumber +":");
+                    reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
+                    System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+
                     return "draw";
                 }
 
@@ -361,7 +367,7 @@ public class Headless {
                 }
                 newState = gameEngine.currentState.clone();
                 System.out.println("\n"+"Move " + moveNumber +":");
-                reward = Reward.calculateReward(gameEngine, previuos, move, newState);
+                reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
                 System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
 
                 if (logs != null) {
@@ -372,7 +378,7 @@ public class Headless {
                     rec.moveType = "RingMovement";
                     rec.fromVertex = fromIndex;
                     rec.toVertex = toIndex;
-                    rec.chipsRemaining = state.chipsRemaining;
+                    rec.chipsRemaining = gameEngine.currentState.chipsRemaining;
                     rec.whiteScore = whiteScore;
                     rec.blackScore = blackScore;
                     rec.coinsFlippedVertices = coinsFlippedString(flippedCoins);
@@ -385,7 +391,8 @@ public class Headless {
                 }
             }
 
-            if (state.chipsRemaining <= 0) {
+            if (gameEngine.currentState.chipsRemaining <= 0) {
+                System.out.println("HELLO");
                 return "draw";
             }
             if (whiteScore == 3) {
@@ -395,8 +402,8 @@ public class Headless {
                 return "black";
             }
 
-            state.resetTurn();
-            switchTurn(state);
+            gameEngine.currentState.resetTurn();
+            switchTurn(gameEngine.currentState);
             moveNumber+=1;
 
         }

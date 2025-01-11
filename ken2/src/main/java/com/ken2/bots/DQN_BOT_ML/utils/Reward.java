@@ -8,16 +8,15 @@ import com.ken2.engine.Move;
 
 public class Reward {
 
-    public static double calculateReward(GameEngine engine, GameState previousState, Move move, GameState newState) {
+    public static double calculateReward(GameEngine engine, GameState previousState, Move move, GameState newState, String currentColor) {
         double reward = 0.0;
-        if (isWin(engine,newState)) {
+        if (isWin(engine,newState, currentColor)) {
             reward += Rewards.WIN.getValue();
             Rewards.logReward(Rewards.WIN, "VICTORY");
-        } else if (isLose(newState)) {
+        } else if (!isWin(engine,newState, currentColor)) {
             reward += Rewards.LOSE.getValue();
-            Rewards.logReward(Rewards.LOSE, "LOSE ЕЩКЕРЕ Я РАНЯЮ ЗАПАД УУУУУ");
+            Rewards.logReward(Rewards.LOSE, "LOSE");
         }
-
         if (isDraw(newState)) {
             reward += Rewards.DRAW.getValue();
             Rewards.logReward(Rewards.DRAW, "Draw");
@@ -73,8 +72,10 @@ public class Reward {
         return Rewards.normalizeReward(reward);
     }
 
-    public static boolean isWin(GameEngine gameEngine, GameState state) {
-        return gameEngine.win(state.getVertexesOfFlippedCoins());
+    public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
+        boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
+        String winnerColor = gameEngine.getWinningColor();
+        return winnerColor.equalsIgnoreCase(currentColor);
     }
 
     public static boolean isLose(GameState state) {
