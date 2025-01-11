@@ -90,7 +90,7 @@ public class Reward {
 
 
     public static boolean isDraw(GameState state) {
-        return state.getChipsCountForColor("white") == 0 && state.getChipsCountForColor("black") == 0;
+        return state.chipsRemaining <= 0;
     }
     public static boolean removedYourRing(GameState previousState, GameState newState) {
         return newState.getRingCountForColor(newState.currentPlayerColor()) < previousState.getRingCountForColor(previousState.currentPlayerColor());

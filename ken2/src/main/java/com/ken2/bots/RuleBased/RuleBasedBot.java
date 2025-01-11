@@ -91,4 +91,10 @@ public class RuleBasedBot extends BotAbstract {
         Move randomMove = allMoves.get(random.nextInt(allMoves.size()));
         return randomMove;
     }
+
+
+    @Override
+    public String getName() {
+        return "RuleBased";
+    }
 }

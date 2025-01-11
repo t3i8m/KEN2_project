@@ -163,13 +163,13 @@ public class Headless {
         int blackScore = 0;
         int moveNumber = 1;
         //////
-        GameState previuos = gameEngine.currentState.clone();
-        GameState newState;
         //////////
 
         while (true) {
             GameState state = gameEngine.currentState;
             Game_Board board = state.getGameBoard();
+            GameState previuos = gameEngine.currentState.clone();
+            GameState newState ;
 
 
 
@@ -184,14 +184,16 @@ public class Headless {
             }
 
             Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
-            String currentPlayerColor = state.isWhiteTurn ? "white" : "black";
-            BoardTransformation boardToVector = new BoardTransformation(board);
-            System.out.println("BEFORE: \n"+board.strMaker());
-            double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
 
-            System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
-            System.out.println(Arrays.toString(vectorBoard));
-            System.out.println(currentPlayerColor);
+            String currentPlayerColor = state.isWhiteTurn ? "white" : "black";
+
+            // BoardTransformation boardToVector = new BoardTransformation(board);
+            // System.out.println("BEFORE: \n"+board.strMaker());
+            // double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
+
+            // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
+            // System.out.println(Arrays.toString(vectorBoard));
+            // System.out.println(currentPlayerColor);
 
             if (state.ringsPlaced < 10) {
                 Move ringPlacement = currentBot.makeMove(state);
@@ -224,12 +226,13 @@ public class Headless {
                     rec.coinsFlippedVertices = "";
                     logs.add(rec);
                 }
+
                 ////////////
                 newState = gameEngine.currentState.clone();
+
                 double reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState);
-                System.out.println("Move " + moveNumber + ": Reward = " + reward);
-                previuos = newState.clone();
-                /////////////////////////
+                System.out.println("\n"+"Move " + moveNumber );
+                System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());                /////////////////////////
 
             } else {
                 Move move = currentBot.makeMove(state);
@@ -327,15 +330,10 @@ public class Headless {
                     }
                     return "draw";
                 }
-                ///////////////////////
-                boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
-                newState = gameEngine.currentState.clone();
-                double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
-                System.out.println("Move " + moveNumber + ": Reward = " + reward);
-                previuos = newState.clone();
-                /////////////////
+
 
                 String gameResult = null;
+                boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
 
                 if (isWinningRow) {
                     String winnerColor = gameEngine.getWinningColor();
@@ -363,6 +361,14 @@ public class Headless {
                             gameResult = "black";
                         }
                     }
+
+                    ///////////////////////
+                    newState = gameEngine.currentState.clone();
+                    double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
+                    System.out.println("\n"+"Move " + moveNumber +":");
+                    System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+                    
+                    /////////////////
                 }
 
                 if (logs != null) {

@@ -294,6 +294,10 @@ public class AlphaBetaBot extends BotAbstract {
     
         return true;
     }
+
+    public String getName() {
+        return "AlphaBeta";
+    }
     
     
 }

@@ -41,9 +41,10 @@ public enum Rewards {
     }
 
     public static double normalizeReward(double reward) {
-        final int MIN_REWARD = -100;
-        final int MAX_REWARD = 50;
-        return (double)(reward - MIN_REWARD) / (MAX_REWARD - MIN_REWARD) * 2 - 1;
+        // final int MIN_REWARD = -100;
+        // final int MAX_REWARD = 50;
+        // return (double)(reward - MIN_REWARD) / (MAX_REWARD - MIN_REWARD) * 2 - 1;
+        return reward;
     }
 
 

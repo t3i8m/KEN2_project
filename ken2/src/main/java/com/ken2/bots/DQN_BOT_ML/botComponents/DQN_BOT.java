@@ -73,6 +73,8 @@ public class DQN_BOT  extends BotAbstract{
         }
         return bestAction;
     }
-
+    public String getName() {
+        return "DQN BOT";
+    }
 
 }

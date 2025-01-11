@@ -10,6 +10,7 @@ import com.ken2.engine.Move;
 // interface for all of the bots
 public interface Bot {
     String getColor();
+    String getName();
     Move makeMove(GameState state);
     Vertex removeRing(GameState state);
     ArrayList<Integer> removeChips(GameState state);
