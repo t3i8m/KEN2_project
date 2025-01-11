@@ -54,4 +54,8 @@ public enum Direction {
         }
         return false;
     }
+
+    public static Direction[] getPrimaryDirections() {
+        return new Direction[]{UP, RIGHT_UP, RIGHT_DOWN};
+    }
 }
