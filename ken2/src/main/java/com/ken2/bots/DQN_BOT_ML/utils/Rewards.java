@@ -5,18 +5,18 @@ public enum Rewards {
     CHIPS_IN_A_ROW(4),
     THREE_IN_A_ROW(2),
     FOUR_IN_A_ROW(3),
-    FIVE_CHIPS_IN_A_ROW(6),
+    FIVE_CHIPS_IN_A_ROW(9),
     YOUR_RING_REMOVAL(10),
     OPPONENT_RING_REMOVAL(-10),
     SUCCESSFUL_MOVE(1),
     //COMPLEX_MOVE (5),
-    DOUBLE_ROW_CREATION (15),
+    DOUBLE_ROW_CREATION (8),
     FLIP_MARKERS(1),
     INVALID_MOVE(-100),
-    SELF_BLOCK(-10),
+    SELF_BLOCK(-2),
     DRAW(5),
     LOSE(-10),
-    OPPONENT_ROW_CREATION(-20);
+    OPPONENT_ROW_CREATION(-8);
 
 
     private int value;

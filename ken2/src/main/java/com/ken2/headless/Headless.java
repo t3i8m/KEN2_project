@@ -170,6 +170,7 @@ public class Headless {
             Game_Board board = state.getGameBoard();
             GameState previuos = gameEngine.currentState.clone();
             GameState newState ;
+            double reward = 0.0;
 
 
 
@@ -222,9 +223,11 @@ public class Headless {
                 ////////////
                 newState = gameEngine.currentState.clone();
 
-                double reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState);
-                System.out.println("\n"+"Move " + moveNumber );
-                System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());                /////////////////////////
+                reward = Reward.calculateReward(gameEngine,previuos,ringPlacement,newState);
+                System.out.println("\n"+"Move " + moveNumber +":");
+                reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState);
+                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+
 
             } else {
                 Move move = currentBot.makeMove(state);
@@ -354,15 +357,13 @@ public class Headless {
                         }
                     }
 
-                    ///////////////////////
-                    
-                    
-                    /////////////////
+
                 }
                 newState = gameEngine.currentState.clone();
-                double reward = Reward.calculateReward(gameEngine, previuos, move, newState);
                 System.out.println("\n"+"Move " + moveNumber +":");
-                System.out.println("Reward = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+                reward = Reward.calculateReward(gameEngine, previuos, move, newState);
+                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+
                 if (logs != null) {
                     GameMoveRecord rec = new GameMoveRecord();
                     rec.gameIndex = gameIndex;

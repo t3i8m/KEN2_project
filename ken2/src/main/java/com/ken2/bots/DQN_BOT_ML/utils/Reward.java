@@ -10,13 +10,12 @@ public class Reward {
 
     public static double calculateReward(GameEngine engine, GameState previousState, Move move, GameState newState) {
         double reward = 0.0;
-
         if (isWin(engine,newState)) {
             reward += Rewards.WIN.getValue();
             Rewards.logReward(Rewards.WIN, "VICTORY");
         } else if (isLose(newState)) {
             reward += Rewards.LOSE.getValue();
-            Rewards.logReward(Rewards.LOSE, "LOSS ЕЩКЕРЕ Я РАНЯЮ ЗАПАД УУУУУ");
+            Rewards.logReward(Rewards.LOSE, "LOSE ЕЩКЕРЕ Я РАНЯЮ ЗАПАД УУУУУ");
         }
 
         if (isDraw(newState)) {
