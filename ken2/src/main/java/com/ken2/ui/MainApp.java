@@ -8,6 +8,7 @@ import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
+import com.ken2.bots.DQN_BOT_ML.utils.Reward;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.engine.Direction;
 import com.ken2.engine.Direction;
@@ -539,6 +540,9 @@ public class MainApp extends Application {
         int vertex = gameEngine.findClosestVertex(e.getX(), e.getY());
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (vertex < 0) return;
+
+        GameState previous = gameEngine.currentState.clone();
+
         if (gameEngine.GetWinningRing()) {
             WinningCase(vertex, gc);
             return;
@@ -556,6 +560,13 @@ public class MainApp extends Application {
                 handleChipAndRingPlacement(vertex, gc);
             }
         }
+
+        GameState newState = gameEngine.currentState.clone();
+        Move move = new Move(vertex,vertex, direction);
+        double reward = Reward.calculateReward(gameEngine,previous,move,newState, previous.currentPlayerColor());
+        System.out.println("Player color: " + previous.currentPlayerColor());
+        System.out.println("Reward = " + reward);
+
 
         // switchPlayer();
         // playerTurn();
@@ -1292,93 +1303,106 @@ public class MainApp extends Application {
         if (isGameOver) {
             restartGame();
         }
-
-        // if (whi) {
-        //     return;
-        // }
         try{
-            GameState gs = gameEngine.getGameState();
-            Game_Board gameBoard = gs.gameBoard;
+            GameState previous = gameEngine.currentState.clone();
+           // GameState gs = gameEngine.getGameState();
+            Game_Board gameBoard = gameEngine.currentState.gameBoard;
             Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
             Bot activeBot = currentPlayer.getBot();
             Vertex vertexFrom;
             int vertexTo;
             Move move = null;
+
             if (activeBot != null) {
-    
-                if (gs.ringsPlaced < 10) {
-    
+
+                if (gameEngine.currentState.ringsPlaced < 10) {
+
                     move = activeBot.makeMove(gameEngine.getGameState());
-    
+
                     int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
                     GUIplaceStartingRing(chosenVertexNumber, gc);
-    
+
+                    GameState newState = gameEngine.currentState.clone();
+                    double reward = Reward.calculateReward(gameEngine, previous, move, newState, previous.currentPlayerColor());
+                    System.out.println("Bot Move Reward (Ring Placement) = " + reward);
+
+
                     gameEngine.currentState.resetTurn();
                     gameEngine.currentState.selectedChipVertex = -1;
                     currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
                 } else {
-                    try{
-                        move = activeBot.makeMove(gameEngine.getGameState());
-                        vertexFrom = move.getStartingVertex();
-                        // if(move==null){
-                        //     return;
-                        // }
-        
-                        vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                        // System.out.println("from "+vertexFrom.getVertextNumber());
-                        // System.out.println("to "+vertexTo);
-                        // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){
-                            // while(true){
-                            //     move = activeBot.makeMove(gameEngine.getGameState());
-                            //     vertexFrom = move.getStartingVertex();
-        
-                            //     vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
-                            //     if(vertexTo!=-1 & vertexFrom.getVertextNumber()!=-1){
-                            //         break;
-                            //     }
-                            // }
-                            int[] moveValid = {1};
-                            
-                            moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
-                    } catch(Exception ex){
-                        // System.out.println(ex);
-                        ex.printStackTrace();
-                        // System.out.println(gameBoard.strMaker());
-                        this.isGameOver=true;
-                        restartGame();
+                    //try{
+                    move = activeBot.makeMove(gameEngine.getGameState());
+                    vertexFrom = move.getStartingVertex();
+                    // if(move==null){
+                    //     return;
+                    // }
+
+                    vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                    // System.out.println("from "+vertexFrom.getVertextNumber());
+                    // System.out.println("to "+vertexTo);
+                    // if(vertexTo==-1 || vertexFrom.getVertextNumber()==-1){
+                    // while(true){
+                    //     move = activeBot.makeMove(gameEngine.getGameState());
+                    //     vertexFrom = move.getStartingVertex();
+
+                    //     vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
+                    //     if(vertexTo!=-1 & vertexFrom.getVertextNumber()!=-1){
+                    //         break;
+                    //     }
+                    // }
+                    int[] moveValid = {1};
+
+                    moveRing(vertexFrom.getVertextNumber(), vertexTo, gc, moveValid, move);
+                     }
+                    GameState newState = gameEngine.currentState.clone();
+                    double reward = Reward.calculateReward(gameEngine, previous, move, newState, previous.currentPlayerColor());
+                    System.out.println("Bot Move Reward = " + reward);
+
+                    if (move == null) {
+//                        resetTurn();
+//                        updateOnscreenText();
+                        System.out.println("Bot failed to make a move.");
+                        return;
                     }
-                    
-                    }
+                }
+            } catch (Throwable ex) {
+            ex.printStackTrace();
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(event -> botTurn(gc));
+            pause.play();
+        }
+        }
     
                     
                     // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
     
-                }
+        //        }
                 // System.out.println("NUMBER OF "+gs.ringsPlaced);
                 // System.out.println("NUMBER BLACK "+gs.ringsBlack);
                 // System.out.println("NUMBER WHITE "+gs.ringsWhite);
     
-                if (move != null) {
-                    // resetTurn();
-                    // Platform.runLater(() -> resetTurn());
-                    resetTurn();
-                    // updateGameBoard(gameBoard, gc);
-                    updateOnscreenText();
-                    
-                }
-        } catch(Throwable ex){
-            // System.out.println(ex);
-            // return;
-            PauseTransition pause = new PauseTransition(Duration.seconds(1));
-            pause.setOnFinished(event -> botTurn(gc));
-            pause.play();
-            // Platform.runLater(() ->             restartGame()
-            // );
-
-        }
-        
-        }
+//                if (move != null) {
+//                    // resetTurn();
+//                    // Platform.runLater(() -> resetTurn());
+//                    resetTurn();
+//                    // updateGameBoard(gameBoard, gc);
+//                    updateOnscreenText();
+//
+//                }
+//        } catch(Throwable ex){
+//            // System.out.println(ex);
+//            // return;
+//            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+//            pause.setOnFinished(event -> botTurn(gc));
+//            pause.play();
+//            // Platform.runLater(() ->             restartGame()
+//            // );
+//
+//        }
+//
+//        }
 
     
 
