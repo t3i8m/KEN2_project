@@ -16,7 +16,8 @@ public enum Rewards {
     SELF_BLOCK(-2),
     DRAW(-1),
     LOSE(-10),
-    OPPONENT_ROW_CREATION(-8);
+    OPPONENT_ROW_CREATION_THREE(-4),
+    OPPONENT_ROW_CREATION_FIVE(-9);
 
 
     private int value;

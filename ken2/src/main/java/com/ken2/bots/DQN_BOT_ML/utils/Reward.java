@@ -1,5 +1,10 @@
 package com.ken2.bots.DQN_BOT_ML.utils;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.Direction;
 import com.ken2.engine.GameEngine;
@@ -25,16 +30,17 @@ public class Reward {
         if (removedOpponentRing(previousState, newState, currentColor)) {
             reward += Rewards.OPPONENT_RING_REMOVAL.getValue();
             Rewards.logReward(Rewards.OPPONENT_RING_REMOVAL, "Opponent ring removed");
+            reward += Rewards.OPPONENT_ROW_CREATION_FIVE.getValue();
+            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION_FIVE, "Opponent row created 5 chips!");
         }
         if (removedYourRing(previousState, newState, currentColor)) {
             reward += Rewards.YOUR_RING_REMOVAL.getValue();
             Rewards.logReward(Rewards.YOUR_RING_REMOVAL, "Your ring removed");
-        }
-
-        if (createdLine(newState, 5, currentColor)) {
             reward += Rewards.FIVE_CHIPS_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.FIVE_CHIPS_IN_A_ROW, "5 chips in a row");
-        } else if (createdLine(newState, 4, currentColor)) {
+        }
+
+        if (createdLine(newState, 4, currentColor)) {
             reward += Rewards.FOUR_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.FOUR_IN_A_ROW, "4 chips in a row");
         } else if (createdLine(newState, 3, currentColor)) {
@@ -65,8 +71,8 @@ public class Reward {
         }
 
         if (opponentCreatedLine(previousState, newState, currentColor)) {
-            reward += Rewards.OPPONENT_ROW_CREATION.getValue();
-            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION, "Opponent row created!");
+            reward += Rewards.OPPONENT_ROW_CREATION_THREE.getValue();
+            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION_THREE, "Opponent row created 3 chips!");
         }
 
         return Rewards.normalizeReward(reward);
@@ -143,16 +149,14 @@ public class Reward {
 
     public static boolean createdLine(GameState state, int length, String currentColor) {
         String currentPlayerColor = currentColor;
-        return countLinesForPlayer(state, length, currentPlayerColor) > 0;
+        return countLinesForPlayer(state, length, currentPlayerColor) >0;
     }
 
-    public static boolean opponentCreatedLine (GameState previousState, GameState newState, String currentColor) {
-        String opponentColor = currentColor;
-        if(opponentColor.equalsIgnoreCase("white"))
-            opponentColor.equalsIgnoreCase("black");
-        else opponentColor.equalsIgnoreCase("white");
+    public static boolean opponentCreatedLine(GameState previousState, GameState newState, String currentColor) {
+        String opponentColor = currentColor.equals("white") ? "black" : "white"; 
         return countLinesForPlayer(newState, 3, opponentColor) > countLinesForPlayer(previousState, 3, opponentColor);
     }
+    
 
     public static boolean successfulMove(Move move, GameState previousState, GameState newState) {
         return !newState.equals(previousState); // Any valid state change is a success
@@ -160,17 +164,25 @@ public class Reward {
 
 
     public static int countLinesForPlayer(GameState state, int length, String playerColor) {
-        int count = 0;
+        int count = 0; 
         Vertex[][] board = state.getGameBoard().getBoard();
+        Set<String> countedLines = new HashSet<>(); 
+
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] != null && board[i][j].hasCoin()) {
                     if (board[i][j].getCoin().getColour().equalsIgnoreCase(playerColor)) {
-                        int start = board[i][j].getVertextNumber();
-                        for (Direction dir : Direction.values()) {
+                        int start = board[i][j].getVertextNumber(); 
+
+                        for (Direction dir : Direction.getPrimaryDirections()) { 
                             int lineLength = countChipsInOneDirection(state, start, playerColor, dir.getDeltaX(), dir.getDeltaY());
+
                             if (lineLength + 1 == length) {
-                                count++;
+                                String lineIdentifier = generateLineIdentifier(start, dir, length); 
+                                if (!countedLines.contains(lineIdentifier)) {
+                                    countedLines.add(lineIdentifier); 
+                                    count++;
+                                }
                             }
                         }
                     }
@@ -182,25 +194,32 @@ public class Reward {
     }
 
     private static int countChipsInOneDirection(GameState state, int start, String chipColor, int dx, int dy) {
-        int k = 0;
+        int count = 0;
         int x = state.getGameBoard().getVertex(start).getXposition();
         int y = state.getGameBoard().getVertex(start).getYposition();
 
-        // Traverse in the given direction
         while (true) {
             x += dx;
             y += dy;
-            int next = state.getGameBoard().getVertexNumberFromPosition(x, y);
-            if (next == -1) {
-                return k;
+            int nextVertex = state.getGameBoard().getVertexNumberFromPosition(x, y);
+
+            if (nextVertex == -1) { 
+                break;
             }
 
-            Vertex v = state.getGameBoard().getVertex(next);
+            Vertex v = state.getGameBoard().getVertex(nextVertex);
             if (v == null || !v.hasCoin() || !v.getCoin().getColour().equalsIgnoreCase(chipColor)) {
-                return k;
+                break;
             }
 
-            k++;
+            count++;
         }
+        return count;
     }
+
+    private static String generateLineIdentifier(int startVertex, Direction dir, int length) {
+        return startVertex + "-" + dir.name() + "-" + length;
+    }
+
+
 }
