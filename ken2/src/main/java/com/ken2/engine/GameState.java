@@ -71,6 +71,28 @@ public class GameState implements Cloneable{
         this.isWhiteTurn = this.currentPlayer.equalsIgnoreCase("white");
         // isWhiteTurn = !isWhiteTurn;
     }
+
+    public void switchPlayerNEW() {
+        String oldPlayer = this.currentPlayer;
+        if (this.currentPlayer.equalsIgnoreCase("black")) {
+            this.currentPlayer = "white";
+            this.isWhiteTurn = true;
+        } else {
+            this.currentPlayer = "black";
+            this.isWhiteTurn=false;
+        }
+        // System.out.println("Switched player from: " + oldPlayer + " to: " + this.currentPlayer);
+    }
+
+    public void setCurrentPlayer(String newColor) {
+        this.currentPlayer = newColor.toLowerCase();
+        this.isWhiteTurn = newColor.equalsIgnoreCase("white");
+    }
+        
+    public String getCurrentColor(){
+        return this.currentPlayer;
+    }
+    
     
 
     public void setAllPossibleCoinsToRemove(List<Integer> llPossibleCoinsToRemove){
@@ -265,7 +287,7 @@ public class GameState implements Cloneable{
                 ? new ArrayList<>(this.vertexesOfFlippedCoins) : new ArrayList<>();
             copy.allPossibleCoinsToRemove = this.allPossibleCoinsToRemove != null 
                 ? new ArrayList<>(this.allPossibleCoinsToRemove) : new ArrayList<>();
-    
+            // copy.isWhiteTurn = this.isWhiteTurn;
             copy.currentPlayer = this.currentPlayer;
     
             return copy;

@@ -16,7 +16,7 @@ public class Move {
     // private int[] targetPosition = null;
     // private int[] fromPosition = null;
     private Vertex startingVertex;
-
+    private double reward = -10000000000.0;
 
     /**
      * constructor
@@ -128,14 +128,37 @@ public class Move {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        GameEngine ge = new GameEngine();
+    
         builder.append("Move: [");
-        builder.append("Start: ").append(startingVertex != null ? startingVertex.toString() : "null").append(", ");
-        builder.append("Target: (").append(xPosition).append(", ").append(yPosition).append("), ");
+        builder.append("Start: ").append(startingVertex != null ? startingVertex.getVertextNumber() : "null").append(", ");
+    
+        int vertexNumber = ge.gameBoard.getVertexNumberFromPosition(xPosition, yPosition);
+        Vertex targetVertex = ge.gameBoard.getVertex(vertexNumber);
+    
+        if (targetVertex == null) {
+            builder.append("Target: (invalid position), ");
+        } else {
+            builder.append("Target: (").append(targetVertex.getVertextNumber()).append("), ");
+        }
+    
         builder.append("Direction: ").append(direction != null ? direction.name() : "null").append(", ");
         builder.append("Flipped Coins: ").append(coinFlip != null ? coinFlip.size() : 0);
         builder.append("]");
+        builder.append("Reward: ").append(reward); 
+
+
         return builder.toString();
     }
+    public void setReward(double reward) {
+        this.reward = reward;
+    }
+
+    public double getReward() {
+        return reward;
+    }
+
+
 
     
 }

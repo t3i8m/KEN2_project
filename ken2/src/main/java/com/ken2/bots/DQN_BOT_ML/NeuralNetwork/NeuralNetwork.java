@@ -31,6 +31,7 @@ public class NeuralNetwork {
 
     public void backward(double[] predicted, double[] target){
         double[] gradients = lossFunction.computeGradient(predicted, target);
+
         for(int i = layers.size()-1;i>=0;i--){
             gradients = layers.get(i).backward(gradients);
         }
@@ -61,7 +62,7 @@ public class NeuralNetwork {
             totalLoss += lossFunction.computeLoss(predicted, targets[i]);
             backward(predicted, targets[i]);
         }
-        System.out.println("Mini-batch Loss: " + totalLoss / inputs.length);
+        // System.out.println("Mini-batch Loss: " + totalLoss / inputs.length);
     }
     
     

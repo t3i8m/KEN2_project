@@ -6,7 +6,7 @@ import com.ken2.engine.Move;
  * Class for the results from the Alpha Beta bots
  */
 public class AlphaBetaResult {
-    private double value;
+    private double value = 0;
     private Move bestMove;
 
     public AlphaBetaResult(double value, Move bestMove){

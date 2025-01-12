@@ -4,18 +4,22 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.NeuralNetwork;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.LoosFunction.MSE;
 import com.ken2.bots.DQN_BOT_ML.utils.BoardTransformation;
 import com.ken2.bots.DQN_BOT_ML.utils.ReplayBuffer;
+import com.ken2.bots.DQN_BOT_ML.utils.Reward;
 import com.ken2.bots.DQN_BOT_ML.utils.Experience;
 import com.ken2.bots.DQN_BOT_ML.utils.ActionIndexer;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.Layer;
@@ -36,6 +40,9 @@ public class DQN_BOT  extends BotAbstract{
     private Random random;
     private int actionSize = 25;
     private ReplayBuffer replayBuffer = new ReplayBuffer(1000);
+
+    private int chipsToRemove;
+    private List<Integer> winningChips = new ArrayList<>();
 
 
     public DQN_BOT(String color){
@@ -139,6 +146,17 @@ public class DQN_BOT  extends BotAbstract{
 
             System.out.println("Action Index " + actionIndex + " does not map to a valid move!");
         }
+        GameState nextState = moveState(state.clone(), chosenMove);
+
+        double reward = Reward.calculateRewardWITHOUT(ge, state, chosenMove, nextState, super.getColor());
+        BoardTransformation boardTransformNEW = new BoardTransformation(nextState.getGameBoard());
+
+        // System.out.println(reward);
+        // System.out.println(state.getGameBoard().strMaker());
+        // System.out.println(chosenMove);
+        // System.out.println(nextState.getGameBoard().strMaker());
+
+        storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"black":"white"));
         return chosenMove;
     }
 
@@ -164,84 +182,63 @@ public class DQN_BOT  extends BotAbstract{
             double[] nextQValues = qNetwork.predict(nextState);
 
             double maxNextQ = Arrays.stream(nextQValues).max().orElse(0.0);
+            // System.out.println("qValues size: " + qValues.length);
+            // System.out.println("Action index: " + action);
+            // System.out.println("qValues: " + Arrays.toString(qValues));
+            qValues[action] = reward + (gamma * maxNextQ);
 
-            qValues[action] = reward+(gamma*maxNextQ);
-            qNetwork.trainMiniBatch(new double[][]{state}, new double[][]{qValues});
+            if (action < 0 || action >= qValues.length) {
+                throw new IllegalStateException("Action index " + action + " out of bounds for qValues size " + qValues.length);
+            }
+            
+            
 
-        }
-    }
-
-    public int chooseAction(double[] qValues, ArrayList<Move> allPossible){
-        if(random.nextDouble() < epsilon){ // random action if less than epsilon
-            return random.nextInt(allPossible.size()-1);
-        }
-        else{
-            return argMax(qValues, allPossible);
-        }
-    }
-    //finds an index with the highest q-value
-    public int argMax(double[] qValues,ArrayList<Move>  allPossible){
-        int bestAction = 0;
-        for (int i =0; i <qValues.length;i++){
-            if(qValues[i]>qValues[bestAction]){
-                bestAction=i;
+            try {
+                qNetwork.trainMiniBatch(new double[][]{state}, new double[][]{qValues});
+            } catch (Exception e) {
+                System.out.println("Error during training: " + e.getMessage());
+                e.printStackTrace();
+                return;
             }
 
-            if(i>=allPossible.size()-1){
-                return bestAction;
 
+        }
+    }
+
+    public int chooseAction(double[] qValues, ArrayList<Move> allPossible) {
+        int maxActions = Math.min(qValues.length, allPossible.size());
+    
+        if (random.nextDouble() < epsilon) { 
+            return random.nextInt(maxActions);
+        } else {
+            return argMax(qValues, maxActions); 
+        }
+    }
+    
+    //finds an index with the highest q-value
+    public int argMax(double[] qValues, int maxActions) {
+        int bestAction = 0;
+        for (int i = 1; i < maxActions; i++) {
+            if (qValues[i] > qValues[bestAction]) {
+                bestAction = i;
             }
         }
         return bestAction;
     }
+    
 
     public String getName() {
         return "DQN BOT";
     }
 
     public void initializeNN(){
-        this.qNetwork = new NeuralNetwork(0.01, new MSE());
+        this.qNetwork = new NeuralNetwork(0.001, new MSE());
         qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
         qNetwork.addLayer(new Layer(64, 128, new ReLu())); 
         qNetwork.addLayer(new Layer(actionSize, 64, new Linear())); 
     }
 
-    // public void updateOutputLayer(int newSize) {
-    //     qNetwork.updateOutputLayer(new Layer(newSize, qNetwork.getPreviousLayerSize(), new Linear()));
-    // }
-    
 
-    // public ArrayList<Move> allPossibleMoves(GameState state) {
-    //     ArrayList<Move> possibleMoves = new ArrayList<>();
-    //     Game_Board board = state.getGameBoard();
-    //     GameSimulation simulation = new GameSimulation();
-
-    //     if (state.ringsPlaced < 10) {
-    //         ArrayList<Vertex> freePositions = board.getAllFreeVertexes();
-    //         for (Vertex vertex : freePositions) {
-    //             if (vertex != null) {
-    //                 Move move = new Move(vertex.getXposition(), vertex.getYposition(), null);
-    //                 possibleMoves.add(move);
-    //             }
-    //         }
-    //         return possibleMoves;
-    //     }
-
-    //     ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
-    //     for (Vertex ringPosition : allRingPositions) {
-    //         if (ringPosition != null && ringPosition.hasRing()) {
-    //             HashMap<Vertex, ArrayList<Move>> movesFromPosition = simulation.getAllMovesFromAllPositions(
-    //                 allRingPositions, state.getGameBoard()
-    //             );
-
-    //             for (ArrayList<Move> moves : movesFromPosition.values()) {
-    //                 possibleMoves.addAll(moves);
-    //             }
-    //         }
-    //     }
-
-    // return possibleMoves;
-    // }
 
     private boolean isValidMove(GameState state, Move move) {
         Vertex[][] board = state.getGameBoard().getBoard();
@@ -336,4 +333,194 @@ public class DQN_BOT  extends BotAbstract{
     
         return true;
     }
+
+    private GameState moveState(GameState state, Move move) {
+        GameState newState = state.clone();
+        
+        Game_Board board = state.getGameBoard();
+
+        String thisBotColor = super.getColor().toLowerCase().equals("white")? "white":"black";
+        Bot thisBot = new DQN_BOT(thisBotColor);
+        Bot opponentBot = new DQN_BOT(thisBotColor.toLowerCase().equals("white")?"black":"white");
+
+        String currentPlayerColor="";
+    
+        currentPlayerColor = state.isWhiteTurn ? "white" : "black";
+
+        GameEngine tempEngine = new GameEngine();
+        tempEngine.currentState = newState;
+    
+        Vertex fromVertex = move.getStartingVertex();
+    
+        if (fromVertex == null) {
+            System.out.println("Error: Source vertex is null.");
+            return state; 
+        }
+
+        int fromIndex = fromVertex.getVertextNumber();
+        int toIndex = board.getVertexNumberFromPosition(
+                move.getXposition(),
+                move.getYposition()
+        );
+    
+        if (toIndex == -1) {
+            System.out.println("Error: Invalid target vertex index.");
+            return state;
+        }
+
+        tempEngine.placeChip(fromIndex);
+        Move currentMove = tempEngine.gameSimulation.simulateMove(
+            board,
+            tempEngine.currentState.gameBoard.getVertex(fromIndex),
+            tempEngine.currentState.gameBoard.getVertex(toIndex)
+        );
+
+        Vertex sourceV = tempEngine.currentState.gameBoard.getVertex(fromIndex);
+
+    
+        if (sourceV == null) {
+            System.out.println("sourceV is null. : ");
+
+            return state;
+        }
+
+        Ring ringToMove;
+        if (sourceV.hasRing()) {
+            ringToMove = (Ring) sourceV.getRing();
+            sourceV.setRing(null);
+        } else {
+            System.out.println("hasRing is null. CurrentBot: " );
+
+            return state;
+        }
+
+    
+        List<Coin> flippedCoins = currentMove.getFlippedCoins();
+        ArrayList<Vertex> verticesToFlip = new ArrayList<>();
+        if (flippedCoins != null && !flippedCoins.isEmpty()) {
+            for (Coin coin : flippedCoins) {
+                Vertex coinVert = tempEngine.currentState.gameBoard.getVertex(coin.getVertex());
+                if (coinVert == null) {
+                    Vertex newVert = tempEngine.currentState.gameBoard.getVertex(coin.getVertex());
+                    if (!verticesToFlip.contains(newVert)) {
+                        verticesToFlip.add(newVert);
+                    }
+                    continue;
+                }
+                if (!verticesToFlip.contains(coinVert)) {
+                    verticesToFlip.add(coinVert);
+                }
+            }
+        }
+
+        tempEngine.gameSimulation.flipCoinsByVertex(verticesToFlip, tempEngine.currentState.gameBoard);
+        Vertex targetV = tempEngine.currentState.gameBoard.getVertex(toIndex);
+
+        if (targetV == null || targetV.hasRing()) {
+            System.out.println("targetV is null. CurrentBot: ");
+
+            return state;
+        }
+        targetV.setRing(ringToMove);
+
+    
+        tempEngine.currentState.chipsRemaining--;
+        tempEngine.currentState.chipRingVertex = -1;
+        tempEngine.currentState.chipPlaced = false;
+        tempEngine.currentState.selectedRingVertex = -1;
+        tempEngine.currentState.updateChipsRingCountForEach();
+        tempEngine.currentState.setVertexesOfFlippedCoins(verticesToFlip);
+        if (!verticesToFlip.contains(sourceV)) {
+            verticesToFlip.add(sourceV);
+        }
+        boolean isWinningRow = tempEngine.win(tempEngine.currentState.getVertexesOfFlippedCoins());
+
+    
+        if (isWinningRow) {
+                        
+            String winnerColor = tempEngine.getWinningColor();
+            Bot currentPlayer = winnerColor.equalsIgnoreCase(super.getColor()) ? thisBot : opponentBot;
+
+            Vertex vertexToRemoveBOT = currentPlayer.removeRing(tempEngine.currentState);
+            
+            handleWinningRing(vertexToRemoveBOT.getVertextNumber(), tempEngine);
+
+            ArrayList<Integer> allRemoveChips = currentPlayer.removeChips(tempEngine.currentState);
+            for (Integer vert : allRemoveChips) {
+                handleChipRemove(vert, tempEngine, currentPlayer);
+            }
+
+            tempEngine.setWinningRing(false);
+            tempEngine.setChipRemovalMode(false);
+
+
+    
+    
+        }
+    
+        return tempEngine.currentState;
+    }
+
+    public void handleWinningRing(int vertex, GameEngine gameEngine) {
+        Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
+        if (v != null
+            && v.hasRing()
+            && v.getRing().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+
+            v.setRing(null);
+            gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
+            gameEngine.currentState.setAllPossibleCoinsToRemove(gameEngine.getWinningChips());
+            gameEngine.setRingSelectionMode(false);
+            gameEngine.setChipRemovalMode(true);
+            chipsToRemove = 5;
+        }
+    }
+
+    public void handleChipRemove(int vertex, GameEngine gameEngine, Bot activeBot) {
+        if (!gameEngine.getWinningChips().contains(vertex)) {
+            return;
+        }
+
+        Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
+        if (v == null || !v.hasCoin()) {
+            return;
+        }
+
+        String currColor = v.getCoin().getColour().toLowerCase();
+        if (currColor.equalsIgnoreCase(gameEngine.getWinningColor())) {
+            v.setPlayObject(null);
+            gameEngine.currentState.chipsRemaining += 1;
+            chipsToRemove--;
+            gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
+
+            List<Integer> adjacentVertices = gameEngine.getAdjacentVertices(vertex);
+            List<Integer> validRemovableChips = new ArrayList<>();
+            for (int adjVertex : adjacentVertices) {
+                if (winningChips.contains(adjVertex)) {
+                    Vertex adjV = gameEngine.currentState.gameBoard.getVertex(adjVertex);
+                    if (adjV != null && adjV.hasCoin()
+                            && adjV.getCoin().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+                        validRemovableChips.add(adjVertex);
+                    }
+                }
+            }
+
+            if (chipsToRemove <= 0) {
+                gameEngine.setChipRemovalMode(false);
+                gameEngine.setRingSelectionMode(false);
+                gameEngine.setWinningColor("");
+                winningChips.clear();
+                gameEngine.getWinningChips().clear();
+
+                if (currColor.equals(activeBot.getColor().toLowerCase())) {
+                    switchTurn(gameEngine.currentState);
+                }
+            }
+        }
+    }
+
+    private void switchTurn(GameState state) {
+        state.isWhiteTurn = !state.isWhiteTurn;
+    }
+    
 }

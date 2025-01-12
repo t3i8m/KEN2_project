@@ -58,6 +58,16 @@ public class Reward {
             Rewards.logReward(Rewards.THREE_IN_A_ROW, "3 chips in a row");
         }
 
+        if (createdNewLine(previousState, newState, 2, currentColor)) {
+            reward += Rewards.TWO_IN_A_ROW.getValue();
+            Rewards.logReward(Rewards.TWO_IN_A_ROW, "2 chips in a row");
+        }
+
+        if (createdNewLine(previousState, newState, 5, currentColor)) {
+            reward += Rewards.FIVE_IN_A_ROW.getValue();
+            Rewards.logReward(Rewards.FIVE_IN_A_ROW, "5 chips in a row");
+        }
+
         if (createdNewLine(previousState, newState, 4, currentColor)) {
             reward += Rewards.FOUR_IN_A_ROW.getValue();
             Rewards.logReward(Rewards.FOUR_IN_A_ROW, "4 chips in a row");
@@ -81,6 +91,107 @@ public class Reward {
         if (successfulMove(move, previousState, newState)) {
             reward += Rewards.SUCCESSFUL_MOVE.getValue();
             Rewards.logReward(Rewards.SUCCESSFUL_MOVE, "Successful move made");
+        }
+
+        if (opponentCreatedLine(previousState, newState, 2, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_TWO.getValue(); 
+            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION_TWO, "Created a line of 2 for opponent");
+        }
+        
+        if (opponentCreatedLine(previousState, newState, 3, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_THREE.getValue();
+            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION_THREE, "Created a line of 3 for opponent");
+        }
+        
+        if (opponentCreatedLine(previousState, newState, 4, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_FOUR.getValue(); 
+            Rewards.logReward(Rewards.OPPONENT_ROW_CREATION_FOUR, "Created a line of 4 for opponent");
+        }
+
+        return Rewards.normalizeReward(reward);
+    }
+
+    public static boolean opponentCreatedLine(GameState previousState, GameState newState, int length, String currentColor) {
+        String opponentColor = currentColor.equalsIgnoreCase("white") ? "black" : "white";
+        return countLinesForPlayer(newState, length, opponentColor) > countLinesForPlayer(previousState, length, opponentColor);
+    }
+    
+
+    public static double calculateRewardWITHOUT(GameEngine engine, GameState previousState, Move move, GameState newState, String currentColor) {
+        double reward = 0.0;
+
+        if (isWin(engine, newState, currentColor)) {
+            reward += Rewards.WIN.getValue();
+        } else if (isLose(engine, newState, currentColor)) {
+            reward += Rewards.LOSE.getValue();
+        } else if (isDraw(newState)) {
+            reward += Rewards.DRAW.getValue();
+        }
+
+        if (removedOpponentRing(previousState, newState, currentColor)) {
+            reward += Rewards.OPPONENT_RING_REMOVAL.getValue();
+        }
+
+        if (removedYourRing(previousState, newState, currentColor)) {
+            reward += Rewards.YOUR_RING_REMOVAL.getValue();
+        }
+
+        int[] flippedChips = countFlippedChips(previousState, newState, currentColor);
+        int ownFlips = flippedChips[0];
+        int opponentFlips = flippedChips[1];
+
+        if (ownFlips > 0) {
+            double flipReward = ownFlips * Rewards.FLIP_MARKERS.getValue();
+            reward += flipReward;
+        }
+
+        if (opponentFlips > 0) {
+            double flipPenalty = opponentFlips * Rewards.FLIP_MARKERS_OPPONENT.getValue();
+            reward += flipPenalty;
+        }
+
+        if (createdNewLine(previousState, newState, 3, currentColor)) {
+            reward += Rewards.THREE_IN_A_ROW.getValue();
+        }
+
+        if (createdNewLine(previousState, newState, 4, currentColor)) {
+            reward += Rewards.FOUR_IN_A_ROW.getValue();
+        }
+
+        
+        if (opponentCreatedLine(previousState, newState, 2, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_TWO.getValue(); 
+        }
+        
+        if (opponentCreatedLine(previousState, newState, 3, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_THREE.getValue();
+        }
+        
+        if (opponentCreatedLine(previousState, newState, 4, currentColor)) {
+            reward += Rewards.OPPONENT_ROW_CREATION_FOUR.getValue(); 
+        }
+
+        if (createdNewLine(previousState, newState, 5, currentColor)) {
+            reward += Rewards.FIVE_CHIPS_IN_A_ROW.getValue();
+        }
+
+        if (createdNewLine(previousState, newState, 2, currentColor)) {
+            reward += Rewards.TWO_IN_A_ROW.getValue();
+        }
+
+        if (selfBlock(previousState, newState, currentColor)) {
+            reward += Rewards.SELF_BLOCK.getValue();
+        }
+        if (createdNewLine(previousState, newState, 5, currentColor)) {
+            reward += Rewards.FIVE_IN_A_ROW.getValue();
+        }
+
+        if (newState.equals(previousState)) {
+            reward += Rewards.INVALID_MOVE.getValue();
+        }
+
+        if (successfulMove(move, previousState, newState)) {
+            reward += Rewards.SUCCESSFUL_MOVE.getValue();
         }
 
         return Rewards.normalizeReward(reward);
@@ -239,7 +350,7 @@ public class Reward {
         return count;
     }
 
-    private static int[] countFlippedChips(GameState previousState, GameState newState, String currentColor) {
+    public static int[] countFlippedChips(GameState previousState, GameState newState, String currentColor) {
         int ownFlips = 0;
         int opponentFlips = 0;
         Vertex[][] prevBoard = previousState.getGameBoard().getBoard();

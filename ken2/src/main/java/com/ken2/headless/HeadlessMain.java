@@ -13,13 +13,13 @@ import com.ken2.utils.BotFactory;
 public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
-        Bot whiteBot = factory.getBot("alphabeta bot", "White");
-        Bot blackBot = factory.getBot("rulebased bot", "Black");
+        Bot whiteBot = factory.getBot("rulebased bot", "White");
+        Bot blackBot = factory.getBot("alphabeta bot", "Black");
 
-        Headless headless = new Headless(100, whiteBot, blackBot);
+        Headless headless = new Headless(10, whiteBot, blackBot);
 
-        // headless.runGames(); // without csv export
-        headless.exportGamesToCsv();// with csv export
+        headless.runGames(); // without csv export
+        // headless.exportGamesToCsv();// with csv export
         // headless.runGamesWithoutStats();
         int totalWhiteWins = 0;
         int totalBlackWins = 0;
@@ -29,13 +29,13 @@ public class HeadlessMain {
         totalBlackWins += headless.getBlackWins();
         totalDraws += headless.getDraws();
         totalInvalidGames += headless.getInvalidGames();
-        System.out.println("=========================================");
-        System.out.println("Training completed!");
-        System.out.println("White Wins ("+whiteBot.getName()+"): " + totalWhiteWins);
-        System.out.println("Black Wins ("+blackBot.getName()+"): " + totalBlackWins);
-        System.out.println("Draws: " + totalDraws);
-        System.out.println("Invalid Games: " + totalInvalidGames);
-        System.out.println("=========================================");
-        System.out.println("Training completed!");
+        // System.out.println("=========================================");
+        // System.out.println("Training completed!");
+        // System.out.println("White Wins ("+whiteBot.getName()+"): " + totalWhiteWins);
+        // System.out.println("Black Wins ("+blackBot.getName()+"): " + totalBlackWins);
+        // System.out.println("Draws: " + totalDraws);
+        // System.out.println("Invalid Games: " + totalInvalidGames);
+        // System.out.println("=========================================");
+        // System.out.println("Training completed!");
     }
 }

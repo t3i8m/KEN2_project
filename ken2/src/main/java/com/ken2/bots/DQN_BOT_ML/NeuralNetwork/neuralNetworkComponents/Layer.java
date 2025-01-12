@@ -28,7 +28,11 @@ public class Layer {
         lastInputs = inputs.clone();
 
         double[] outputs = new double[neurons.size()];
-
+        for (double input : inputs) {
+            if (Double.isNaN(input) || Double.isInfinite(input)) {
+                throw new IllegalArgumentException("Invalid input detected: " + input);
+            }
+        }
         for(int i = 0; i<neurons.size();i++){
             try{
                 double outputValue = neurons.get(i).activate(inputs);
@@ -42,38 +46,68 @@ public class Layer {
 
     }
 
-    public double[] backward(double[] gradients){
-        double[] newGradients = new double[neurons.size()];
+    // public double[] backward(double[] gradients){
+    //     double[] newGradients = new double[neurons.size()];
 
-        for(int i = 0; i<neurons.size();i++){
-            Neuron neuron = neurons.get(i);
-            double neuronDelta = gradients[i]* activationFunction.derivative(neuron.getInput());
-            double[] neuronGradients = new double[neuron.getWeights().length];
+    //     for(int i = 0; i<neurons.size();i++){
+    //         Neuron neuron = neurons.get(i);
+    //         double neuronDelta = gradients[i]* activationFunction.derivative(neuron.getInput());
+    //         double[] neuronGradients = new double[neuron.getWeights().length];
 
-            for(int j =0; j<neuron.getWeights().length;j++){
-                newGradients[j] +=neuronDelta*lastInputs[j];
-                neuronGradients[j] = neuronDelta * neuron.getLastInputs()[j];
-            }
+    //         for(int j =0; j<neuron.getWeights().length;j++){
+    //             newGradients[j] +=neuronDelta*lastInputs[j];
+    //             neuronGradients[j] = neuronDelta * neuron.getLastInputs()[j];
+    //         }
 
-            neuron.updateWeights(neuronGradients, 0.01);
+    //         neuron.updateWeights(neuronGradients, 0.001);
 
-        }
+    //     }
         
+    //     return newGradients;
+    // }
+
+    public double[] backward(double[] gradients) {
+        if (gradients.length != neurons.size()) {
+            throw new IllegalArgumentException("Mismatch: gradients length = " 
+                + gradients.length + ", neurons size = " + neurons.size());
+        }
+    
+        double[] newGradients = new double[lastInputs.length]; 
+        
+        for (int i = 0; i < neurons.size(); i++) {
+            Neuron neuron = neurons.get(i);
+            double neuronDelta = gradients[i] * activationFunction.derivative(neuron.getInput());
+    
+            for (int j = 0; j < neuron.getWeights().length; j++) {
+                newGradients[j] += neuronDelta * lastInputs[j];
+            }
+    
+            double[] neuronGradients = new double[neuron.getWeights().length];
+            for (int j = 0; j < neuron.getWeights().length; j++) {
+                neuronGradients[j] = neuronDelta * lastInputs[j];
+            }
+    
+            neuron.updateWeights(neuronGradients, 0.01);  
+        }
+    
         return newGradients;
     }
+    
+    
 
 
-    private double initializeBias(){
-        return Math.random()-0.5;
+    private double initializeBias() {
+        return Math.random() * 0.02 - 0.01; //  -0.01  0.01
     }
-
-    private double[] initializeWeights(int inputSize){
+    
+    private double[] initializeWeights(int inputSize) {
         double[] weights = new double[inputSize];
-        for(int i = 0; i<inputSize;i++){
-            weights[i] =  Math.random() - 0.5; //from -0.5 to 0.5
+        for (int i = 0; i < inputSize; i++) {
+            weights[i] = Math.random() * 0.02 - 0.01; 
         }
         return weights;
     }
+    
 
     public List<Neuron> getNeurons(){
         return this.neurons;
