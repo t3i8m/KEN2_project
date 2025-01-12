@@ -222,38 +222,34 @@ public class GameState implements Cloneable{
      * @param color current player color
      * @return value of the function
      */
-    public double evaluate(GameState state, GameEngine ge, String color){
+    public double evaluate(GameState state, GameEngine ge, String color) {
         double valuation = 0;
         String opponentColor = color.equals("white") ? "black" : "white";
-
-        /** Purpose of the variables below
-         * number of coins of our colour
-         * number of coins in a row of our colour
-
-         * number of coins of opposite colour
-         * number of coins in a row of opposite colour
-
-         * Same with the rings
-
-         * if we will get a win if we move
-         * Then bonus points will be awarded LESSGOOOOO
-         */
-        double inOurfavour = 0.50;
-        double notOurfavour= -0.25;
-        double ourWin = 1;
-        double theirWin = -1;
-
-        // Calculating the chip calculation
-        valuation += state.getChipsCountForColor(color)*inOurfavour + state.getChipsCountForColor(opponentColor)*notOurfavour;
-
-        // Calculating the ring calculation
-        valuation += state.getRingCountForColor(color)*inOurfavour + state.getRingCountForColor(opponentColor)*notOurfavour;
-
-        // Calculating the win calculation
-        valuation += ge.win(ge.currentState.getVertexesOfFlippedCoins()) ? ourWin : theirWin;
-
+    
+        double inOurFavour = 0.5;
+        double notOurFavour = -0.25;
+        double winBonus = 1.0;
+        double losePenalty = -1.0;
+    
+        int ourChips = state.getChipsCountForColor(color);
+        int opponentChips = state.getChipsCountForColor(opponentColor);
+    
+        int ourRings = state.getRingCountForColor(color);
+        int opponentRings = state.getRingCountForColor(opponentColor);
+    
+        valuation += ourChips * inOurFavour + opponentChips * notOurFavour;
+        valuation += ourRings * inOurFavour + opponentRings * notOurFavour;
+    
+        boolean isWin = ge.win(state.getVertexesOfFlippedCoins());
+        if (isWin && ge.getWinningColor().equalsIgnoreCase(color)) {
+            valuation += winBonus;
+        } else if (isWin && ge.getWinningColor().equalsIgnoreCase(opponentColor)) {
+            valuation += losePenalty;
+        }
+    
         return valuation;
     }
+    
 
 
     @Override

@@ -207,12 +207,14 @@ public class GameEngine {
                 if (allMovesdig.isEmpty()) {
                     // System.out.println("No possible moves available.");
                     // allMoves.put(v, null);
+
     
                 } else{
-                    allMoves.put(v, allMovesdig);
+                    // allMoves.put(v, allMovesdig);
     
                 }
-    
+                allMoves.put(v, allMovesdig);
+
                 for(Move m: allMoves.get(v)){
                     m.setStartingVertex(v);
                 }

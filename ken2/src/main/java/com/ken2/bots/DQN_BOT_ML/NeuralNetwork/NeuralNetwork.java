@@ -53,5 +53,16 @@ public class NeuralNetwork {
             System.out.println("Epoch " + epoch + " Loss: " + totalLoss / inputs.length);
         }
     }
+
+    public void trainMiniBatch(double[][] inputs, double[][] targets) {
+        double totalLoss = 0;
+        for (int i = 0; i < inputs.length; i++) {
+            double[] predicted = forward(inputs[i]);
+            totalLoss += lossFunction.computeLoss(predicted, targets[i]);
+            backward(predicted, targets[i]);
+        }
+        System.out.println("Mini-batch Loss: " + totalLoss / inputs.length);
+    }
+    
     
 }

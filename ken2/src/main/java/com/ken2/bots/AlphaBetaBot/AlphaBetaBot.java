@@ -66,10 +66,9 @@ public class AlphaBetaBot extends BotAbstract {
         Move bestMove = null;
         double value;
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
-        // System.out.println(allRingPositions);
         HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
         GameSimulation gs = new GameSimulation();
-        
+
         if (vertexMove.isEmpty()) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
@@ -97,7 +96,6 @@ public class AlphaBetaBot extends BotAbstract {
                         state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
                     );
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
-
                     // m = gs.simulateMove(state.gameBoard, m.getStartingVertex(), state.gameBoard.getVertex(vertexTo));
 
                     GameState newState = moveState(state, m);
@@ -208,12 +206,14 @@ public class AlphaBetaBot extends BotAbstract {
         Vertex startVertex = move.getStartingVertex();
     
         if (startVertex == null || !startVertex.hasRing()) {
+
             return false;
         }
     
         PlayObj ring = (Ring)startVertex.getRing();
     
-        if (!ring.getColour().equals(state.currentPlayerColor())) {
+        if (!ring.getColour().equals(super.getColor())) {
+            
             return false;
         }
     
@@ -225,6 +225,7 @@ public class AlphaBetaBot extends BotAbstract {
         com.ken2.engine.Direction direction = move.getDirection();
     
         if (direction == null) {
+
             return false;
         }
     
@@ -232,6 +233,7 @@ public class AlphaBetaBot extends BotAbstract {
         int deltaY = direction.getDeltaY();
     
         if (deltaX == 0 && deltaY == 0) {
+
             return false;
         }
     
@@ -275,12 +277,14 @@ public class AlphaBetaBot extends BotAbstract {
             }
     
             if (currentX < 0 || currentX >= board.length || currentY < 0 || currentY >= board[0].length) {
+
                 return false; 
             }
     
             Vertex currentVertex = board[currentX][currentY];
     
             if (currentVertex != null && currentVertex.hasRing()) {
+
                 return false; 
             }
     
@@ -289,6 +293,7 @@ public class AlphaBetaBot extends BotAbstract {
         Vertex targetVertex = board[targetX][targetY];
     
         if (targetVertex == null || targetVertex.hasRing() || targetVertex.hasCoin()) {
+
             return false; 
         }
     

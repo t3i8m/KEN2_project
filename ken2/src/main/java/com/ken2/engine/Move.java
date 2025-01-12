@@ -124,5 +124,18 @@ public class Move {
         result = 31 * result + (coinFlip != null ? coinFlip.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Move: [");
+        builder.append("Start: ").append(startingVertex != null ? startingVertex.toString() : "null").append(", ");
+        builder.append("Target: (").append(xPosition).append(", ").append(yPosition).append("), ");
+        builder.append("Direction: ").append(direction != null ? direction.name() : "null").append(", ");
+        builder.append("Flipped Coins: ").append(coinFlip != null ? coinFlip.size() : 0);
+        builder.append("]");
+        return builder.toString();
+    }
+
     
 }

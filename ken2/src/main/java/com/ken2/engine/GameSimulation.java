@@ -1,6 +1,7 @@
 package com.ken2.engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 import com.ken2.Game_Components.Board.Coin;
@@ -188,4 +189,53 @@ public class GameSimulation {
 
         }
     }
+
+    public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions, Game_Board board) {
+        HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<>();
+        for (Vertex v : allRingPositions) {
+            if (v != null && v.hasRing()) {
+                ArrayList<Move> movesFromVertex = getMovesForRing(board, v); 
+                allMoves.put(v, movesFromVertex);
+            }
+        }
+        return allMoves;
+    }
+
+    private ArrayList<Move> getMovesForRing(Game_Board board, Vertex ringPosition) {
+        ArrayList<Move> possibleMoves = new ArrayList<>();
+        Vertex[][] gameBoard = board.getBoard();
+    
+        int startX = ringPosition.getXposition();
+        int startY = ringPosition.getYposition();
+    
+        for (Direction direction : Direction.values()) {
+            int currentX = startX;
+            int currentY = startY;
+    
+            while (true) {
+                currentX += direction.getDeltaX();
+                currentY += direction.getDeltaY();
+    
+                if (currentX < 0 || currentX >= gameBoard.length || currentY < 0 || currentY >= gameBoard[0].length) {
+                    break;
+                }
+    
+                Vertex targetVertex = board.getVertex(board.getVertexNumberFromPosition(currentX, currentY));
+                if (targetVertex == null || targetVertex.hasRing()) {
+                    break; 
+                }
+    
+                Move move = new Move(ringPosition.getVertextNumber(), targetVertex.getVertextNumber(), null, direction);
+                possibleMoves.add(move);
+    
+                if (targetVertex.hasCoin()) {
+                    break;
+                }
+            }
+        }
+    
+        return possibleMoves;
+    }
+    
+
 }

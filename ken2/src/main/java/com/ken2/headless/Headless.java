@@ -90,6 +90,44 @@ public class Headless {
         System.out.println("=========================================");
     }
 
+    public void runGamesWithoutStats() {
+        for (int i = 0; i < games; i++) {
+            String result;
+            try {
+                result = runSingleGame(whiteBot, blackBot, null, i+1);
+            } catch (Exception ex) {
+                System.out.println(ex);
+
+                result = "u";
+            }
+
+            switch (result) {
+                case "white": whiteWins++; break;
+                case "black": blackWins++; break;
+                case "draw":  draws++;     break;
+                case "u":     notValid++;  break;
+            }
+        }
+
+    }
+
+    public int getWhiteWins() {
+        return whiteWins;
+    }
+    
+    public int getBlackWins() {
+        return blackWins;
+    }
+    
+    public int getDraws() {
+        return draws;
+    }
+    
+    public int getInvalidGames() {
+        return notValid;
+    }
+    
+
     /**
      * Runs the specified number of matches and writes detailed move data to a CSV file.
      * Also prints overall statistics at the end.
@@ -158,7 +196,7 @@ public class Headless {
         gameEngine.resetGame();
 
         gameEngine.currentState.chipsRemaining = 51;
-
+        String currentPlayerColor="";
         int whiteScore = 0;
         int blackScore = 0;
         int moveNumber = 1;
@@ -166,146 +204,235 @@ public class Headless {
         //////////
 
         while (true) {
-            GameState state = gameEngine.currentState;
-            Game_Board board = state.getGameBoard();
-            GameState previuos = gameEngine.currentState.clone();
-            GameState newState ;
-            double reward = 0.0;
+            try{
+                GameState state = gameEngine.currentState;
+                Game_Board board = state.getGameBoard();
+                GameState previuos = gameEngine.currentState.clone();
+                GameState newState ;
+                double reward = 0.0;
+    
+    
+    
+    
+                Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
+    
+                currentPlayerColor = state.isWhiteTurn ? "white" : "black";
+                // System.out.println(state.currentPlayerColor());
+                // System.out.println(currentPlayerColor);
 
-
-
-
-            Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
-
-            String currentPlayerColor = state.isWhiteTurn ? "white" : "black";
-
-            // BoardTransformation boardToVector = new BoardTransformation(board);
-            // System.out.println("BEFORE: \n"+board.strMaker());
-            // double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
-
-            // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
-            // System.out.println(Arrays.toString(vectorBoard));
-            // System.out.println(currentPlayerColor);
-
-            if (state.ringsPlaced < 10) {
-                Move ringPlacement = currentBot.makeMove(state);
-                if (ringPlacement == null) {
-                    return "u";
-                }
-
-                int chosenVertex = board.getVertexNumberFromPosition(
-                        ringPlacement.getXposition(),
-                        ringPlacement.getYposition()
-                );
-                Vertex boardV = board.getVertex(chosenVertex);
-                if (boardV == null) {
-                    return "u";
-                }
-                Ring ring = new Ring(currentBot.getColor());
-                boardV.setPlayObject(ring);
-
-                if (logs != null) {
-                    GameMoveRecord rec = new GameMoveRecord();
-                    rec.gameIndex = gameIndex;
-                    rec.moveNumber = moveNumber;
-                    rec.currentPlayer = currentPlayerColor;
-                    rec.moveType = "RingPlacement";
-                    rec.fromVertex = -1; // Not applicable
-                    rec.toVertex = chosenVertex;
-                    rec.chipsRemaining = state.chipsRemaining;
-                    rec.whiteScore = whiteScore;
-                    rec.blackScore = blackScore;
-                    rec.coinsFlippedVertices = "";
-                    logs.add(rec);
-                }
-
-                ////////////
-                newState = state.clone();
-
-                System.out.println("\n"+"Move " + moveNumber +":");
-                reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState, currentPlayerColor);
-                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-
-
-            } else {
-                Move move = currentBot.makeMove(state);
-                if (move == null) {
-                    return "draw";
-                }
-
-                Vertex fromVertex = move.getStartingVertex();
-                if (fromVertex == null) {
-                    return "draw";
-                }
-
-                int fromIndex = fromVertex.getVertextNumber();
-                int toIndex = board.getVertexNumberFromPosition(
-                        move.getXposition(),
-                        move.getYposition()
-                );
-                if (toIndex < 0) {
-                    return "u";
-                }
-
-                gameEngine.placeChip(fromIndex);
-
-                Move currentMove = gameEngine.gameSimulation.simulateMove(
-                        board,
-                        gameEngine.currentState.gameBoard.getVertex(fromIndex),
-                        gameEngine.currentState.gameBoard.getVertex(toIndex)
-                );
-
-                Vertex sourceV = gameEngine.currentState.gameBoard.getVertex(fromIndex);
-                if (sourceV == null) {
-                    return "u";
-                }
-
-                Ring ringToMove;
-                if (sourceV.hasRing()) {
-                    ringToMove = (Ring) sourceV.getRing();
-                    sourceV.setRing(null);
+                // System.out.println(currentPlayerColor);
+                // BoardTransformation boardToVector = new BoardTransformation(board);
+                // System.out.println("BEFORE: \n"+board.strMaker());
+                // double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
+    
+                // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
+                // System.out.println(Arrays.toString(vectorBoard));
+                // System.out.println(currentPlayerColor);
+    
+                if (state.ringsPlaced < 10) {
+                    Move ringPlacement = currentBot.makeMove(state);
+                    if (ringPlacement == null) {
+                        System.out.println("ringPlacement is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+    
+                    int chosenVertex = board.getVertexNumberFromPosition(
+                            ringPlacement.getXposition(),
+                            ringPlacement.getYposition()
+                    );
+                    Vertex boardV = board.getVertex(chosenVertex);
+                    if (boardV == null) {
+                        System.out.println("boardV is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+                    Ring ring = new Ring(currentBot.getColor());
+                    boardV.setPlayObject(ring);
+    
+                    if (logs != null) {
+                        GameMoveRecord rec = new GameMoveRecord();
+                        rec.gameIndex = gameIndex;
+                        rec.moveNumber = moveNumber;
+                        rec.currentPlayer = currentPlayerColor;
+                        rec.moveType = "RingPlacement";
+                        rec.fromVertex = -1; // Not applicable
+                        rec.toVertex = chosenVertex;
+                        rec.chipsRemaining = state.chipsRemaining;
+                        rec.whiteScore = whiteScore;
+                        rec.blackScore = blackScore;
+                        rec.coinsFlippedVertices = "";
+                        logs.add(rec);
+                    }
+    
+                    ////////////
+                    // newState = state.clone();
+    
+                    // System.out.println("\n"+"Move " + moveNumber +":");
+                    // reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState, currentPlayerColor);
+                    // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+    
+    
                 } else {
-                    return "u";
-                }
-
-                List<Coin> flippedCoins = currentMove.getFlippedCoins();
-                ArrayList<Vertex> verticesToFlip = new ArrayList<>();
-
-                if (flippedCoins != null && !flippedCoins.isEmpty()) {
-                    for (Coin coin : flippedCoins) {
-                        Vertex coinVert = gameEngine.currentState.gameBoard.getVertex(coin.getVertex());
-                        if (coinVert == null) {
-                            Vertex newVert = gameEngine.currentState.gameBoard.getVertex(coin.getVertex());
-                            if (!verticesToFlip.contains(newVert)) {
-                                verticesToFlip.add(newVert);
+                    Move move = currentBot.makeMove(state.clone());
+    
+                    if (move == null) {
+                        System.out.println("Move is null. CurrentBot: " + currentBot.getName());
+    
+    
+                        return "u";
+                    }
+    
+                    Vertex fromVertex = move.getStartingVertex();
+                    if (fromVertex == null) {
+                        System.out.println("fromVertex is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+    
+                    int fromIndex = fromVertex.getVertextNumber();
+                    int toIndex = board.getVertexNumberFromPosition(
+                            move.getXposition(),
+                            move.getYposition()
+                    );
+    
+                    if (toIndex < 0) {
+                        System.out.println("toIndex is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+    
+                    gameEngine.placeChip(fromIndex);
+    
+                    Move currentMove = gameEngine.gameSimulation.simulateMove(
+                            board,
+                            gameEngine.currentState.gameBoard.getVertex(fromIndex),
+                            gameEngine.currentState.gameBoard.getVertex(toIndex)
+                    );
+    
+                    Vertex sourceV = gameEngine.currentState.gameBoard.getVertex(fromIndex);
+                    if (sourceV == null) {
+                        System.out.println("sourceV is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+    
+                    Ring ringToMove;
+                    if (sourceV.hasRing()) {
+                        ringToMove = (Ring) sourceV.getRing();
+                        sourceV.setRing(null);
+                    } else {
+                        System.out.println("hasRing is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+    
+                    List<Coin> flippedCoins = currentMove.getFlippedCoins();
+                    ArrayList<Vertex> verticesToFlip = new ArrayList<>();
+    
+                    if (flippedCoins != null && !flippedCoins.isEmpty()) {
+                        for (Coin coin : flippedCoins) {
+                            Vertex coinVert = gameEngine.currentState.gameBoard.getVertex(coin.getVertex());
+                            if (coinVert == null) {
+                                Vertex newVert = gameEngine.currentState.gameBoard.getVertex(coin.getVertex());
+                                if (!verticesToFlip.contains(newVert)) {
+                                    verticesToFlip.add(newVert);
+                                }
+                                continue;
                             }
-                            continue;
-                        }
-                        if (!verticesToFlip.contains(coinVert)) {
-                            verticesToFlip.add(coinVert);
+                            if (!verticesToFlip.contains(coinVert)) {
+                                verticesToFlip.add(coinVert);
+                            }
                         }
                     }
-                }
-
-                gameEngine.gameSimulation.flipCoinsByVertex(verticesToFlip, gameEngine.currentState.gameBoard);
-                Vertex targetV = gameEngine.currentState.gameBoard.getVertex(toIndex);
-
-                if (targetV == null || targetV.hasRing()) {
-                    return "u";
-                }
-                targetV.setRing(ringToMove);
-
-                gameEngine.currentState.chipsRemaining--;
-                gameEngine.currentState.chipRingVertex = -1;
-                gameEngine.currentState.chipPlaced = false;
-                gameEngine.currentState.selectedRingVertex = -1;
-                gameEngine.currentState.updateChipsRingCountForEach();
-                gameEngine.currentState.setVertexesOfFlippedCoins(verticesToFlip);
-                if (!verticesToFlip.contains(sourceV)) {
-                    verticesToFlip.add(sourceV);
-                }
-
-                if (gameEngine.currentState.chipsRemaining <= 0) {
+    
+                    gameEngine.gameSimulation.flipCoinsByVertex(verticesToFlip, gameEngine.currentState.gameBoard);
+                    Vertex targetV = gameEngine.currentState.gameBoard.getVertex(toIndex);
+    
+                    if (targetV == null || targetV.hasRing()) {
+                        System.out.println("targetV is null. CurrentBot: " + currentBot.getName());
+    
+                        return "u";
+                    }
+                    targetV.setRing(ringToMove);
+    
+                    gameEngine.currentState.chipsRemaining--;
+                    gameEngine.currentState.chipRingVertex = -1;
+                    gameEngine.currentState.chipPlaced = false;
+                    gameEngine.currentState.selectedRingVertex = -1;
+                    gameEngine.currentState.updateChipsRingCountForEach();
+                    gameEngine.currentState.setVertexesOfFlippedCoins(verticesToFlip);
+                    if (!verticesToFlip.contains(sourceV)) {
+                        verticesToFlip.add(sourceV);
+                    }
+    
+                    if (gameEngine.currentState.chipsRemaining <= 0) {
+                        if (logs != null) {
+                            GameMoveRecord rec = new GameMoveRecord();
+                            rec.gameIndex = gameIndex;
+                            rec.moveNumber = moveNumber;
+                            rec.currentPlayer = currentPlayerColor;
+                            rec.moveType = "RingMovement";
+                            rec.fromVertex = fromIndex;
+                            rec.toVertex = toIndex;
+                            rec.chipsRemaining = state.chipsRemaining;
+                            rec.whiteScore = whiteScore;
+                            rec.blackScore = blackScore;
+                            rec.coinsFlippedVertices = coinsFlippedString(flippedCoins);
+                            rec.gameResult = "draw";
+                            logs.add(rec);
+                        }
+                        // newState = gameEngine.currentState.clone();
+                        // System.out.println(gameEngine.currentState.chipsRemaining);
+                        // System.out.println("\n"+"Move " + moveNumber +":");
+                        // reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
+                        // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+    
+                        return "draw";
+                    }
+    
+                    // GameEngine newGE = gameEngine.clone();
+    
+                    String gameResult = null;
+                    boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
+                    
+                    if (isWinningRow) {
+                        
+                        String winnerColor = gameEngine.getWinningColor();
+                        Bot currentPlayer = winnerColor.equalsIgnoreCase("white") ? whiteBot : blackBot;
+    
+                        Vertex vertexToRemoveBOT = currentPlayer.removeRing(gameEngine.currentState);
+                        handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gameEngine);
+    
+                        ArrayList<Integer> allRemoveChips = currentPlayer.removeChips(gameEngine.currentState);
+                        for (Integer vert : allRemoveChips) {
+                            handleChipRemove(vert, gameEngine, currentBot);
+                        }
+    
+                        gameEngine.setWinningRing(false);
+                        gameEngine.setChipRemovalMode(false);
+    
+                        if (winnerColor.equalsIgnoreCase("white")) {
+                            whiteScore++;
+                            if (whiteScore == 3) {
+                                gameResult = "white";
+                            }
+                        } else {
+                            blackScore++;
+                            if (blackScore == 3) {
+                                gameResult = "black";
+                            }
+                        }
+    
+    
+                    }
+                    
+                    
+                    // newState = gameEngine.currentState.clone();
+                    // System.out.println("\n"+"Move " + moveNumber +":");
+                    // reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
+                    // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
+    
                     if (logs != null) {
                         GameMoveRecord rec = new GameMoveRecord();
                         rec.gameIndex = gameIndex;
@@ -314,100 +441,41 @@ public class Headless {
                         rec.moveType = "RingMovement";
                         rec.fromVertex = fromIndex;
                         rec.toVertex = toIndex;
-                        rec.chipsRemaining = state.chipsRemaining;
+                        rec.chipsRemaining = gameEngine.currentState.chipsRemaining;
                         rec.whiteScore = whiteScore;
                         rec.blackScore = blackScore;
                         rec.coinsFlippedVertices = coinsFlippedString(flippedCoins);
-                        rec.gameResult = "draw";
+                        rec.gameResult = gameResult; 
                         logs.add(rec);
                     }
-                    newState = gameEngine.currentState.clone();
-                    System.out.println(gameEngine.currentState.chipsRemaining);
-                    System.out.println("\n"+"Move " + moveNumber +":");
-                    reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
-                    System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-
+    
+                    if (gameResult != null) {
+                        return gameResult;
+                    }
+                }
+    
+                if (gameEngine.currentState.chipsRemaining <= 0) {
+                    System.out.println("HELLO");
                     return "draw";
                 }
-
-                // GameEngine newGE = gameEngine.clone();
-
-                String gameResult = null;
-                boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
-                
-                if (isWinningRow) {
-                    
-                    String winnerColor = gameEngine.getWinningColor();
-                    Bot currentPlayer = winnerColor.equalsIgnoreCase("white") ? whiteBot : blackBot;
-
-                    Vertex vertexToRemoveBOT = currentPlayer.removeRing(gameEngine.currentState);
-                    handleWinningRing(vertexToRemoveBOT.getVertextNumber(), gameEngine);
-
-                    ArrayList<Integer> allRemoveChips = currentPlayer.removeChips(gameEngine.currentState);
-                    for (Integer vert : allRemoveChips) {
-                        handleChipRemove(vert, gameEngine, currentBot);
-                    }
-
-                    gameEngine.setWinningRing(false);
-                    gameEngine.setChipRemovalMode(false);
-
-                    if (winnerColor.equalsIgnoreCase("white")) {
-                        whiteScore++;
-                        if (whiteScore == 3) {
-                            gameResult = "white";
-                        }
-                    } else {
-                        blackScore++;
-                        if (blackScore == 3) {
-                            gameResult = "black";
-                        }
-                    }
-
-
+                if (whiteScore == 3) {
+                    return "white";
                 }
-                
-                
-                newState = gameEngine.currentState.clone();
-                System.out.println("\n"+"Move " + moveNumber +":");
-                reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
-                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-
-                if (logs != null) {
-                    GameMoveRecord rec = new GameMoveRecord();
-                    rec.gameIndex = gameIndex;
-                    rec.moveNumber = moveNumber;
-                    rec.currentPlayer = currentPlayerColor;
-                    rec.moveType = "RingMovement";
-                    rec.fromVertex = fromIndex;
-                    rec.toVertex = toIndex;
-                    rec.chipsRemaining = gameEngine.currentState.chipsRemaining;
-                    rec.whiteScore = whiteScore;
-                    rec.blackScore = blackScore;
-                    rec.coinsFlippedVertices = coinsFlippedString(flippedCoins);
-                    rec.gameResult = gameResult; 
-                    logs.add(rec);
+                if (blackScore == 3) {
+                    return "black";
                 }
+    
+                gameEngine.currentState.resetTurn();
+                switchTurn(gameEngine.currentState);
+                moveNumber+=1;
+    
+            
+            } catch(Exception ex){
+                // System.out.println(ex+" "+currentPlayerColor);
 
-                if (gameResult != null) {
-                    return gameResult;
-                }
-            }
+                ex.printStackTrace(); // Prints the full stack trace
 
-            if (gameEngine.currentState.chipsRemaining <= 0) {
-                System.out.println("HELLO");
-                return "draw";
             }
-            if (whiteScore == 3) {
-                return "white";
-            }
-            if (blackScore == 3) {
-                return "black";
-            }
-
-            gameEngine.currentState.resetTurn();
-            switchTurn(gameEngine.currentState);
-            moveNumber+=1;
-
         }
 
 

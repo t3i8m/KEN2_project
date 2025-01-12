@@ -18,7 +18,7 @@ public class ReplayBuffer {
         buffer.add(newExperience);
     }
 
-    public ArrayList<Experience> sample(int sampleSize){
+    public ArrayList<Experience> createSample(int sampleSize){
         Random rand = new Random();
         ArrayList<Experience> container = new ArrayList<>();
         for(int i =0; i<sampleSize;i++){
@@ -26,6 +26,10 @@ public class ReplayBuffer {
             container.add(exp);
         }
         return container;
+    }
+
+    public ArrayList<Experience> getBuffer(){
+        return this.buffer;
     }
     
 }

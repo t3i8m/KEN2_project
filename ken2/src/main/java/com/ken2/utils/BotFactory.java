@@ -2,6 +2,7 @@ package com.ken2.utils;
 
 import com.ken2.bots.Bot;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
+import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 
 public class BotFactory {
@@ -21,6 +22,8 @@ public class BotFactory {
                 return new RuleBasedBot(botColor);
             case "alphabeta bot":
                 return new AlphaBetaBot(botColor);
+            case "dqn bot":
+                return new DQN_BOT(botColor);
         }
         return null;
     }

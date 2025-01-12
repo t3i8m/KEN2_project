@@ -498,6 +498,7 @@ public class MainApp extends Application {
             PauseTransition pause = new PauseTransition(Duration.seconds(0.1));
             pause.setOnFinished(event -> botTurn(gc));
             pause.play();
+
             // botTurn(gc);
         } else {
             if (gameEngine.currentState.ringsPlaced < 10) {
@@ -1376,6 +1377,12 @@ public class MainApp extends Application {
                 if (move != null) {
                     // resetTurn();
                     // Platform.runLater(() -> resetTurn());
+                    newState = gameEngine.currentState.clone();
+
+    
+                    System.out.println("\n"+"Move " +activeBot.getColor());
+                    reward = Reward.calculateReward(gameEngine, previuosState, move, newState, activeBot.getColor());
+                    System.out.println("TOTAL REWARD = " + reward+" BOT color: "+activeBot.getColor());
                     resetTurn();
                     // updateGameBoard(gameBoard, gc);
                     updateOnscreenText();
@@ -1483,31 +1490,37 @@ public class MainApp extends Application {
         GraphicsContext gc = strengthIndicator.getGraphicsContext2D();
         GameState gs = gameEngine.getGameState();
         gc.clearRect(0, 0, strengthIndicator.getWidth(), strengthIndicator.getHeight());
-
-//        int whiteStrength = gs.calculateStrength("white");
-//        int blackStrength = gs.calculateStrength("black");
-
-        double whiteStrength = gs.evaluate(gameEngine.currentState,gameEngine,"white");
-        double blackStrength = gs.evaluate(gameEngine.currentState,gameEngine,"black");
-
+    
+        double whiteStrength;
+        double blackStrength;
+        String currentPlayer = gameEngine.currentState.isWhiteTurn ? "white" : "black";
+    
+        if (currentPlayer.equals("white")) {
+            whiteStrength = gs.evaluate(gameEngine.currentState, gameEngine, "white") + reward;
+            blackStrength = gs.evaluate(gameEngine.currentState, gameEngine, "black");
+        } else {
+            whiteStrength = gs.evaluate(gameEngine.currentState, gameEngine, "white");
+            blackStrength = gs.evaluate(gameEngine.currentState, gameEngine, "black") + reward;
+        }
+    
         double totalStrength = whiteStrength + blackStrength;
-
-        double whiteRatio = totalStrength == 0 ? 0.5 : (double) whiteStrength / totalStrength;
+        double whiteRatio = (totalStrength == 0) ? 0.5 : whiteStrength / totalStrength;
         double blackRatio = 1 - whiteRatio;
-
+    
         double width = strengthIndicator.getWidth();
         double height = strengthIndicator.getHeight();
-
+    
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, width * whiteRatio, height);
-
+    
         gc.setFill(Color.BLUE);
         gc.fillRect(width * whiteRatio, 0, width * blackRatio, height);
-
+    
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
         gc.strokeLine(width / 2, 0, width / 2, height);
     }
+    
 
 
     private void updateOnscreenText(){

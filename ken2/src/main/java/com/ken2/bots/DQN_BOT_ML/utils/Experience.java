@@ -1,24 +1,24 @@
 package com.ken2.bots.DQN_BOT_ML.utils;
 
 public class Experience {
-    private final int[] state;
-    private final int[] newState;
+    private final double[] state;
+    private final double[] newState;
     private final int action;
     private final double reward;
 
 
-    public Experience(int[] state, int action, double reward, int[] newState){
+    public Experience(double[] state, int action, double reward, double[] newState){
         this.state=state;
         this.newState = newState;
         this.action=action;
         this.reward=reward;
     }
 
-    public int[] getState(){
+    public double[] getState(){
         return this.state;
     }
 
-    public int[] getnewState(){
+    public double[] getnewState(){
         return this.newState;
     }
 
@@ -28,5 +28,9 @@ public class Experience {
 
     public double getReward(){
         return this.reward;
+    }
+
+    public double[] getNextState(){
+        return this.newState;
     }
 }

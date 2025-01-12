@@ -1,6 +1,7 @@
 package com.ken2.bots.DQN_BOT_ML.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ken2.engine.Move;
@@ -32,6 +33,13 @@ public class ActionIndexer {
     public int size(){
         return currentIndex;
     }
+
+    public void initializeActions(List<Move> possibleMoves) {
+    for (Move move : possibleMoves) {
+        getIndex(move);
+    }
+}
+
 
 
 }
