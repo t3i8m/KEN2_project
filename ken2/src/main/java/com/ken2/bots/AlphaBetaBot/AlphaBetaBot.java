@@ -23,6 +23,7 @@ public class AlphaBetaBot extends BotAbstract {
     private GameState StateRightNow;
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
+    private boolean switched = false;
 
     public AlphaBetaBot(String color) {
         super(color);
@@ -53,9 +54,10 @@ public class AlphaBetaBot extends BotAbstract {
             state.ringsPlaced++;
             return new Move(targetPosition[0], targetPosition[1], null);
         }
-        StateRightNow.setCurrentPlayer(super.getColor());
-        AlphaBetaResult result = alphaBeta(this.StateRightNow,this.StateRightNow, alpha, beta, 2, ge, null);
-
+        StateRightNow.setCurrentPlayer(super.getColor().toLowerCase());
+        AlphaBetaResult result = alphaBeta(this.StateRightNow,this.StateRightNow.clone(), alpha, beta, 1, ge, null);
+        // StateRightNow.switchPlayerNEW();
+        // state.switchPlayerNEW();
         if (result != null && result.getMove() != null) {
             // System.out.println("Executed move: " + result.getMove());
             return result.getMove();
@@ -68,11 +70,10 @@ public class AlphaBetaBot extends BotAbstract {
     public AlphaBetaResult alphaBeta(GameState state, GameState prevState, double alpha, double beta, int depth, GameEngine ge, Move currentMove) {
         GameEngine ge2 = new GameEngine();
         // System.out.println(state.getCurrentColor());
-
         if (depth == 0) {
             String playerColor = state.getCurrentColor().toLowerCase().equals("white")?"black":"white"; 
             double evaluation = evaluate(state, prevState, ge, prevState.getCurrentColor(), currentMove);
-            // System.out.println("Depth=0 | Evaluation: " + evaluation + " | Move: " + currentMove);
+            // System.out.println("Depth=0 | Evaluation: " + evaluation + " | Move: " + currentMove+" color"+prevState.getCurrentColor());
 
             // System.out.println("Terminal depth reached. Evaluation: " + evaluation + " for move: " + currentMove+" color"+playerColor);
             return new AlphaBetaResult(evaluation, null);
@@ -84,7 +85,7 @@ public class AlphaBetaBot extends BotAbstract {
         // System.out.println(isMaximizingPlayer);
         double value = isMaximizingPlayer ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 
-    
+        
         Move bestMove = null;
     
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.getCurrentColor().toLowerCase());
@@ -93,7 +94,8 @@ public class AlphaBetaBot extends BotAbstract {
         // System.out.println(state.getGameBoard().strMaker());
 
         // System.out.println("Valid moves count: " + validMoves.size() + " at depth=" + depth);
-    
+        List<Move> sortedMoves = sortMoves(validMoves, state, prevState, ge);
+
         if (validMoves.isEmpty()) {
             System.out.println("No valid moves at depth=" + depth);
             
@@ -110,87 +112,113 @@ public class AlphaBetaBot extends BotAbstract {
 
         // }
         int i = 0;
-        for (Map.Entry<Vertex, ArrayList<Move>> entry : validMoves.entrySet()) {
-            i++;
-            for (Move m : entry.getValue()) {
-                // System.out.println(i);
-                // System.out.println("Before alphaBeta: Depth=" + depth +
-                // ", Alpha=" + alpha + ", Beta=" + beta +
-                // ", CurrentPlayer=" + state.getCurrentColor());
+        // for (Map.Entry<Vertex, ArrayList<Move>> entry : validMoves.entrySet()) {
+        //     i++;
+        for (Move m :sortedMoves) {
+            // System.out.println(i);
+            // System.out.println("Before alphaBeta: Depth=" + depth +
+            // ", Alpha=" + alpha + ", Beta=" + beta +
+            // ", CurrentPlayer=" + state.getCurrentColor());
 
-                GameState newState = moveState(state, m);
-                newState.switchPlayer();
-                // newState.setCurrentPlayer(
-                //     state.getCurrentColor().toLowerCase().equals("white") ? "black" : "white"
-                // );
-                // System.out.println("After moveState: CurrentPlayer=" + newState.currentPlayerColor() + ", Depth=" + depth);
+            GameState newState = moveState(state.clone(), m);
+            // if(!switched){
 
+            // }
+            // if (newState.getRingCountForColor(newState.getCurrentColor().toLowerCase()) < (state.getRingCountForColor(newState.getCurrentColor().toLowerCase()) )) { 
+            //     m.setReward(Double.POSITIVE_INFINITY);
+            //     newState.switchPlayerNEW();
 
-                // newState.isWhiteTurn = !state.isWhiteTurn;
+            //     System.out.println("Winning move found at depth=" + depth + ": " + m);
+            //     return new AlphaBetaResult(Double.POSITIVE_INFINITY, m); 
+            // }
+            if(!switched){
 
-                double reward = Reward.calculateRewardWITHOUT(ge, state, m, newState, state.getCurrentColor());
-                m.setReward(reward);
-                // System.out.println(m);
-                // System.out.println(newState.getCurrentColor());
+                newState.switchPlayerNEW();
 
-
-
-                // state.switchPlayer();
-                // System.out.println("Entering alphaBeta: Depth=" + depth + 
-                //    ", Alpha=" + alpha + 
-                //    ", Beta=" + beta + 
-                //    ", CurrentPlayer=" + state.getCurrentColor());
-
-                AlphaBetaResult result = alphaBeta(newState, state, alpha, beta, depth - 1, ge, m);
-                double currentValue = result.getValue();
-
-                // System.out.println("Depth=" + depth +
-                // " | CurrentPlayer=" + state.getCurrentColor() +
-                // " | NextPlayer=" + newState.getCurrentColor());
-            
-                if (isMaximizingPlayer) {
-                    if (currentValue > value) {
-                        value = currentValue;
-                        bestMove = m;
-                        // System.out.println("Maximizing: New best value = " + value + " at move " + m);
-                    }
-                    if (value > alpha) {
-                        alpha = value;
-                        // System.out.println("Maximizing: Alpha updated to " + alpha);
-                    }
-                    if (alpha > beta) {
-                        // System.out.println("Maximizing: Pruning at alpha = " + alpha + ", beta = " + beta);
-                        break;
-                    }
-                } else {
-                    if (currentValue < value) {
-                        value = currentValue;
-                        bestMove = m;
-                        // System.out.println("Minimizing: New best value = " + value + " at move " + m);
-                    }
-                    if (value < beta) {
-                        beta = value;
-                        // System.out.println("Minimizing: Beta updated to " + beta);
-                    }
-                    if (alpha > beta) {
-                        // System.out.println("Minimizing: Pruning at alpha = " + alpha + ", beta = " + beta);
-                        break;
-                    }
-                }
-                
-                System.out.println("Depth=" + depth + ", Current Move=" + m + ", Current Value=" + currentValue + ", Value=" + value);
-
-                // System.out.println("After Iteration: Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
-                // System.out.println("Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
             }
+
+
+            // newState.isWhiteTurn = !state.isWhiteTurn;
+
+            double reward = Reward.calculateRewardWITHOUT(ge, state.clone(), m, newState.clone(), state.getCurrentColor().toLowerCase());
+            m.setReward(reward);
+            // System.out.println(m);
+            // System.out.println(newState.getCurrentColor());
+
+
+
+            // state.switchPlayer();
+            // System.out.println("Entering alphaBeta: Depth=" + depth + 
+            //    ", Alpha=" + alpha + 
+            //    ", Beta=" + beta + 
+            //    ", CurrentPlayer=" + state.getCurrentColor());
+
+            AlphaBetaResult result = alphaBeta(newState, state, alpha, beta, depth - 1, ge, m);
+            double currentValue = result.getValue();
+
+            // System.out.println("Depth=" + depth +
+            // " | CurrentPlayer=" + state.getCurrentColor() +
+            // " | NextPlayer=" + newState.getCurrentColor());
+        
+            if (isMaximizingPlayer) {
+                if (currentValue > value) {
+                    value = currentValue;
+                    bestMove = m;
+                    // System.out.println("Maximizing: New best value = " + value + " at move " + m);
+                }
+                if (value > alpha) {
+                    alpha = value;
+                    // System.out.println("Maximizing: Alpha updated to " + alpha);
+                }
+                if (alpha > beta) {
+                    // System.out.println("Maximizing: Pruning at alpha = " + alpha + ", beta = " + beta);
+                    break;
+                }
+            } else {
+                if (currentValue < value) {
+                    value = currentValue;
+                    bestMove = m;
+                    // System.out.println("Minimizing: New best value = " + value + " at move " + m);
+                }
+                if (value < beta) {
+                    beta = value;
+                    // System.out.println("Minimizing: Beta updated to " + beta);
+                }
+                if (alpha > beta) {
+                    // System.out.println("Minimizing: Pruning at alpha = " + alpha + ", beta = " + beta);
+                    break;
+                }
+            }
+            
+            // System.out.println("Depth=" + depth + ", Current Move=" + m + ", Current Value=" + currentValue + ", Value=" + value);
+
+            // System.out.println("After Iteration: Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
+            // System.out.println("Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
         }
+    // }
     
         return new AlphaBetaResult(value, bestMove);
+    }
+
+    private List<Move> sortMoves(HashMap<Vertex, ArrayList<Move>> validMoves, GameState state, GameState prevState, GameEngine ge) {
+        List<Move> allMoves = new ArrayList<>();
+        for (ArrayList<Move> moves : validMoves.values()) {
+            allMoves.addAll(moves);
+        }
+    
+        allMoves.sort((Move m1, Move m2) -> {
+            double value1 = evaluate(moveState(state, m1), prevState, ge, state.getCurrentColor(), m1);
+            double value2 = evaluate(moveState(state, m2), prevState, ge, state.getCurrentColor(), m2);
+            return Double.compare(value2, value1);
+        });
+    
+        return allMoves;
     }
     
 
     private HashMap<Vertex, ArrayList<Move>> filterValidMoves(HashMap<Vertex, ArrayList<Move>> vertexMove, GameState state) {
         HashMap<Vertex, ArrayList<Move>> validMoves = new HashMap<>();
+        GameEngine ge = new GameEngine();
     
         for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
             if (entry == null || entry.getValue() == null) {
@@ -199,19 +227,26 @@ public class AlphaBetaBot extends BotAbstract {
     
             ArrayList<Move> validMovesForVertex = new ArrayList<>();
             for (Move m : entry.getValue()) {
-                // System.out.println(m);
                 if (isValidMove(state, m)) {
                     validMovesForVertex.add(m);
                 }
             }
     
             if (!validMovesForVertex.isEmpty()) {
-                validMoves.put(entry.getKey(), validMovesForVertex);
+                validMovesForVertex.sort((Move m1, Move m2) -> {
+                    double value1 = evaluate(moveState(state, m1), state, ge, state.getCurrentColor(), m1);
+                    double value2 = evaluate(moveState(state, m2), state, ge, state.getCurrentColor(), m2);
+                    return Double.compare(value2, value1); 
+                });
+    
+                ArrayList<Move> topMoves = new ArrayList<>(validMovesForVertex.subList(0, Math.min(1, validMovesForVertex.size())));
+                validMoves.put(entry.getKey(), topMoves);
             }
         }
     
         return validMoves;
     }
+    
     
 
     private double evaluate(GameState state,GameState prevState, GameEngine ge, String color, Move chosenMove) {
@@ -345,14 +380,15 @@ public class AlphaBetaBot extends BotAbstract {
         }
         boolean isWinningRow = tempEngine.win(tempEngine.currentState.getVertexesOfFlippedCoins());
 
-    
+        switched = false;
+
         if (isWinningRow) {
-                        
+            // System.out.println("REMOVING RING for "+tempEngine.getWinningColor());
             String winnerColor = tempEngine.getWinningColor();
             Bot currentPlayer = winnerColor.equalsIgnoreCase(super.getColor()) ? thisBot : opponentBot;
 
             Vertex vertexToRemoveBOT = currentPlayer.removeRing(tempEngine.currentState);
-            
+            String vertexColor = vertexToRemoveBOT.getRing().getColour();
             handleWinningRing(vertexToRemoveBOT.getVertextNumber(), tempEngine);
             // handleWinningRing(vertexToRemoveBOT.getVertextNumber(), tempEngine);
 
@@ -360,13 +396,26 @@ public class AlphaBetaBot extends BotAbstract {
             for (Integer vert : allRemoveChips) {
                 handleChipRemove(vert, tempEngine, currentPlayer);
             }
-
             tempEngine.setWinningRing(false);
             tempEngine.setChipRemovalMode(false);
+            tempEngine.currentState.setVertexesOfFlippedCoins(null);
+
+            // if(vertexColor.equals(tempEngine.currentState.getCurrentColor().toLowerCase())){
+            //     tempEngine.currentState.switchPlayerNEW();
+            //     this.switched = true;
+            // }
+
+            tempEngine.currentState.updateChipsRingCountForEach();
+            tempEngine.setChipRemovalMode(false);
+            tempEngine.setRingSelectionMode(false);
+            tempEngine.setWinningColor("");
+            winningChips.clear();
+            tempEngine.setWinningRing(false);
+            tempEngine.setChipRemovalMode(false);
+            tempEngine.getWinningChips().clear();
+            // System.out.println("CHANGING COLOR RESULT"+tempEngine.currentState.isWhiteTurn);
 
 
-    
-    
         }
         // tempEngine.currentState.setCurrentPlayer(
         //     tempEngine.currentState.currentPlayerColor().toLowerCase().equals("white") ? "black" : "white"
@@ -404,7 +453,7 @@ public class AlphaBetaBot extends BotAbstract {
         }
 
         String currColor = v.getCoin().getColour().toLowerCase();
-        if (currColor.equalsIgnoreCase(gameEngine.getWinningColor())) {
+        if (currColor.equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
             gameEngine.currentState.chipsRemaining += 1;
             chipsToRemove--;
@@ -429,8 +478,13 @@ public class AlphaBetaBot extends BotAbstract {
                 winningChips.clear();
                 gameEngine.getWinningChips().clear();
 
-                if (currColor.equals(activeBot.getColor().toLowerCase())) {
-                    switchTurn(gameEngine.currentState);
+                if (currColor.toLowerCase().equals(activeBot.getColor().toLowerCase())) {
+                    // System.out.println("CHANGING COLOR BEFORE"+gameEngine.currentState.isWhiteTurn);
+                    // switchTurn(gameEngine.currentState);
+                    // System.out.println("CHANGING COLOR AFTER"+gameEngine.currentState.isWhiteTurn);
+
+                    // this.switched = true;
+                    // gameEngine.currentState.switchPlayerNEW();
                 }
             }
         }

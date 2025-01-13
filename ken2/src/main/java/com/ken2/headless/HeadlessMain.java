@@ -13,10 +13,10 @@ import com.ken2.utils.BotFactory;
 public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
-        Bot whiteBot = factory.getBot("rulebased bot", "White");
+        Bot whiteBot = factory.getBot("alphabeta bot", "White");
         Bot blackBot = factory.getBot("alphabeta bot", "Black");
 
-        Headless headless = new Headless(10, whiteBot, blackBot);
+        Headless headless = new Headless(100, whiteBot, blackBot);
 
         headless.runGames(); // without csv export
         // headless.exportGamesToCsv();// with csv export

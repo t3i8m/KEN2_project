@@ -133,6 +133,8 @@ public class Reward {
         }
 
         if (removedYourRing(previousState, newState, currentColor)) {
+            // System.out.println(move);
+            // System.out.println("reward for the removed ring");
             reward += Rewards.YOUR_RING_REMOVAL.getValue();
         }
 

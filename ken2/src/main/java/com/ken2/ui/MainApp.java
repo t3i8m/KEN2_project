@@ -515,6 +515,7 @@ public class MainApp extends Application {
 
 
     private void switchPlayer() {
+        // gameEngine.currentState.currentPlayer=gameEngine.currentState.currentPlayer.equals("white")?"black":"white";
         gameEngine.currentState.isWhiteTurn = !gameEngine.currentState.isWhiteTurn;
         currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
     }
@@ -676,7 +677,6 @@ public class MainApp extends Application {
             chipsToRemove--;
             removeCircleIndicators();
             gameEngine.getWinningChips().remove(Integer.valueOf(vertex));
-            // System.out.println("Chip removed. Remaining chips to remove: " + chipsToRemove);
             List<Integer> adjacentVertices = gameEngine.getAdjacentVertices(vertex);
             List<Integer> validRemovableChips = new ArrayList<>();
             for (int adjVertex : adjacentVertices) {
@@ -696,11 +696,11 @@ public class MainApp extends Application {
                 gameEngine.setRingSelectionMode(false);
                 gameEngine.setWinningColor("");
                 winningChips.clear();
-
+                // gameEngine.setWinningRing(false);
+                // gameEngine.setChipRemovalMode(false);
                 gameEngine.getWinningChips().clear();
 
-                if(currColor.equals(currentPlayer.getColor().toLowerCase())){
-                    // System.out.println("curr color "+currColor);
+                if(gameEngine.currentState.getCurrentColor().toLowerCase().equals(currentPlayer.getColor().toLowerCase())){
                     resetTurn();
 
                 }
@@ -1308,14 +1308,24 @@ public class MainApp extends Application {
             restartGame();
         }
 
+        if (isGameOver || gameEngine.isInChipRemovalMode() || gameEngine.isInRingRemovalMode()) {
+            return; 
+        }
+
         // if (whi) {
         //     return;
         // }
         try{
-            GameState gs = gameEngine.getGameState();
+            GameState gs = gameEngine.getGameState().clone();
             Game_Board gameBoard = gs.gameBoard;
             Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
-    
+            
+            Game_Board prevGameBoard = gs.getGameBoard().clone();   
+            GameState prevGameStateNew = prevGameBoard.createStatesFromBoards(prevGameBoard);
+
+            // Game_Board currentGameBoard = gs.getGameBoard().clone();   
+            // GameState currentStateNew = prevGameBoard.createStatesFromBoards(currentGameBoard);
+
             Bot activeBot = currentPlayer.getBot();
             Vertex vertexFrom;
             int vertexTo;
@@ -1323,9 +1333,8 @@ public class MainApp extends Application {
             if (activeBot != null) {
     
                 if (gs.ringsPlaced < 10) {
-    
+
                     move = activeBot.makeMove(gameEngine.getGameState());
-    
                     int chosenVertexNumber = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
                     GUIplaceStartingRing(chosenVertexNumber, gc);
     
@@ -1334,12 +1343,16 @@ public class MainApp extends Application {
                     currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
                 } else {
                     try{
+                        
+                        // System.out.println(gameEngine.currentState.getGameBoard().strMaker());
                         move = activeBot.makeMove(gameEngine.getGameState());
                         vertexFrom = move.getStartingVertex();
                         // if(move==null){
                         //     return;
                         // }
-        
+                        // gameEngine.currentState = currentStateNew;
+                        // System.out.println(gameEngine.currentState.getGameBoard().strMaker());
+
                         vertexTo = gameBoard.getVertexNumberFromPosition(move.getXposition(), move.getYposition());
                         // System.out.println("from "+vertexFrom.getVertextNumber());
                         // System.out.println("to "+vertexTo);
@@ -1378,15 +1391,25 @@ public class MainApp extends Application {
                     // resetTurn();
                     // Platform.runLater(() -> resetTurn());
                     newState = gameEngine.currentState.clone();
+                    // if(!gameEngine.currentState.getCurrentColor().equals(activeBot.getColor().toLowerCase())){
+                    //     gameEngine.currentState.isWhiteTurn=!gameEngine.currentState.isWhiteTurn;
+                    // }
+                    // System.out.println(gameEngine.currentState.isWhiteTurn);
+                    // System.out.println(gameEngine.currentState.isWhiteTurn);
 
-    
-                    System.out.println("\n"+"Move " +activeBot.getColor());
-                    reward = Reward.calculateReward(gameEngine, previuosState, move, newState, activeBot.getColor());
+                    // System.out.println("\n"+"Move " +activeBot.getColor());
+                    // System.out.println("Previous "+previuosState.getCurrentColor());
+                    // System.out.println(newState.getCurrentColor());
+                    // System.out.println(gameEngine.currentState.getCurrentColor());
+                    // System.out.println(prevGameStateNew.getGameBoard().strMaker());
+
+                    // System.out.println(newState.getGameBoard().strMaker());
+                    reward = Reward.calculateReward(gameEngine, prevGameStateNew, move, newState, activeBot.getColor());
                     System.out.println("TOTAL REWARD = " + reward+" BOT color: "+activeBot.getColor());
                     resetTurn();
                     // updateGameBoard(gameBoard, gc);
                     updateOnscreenText();
-                    
+
                 }
         } catch(Throwable ex){
             // System.out.println(ex);
@@ -1453,26 +1476,36 @@ public class MainApp extends Application {
 
 
     private void resetTurn(){
-        previuosState = gameEngine.currentState.clone();
+        // previuosState = gameEngine.currentState.clone();
 
         if (isGameOver) {
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
             // System.out.println("BEFORE:"+gameEngine.currentState.gameBoard.strMaker());
+            System.out.println("BEFORE reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
+            // if(gameEngine.currentState.getCurrentColor().equals("white") && gameEngine.currentState.isWhiteTurn==true){
+            //     gameEngine.currentState.isWhiteTurn = true;
+            // } else if (gameEngine.currentState.getCurrentColor().equals("white") && gameEngine.currentState.isWhiteTurn==false){
+            //     gameEngine.currentState.isWhiteTurn = false;
+
+            // }
 
             gameEngine.currentState.resetTurn();
             gameEngine.currentState.selectedChipVertex = -1;
+
             // currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
 
             // PauseTransition pause = new PauseTransition(new Duration(1));
             // pause.setOnFinished(event -> {
-                switchPlayer();
-                chipsToRemove=5;
-                // lastMoveStartVertex = null;
-                // lastMoveEndVertex = null;
-                updateStrengthIndicator();
-                chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
+            switchPlayer();
+            System.out.println("AFTER reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
+
+            chipsToRemove=5;
+            // lastMoveStartVertex = null;
+            // lastMoveEndVertex = null;
+            updateStrengthIndicator();
+            chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
                 
             updateGameBoard(gameEngine.currentState.getGameBoard(), playObjectCanvas.getGraphicsContext2D());
             // System.out.println(gameEngine.currentState.isWhiteTurn);
@@ -1482,6 +1515,10 @@ public class MainApp extends Application {
             playerTurn();
             // Platform.runLater(() -> playerTurn());
 
+        }else{
+            System.out.println(gameEngine.isInChipRemovalMode());
+            System.out.println(gameEngine.isInRingRemovalMode());
+            System.out.println("No changes");
         }
         
     }

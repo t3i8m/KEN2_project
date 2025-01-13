@@ -41,7 +41,7 @@ public class GameState implements Cloneable{
     public boolean isRingSelectionMode;
     private ArrayList<Vertex >vertexesOfFlippedCoins;
     private List<Integer> allPossibleCoinsToRemove;
-    private String currentPlayer;
+    public String currentPlayer;
 
 
     /**
@@ -82,6 +82,7 @@ public class GameState implements Cloneable{
             this.isWhiteTurn=false;
         }
         // System.out.println("Switched player from: " + oldPlayer + " to: " + this.currentPlayer);
+        // System.out.println(this.isWhiteTurn);
     }
 
     public void setCurrentPlayer(String newColor) {
@@ -90,6 +91,7 @@ public class GameState implements Cloneable{
     }
         
     public String getCurrentColor(){
+
         return this.currentPlayer;
     }
     
@@ -304,5 +306,41 @@ public class GameState implements Cloneable{
         }
         return false;
     }
+
+    @Override
+public boolean equals(Object obj) {
+    if (this == obj) {
+        return true; 
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+        return false; 
+    }
+
+    GameState other = (GameState) obj;
+
+    return ringsWhite == other.ringsWhite &&
+           ringsBlack == other.ringsBlack &&
+           chipsRemaining == other.chipsRemaining &&
+           chipsWhite == other.chipsWhite &&
+           chipsBlack == other.chipsBlack &&
+           ringsPlaced == other.ringsPlaced &&
+           isWhiteTurn == other.isWhiteTurn &&
+           chipPlacement == other.chipPlacement &&
+           selectedRingVertex == other.selectedRingVertex &&
+           selectedChipVertex == other.selectedChipVertex &&
+           chipPlaced == other.chipPlaced &&
+           chipRingVertex == other.chipRingVertex &&
+           totalChipsFlipped == other.totalChipsFlipped &&
+           isChipRemovalMode == other.isChipRemovalMode &&
+           isRingSelectionMode == other.isRingSelectionMode &&
+           (gameBoard != null ? gameBoard.equals(other.gameBoard) : other.gameBoard == null) &&
+           (gameSimulation != null ? gameSimulation.equals(other.gameSimulation) : other.gameSimulation == null) &&
+           (ringVertexNumbers != null ? ringVertexNumbers.equals(other.ringVertexNumbers) : other.ringVertexNumbers == null) &&
+           (chipNumber != null ? chipNumber.equals(other.chipNumber) : other.chipNumber == null) &&
+           (vertexesOfFlippedCoins != null ? vertexesOfFlippedCoins.equals(other.vertexesOfFlippedCoins) : other.vertexesOfFlippedCoins == null) &&
+           (allPossibleCoinsToRemove != null ? allPossibleCoinsToRemove.equals(other.allPossibleCoinsToRemove) : other.allPossibleCoinsToRemove == null) &&
+           (currentPlayer != null ? currentPlayer.equals(other.currentPlayer) : other.currentPlayer == null);
+}
+
 
 }
