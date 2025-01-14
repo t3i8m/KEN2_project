@@ -41,7 +41,7 @@ public class DQNTrainer {
 
             gameSimulation.runGamesWithoutStats();
 
-            dqnBot.train(50); 
+            dqnBot.train(30); 
             dqnBot.epsilon = Math.max(dqnBot.epsilon * epsilonDecay, dqnBot.epsilonMin);
 
             // System.out.println("Episode " + episode + " completed. Epsilon: " + dqnBot.epsilon);
@@ -59,6 +59,7 @@ public class DQNTrainer {
         System.out.println("Invalid Games: " + totalInvalidGames);
         System.out.println("=========================================");
         System.out.println("Training completed!");
+        dqnBot.getQNetwork().saveWeights();
     }
 
     private Bot initializeOpponentBot(String type) {

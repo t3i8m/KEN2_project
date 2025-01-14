@@ -4,11 +4,15 @@ import com.ken2.Game_Components.Board.Coin;
 import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.engine.GameState;
 
 public class BoardTransformation {
     Vertex[][] board;
     public BoardTransformation(Game_Board board){
         this.board = board.getBoard();
+    }
+    public BoardTransformation() {
+        
     }
 
     // 0 - empty cell
@@ -104,5 +108,85 @@ public class BoardTransformation {
             gb.the_Board = reconstructedBoard;
             return gb;
         }
+
+    public GameState fromVectorToState(double[] vector) {
+        if (vector.length != 86) {
+            throw new IllegalArgumentException(
+                "Vector length != 86 " + vector.length);
+        }
+        
+        GameState newState = new GameState();
+        
+        Game_Board newBoard = new Game_Board();
+
+
+        
+        final int ROWS = 13;
+        final int COLS = 7;
+        Vertex[][] reconstructedBoard = new Vertex[ROWS][COLS];
+
+        int index = 0;        
+        int vertexNumber = 0;
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (index < 85) {
+                    int cellValue = (int) vector[index];
+                    
+                    Vertex vertex = new Vertex(i, j);
+                    vertex.setVertexNumber(vertexNumber);
+
+                    
+                    switch (cellValue) {
+                        case 1: // WHITE RING
+                            Ring ringW = new Ring("white");
+                            vertex.setPlayObject(ringW);
+                            vertex.setRing(ringW);
+                            break;
+                        case 2: // BLACK RING
+                            Ring ringB = new Ring("black");
+                            vertex.setPlayObject(ringB);
+                            vertex.setRing(ringB);
+                            break;
+                        case 3: // WHITE COIN
+                            Coin coinW = new Coin("white");
+                            vertex.setPlayObject(coinW);
+                            vertex.setCoin(coinW);
+                            break;
+                        case 4: // BLACK COIN
+                            Coin coinB = new Coin("black");
+                            vertex.setPlayObject(coinB);
+                            vertex.setCoin(coinB);
+                            break;
+                        default:
+                            // 0 или что-то иное — пусто
+                            vertex.setPlayObject(null);
+                    }
+
+                    reconstructedBoard[i][j] = vertex;
+
+                    index++;
+                    vertexNumber++;
+
+                } else {
+                    
+                    reconstructedBoard[i][j] = null;
+                }
+            }
+        }
+
+        double turnValue = vector[85];
+        if ((int)turnValue == 5) {
+            newState.setCurrentPlayer("white");
+        } else {
+            newState.setCurrentPlayer("black");
+        }
+
+        newBoard.the_Board = reconstructedBoard;
+        newState.gameBoard = newBoard;
+        
+        return newState;
+    }
 }
+
 

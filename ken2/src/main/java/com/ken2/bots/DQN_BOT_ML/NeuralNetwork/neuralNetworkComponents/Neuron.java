@@ -37,10 +37,15 @@ public class Neuron {
 
     public void updateWeights(double[] gradients, double learningRate) {
         double gradientClipValue = 1.0; 
+
         for (int i = 0; i < weights.length; i++) {
             gradients[i] = Math.max(-gradientClipValue, Math.min(gradientClipValue, gradients[i])); // Обрезка
             weights[i] -= learningRate * gradients[i];
         }
+    }
+
+    public double getBias() {
+        return this.bias;
     }
     
     

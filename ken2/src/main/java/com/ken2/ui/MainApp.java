@@ -195,6 +195,8 @@ public class MainApp extends Application {
         whitePlayerComboBox.getItems().add("Human Player");
         whitePlayerComboBox.getItems().add("RuleBased Bot");
         whitePlayerComboBox.getItems().add("AlphaBeta Bot");
+        whitePlayerComboBox.getItems().add("DQN Bot");
+
 
         whitePlayerComboBox.getSelectionModel().selectFirst();
         whitePlayerComboBox.setStyle(
@@ -212,6 +214,8 @@ public class MainApp extends Application {
         blackPlayerComboBox.getItems().add("Human Player");
         blackPlayerComboBox.getItems().add("RuleBased Bot");
         blackPlayerComboBox.getItems().add("AlphaBeta Bot");
+        blackPlayerComboBox.getItems().add("DQN Bot");
+
 
         blackPlayerComboBox.getSelectionModel().selectFirst();
         blackPlayerComboBox.setStyle(
