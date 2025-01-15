@@ -91,6 +91,7 @@ public class NeuralNetwork {
         writer.write(String.valueOf(this.layers.size()));
         writer.newLine();
 
+
         for (Layer layer : this.layers) {
             int neuronCount = layer.getNeurons().size();
             writer.write(String.valueOf(neuronCount));

@@ -1,5 +1,10 @@
 package com.ken2.bots.DQN_BOT_ML.botComponents;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,12 +63,13 @@ public class DQN_BOT  extends BotAbstract{
             this.qNetwork.loadWeights();
 
         } catch(Exception ex){
+            // this.qNetwork.saveWeights();
             System.out.println(ex);
         }
+        loadEpsilon();
         this.targetNetwork = copyNetwork(this.qNetwork);
 
         this.mask = new int[actionSize];
-        this.epsilon = 1;
         this.epsilonMin = 0.01;
         this.epsilonDecay = 0.995;
         this.gamma = 0.99;
@@ -126,6 +132,10 @@ public class DQN_BOT  extends BotAbstract{
         actionMapping.initializeActions(allValidMoves);
         int actionIndex = chooseAction(qValues, allValidMoves);
 
+        if (epsilon > epsilonMin) {
+            epsilon *= epsilonDecay;
+        }
+
         Move chosenMove;
         try{
             chosenMove= actionMapping.getMove(actionIndex);
@@ -157,6 +167,26 @@ public class DQN_BOT  extends BotAbstract{
         storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"white":"black"));
         // storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"black":"white"));
         return chosenMove;
+    }
+
+    public void saveEpsilon(){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\NeuralNetwork\\weights\\savedEpsilon.txt"))) {
+            writer.write(String.valueOf(this.epsilon));
+        }catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    }
+
+    public void loadEpsilon(){
+        double loadedEps = 1.0; 
+        try (BufferedReader reader = new BufferedReader(new FileReader("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\NeuralNetwork\\weights\\savedEpsilon.txt"))) {
+            loadedEps = Double.parseDouble(reader.readLine());
+        } catch (IOException ex) {
+            System.out.println("No saved epsilon found, defaulting to 1.0");
+        }
+        this.epsilon = loadedEps;
+
     }
 
     public void storeExperience(double[] state, int action, double reward, double[] nextState) {
@@ -343,6 +373,7 @@ public class DQN_BOT  extends BotAbstract{
         int maxActions = Math.min(qValues.length, allPossible.size());
     
         if (random.nextDouble() < epsilon) { 
+            // System.out.println(random.nextDouble());
             return random.nextInt(maxActions);
         } else {
             return argMax(qValues, maxActions); 

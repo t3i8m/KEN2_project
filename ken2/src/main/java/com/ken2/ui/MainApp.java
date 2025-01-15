@@ -1522,7 +1522,6 @@ public class MainApp extends Application {
         }else{
             System.out.println(gameEngine.isInChipRemovalMode());
             System.out.println(gameEngine.isInRingRemovalMode());
-            System.out.println("No changes");
         }
         
     }

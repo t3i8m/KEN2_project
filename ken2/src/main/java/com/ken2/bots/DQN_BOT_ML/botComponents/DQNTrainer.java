@@ -60,6 +60,7 @@ public class DQNTrainer {
         System.out.println("=========================================");
         System.out.println("Training completed!");
         dqnBot.getQNetwork().saveWeights();
+        dqnBot.saveEpsilon();
     }
 
     private Bot initializeOpponentBot(String type) {
