@@ -787,10 +787,12 @@ public class MainApp extends Application {
                     this.isGameOver=true;
                     whiteWins++; 
                     updateWinsText();
-                    showGameOverAlert("White wins!");
+                    GameAlerts.alertGameEnd("White player wins the game!");
+                    return;
+                    //showGameOverAlert("White wins!");
                     // showAlert("Game Over", "White wins!");
                     //endGame();
-                    return;
+                   // return;
                 }
             }
         } else {
@@ -804,12 +806,14 @@ public class MainApp extends Application {
 
                     blackWins++; 
                     updateWinsText();
-                    showGameOverAlert("Black wins!");
+                    //showGameOverAlert("Black wins!");
+                    GameAlerts.alertGameEnd("Black player wins the game!");
+                    return;
 
 
                     // showAlert("Game Over", "Black wins!");
                     //endGame();
-                    return;
+
                 }
             }
         }
@@ -1318,7 +1322,8 @@ public class MainApp extends Application {
 
     private void botTurn(GraphicsContext gc) {
         if (isGameOver) {
-            restartGame();
+            // restartGame();
+            return;
         }
 
         if (isGameOver || gameEngine.isInChipRemovalMode() || gameEngine.isInRingRemovalMode()) {
