@@ -5,8 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/Game_Components/Board/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/Game_Components/Board/Vertex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Move.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Coin.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Coin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Game_Board.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Game_Board.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/PlayObj.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/PlayObj.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Ring.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Ring.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/Game_Components/Board/Vertex.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/BotAbstract.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/BotAbstract.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/all_commands.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/dqn.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/image-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/image-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/image.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/info/q_learning.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/RuleBased/RuleBasedBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/RuleBased/RuleBasedBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Direction.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Direction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameSimulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Move.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/Move.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/What i have done240924.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/GameAlerts.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/GameAlerts.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/module-info.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,20 +66,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/kenn2/KEN2_project&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "alarm",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/kenn2/KEN2_project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

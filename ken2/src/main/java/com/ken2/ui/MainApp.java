@@ -864,6 +864,15 @@ public class MainApp extends Application {
             Move currentMove = gameEngine.gameSimulation.simulateMove(gameEngine.currentState.gameBoard,
                     gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex),
                     gameEngine.currentState.gameBoard.getVertex(vertex));
+            ArrayList<Move> normalMove = gameEngine.possibleMoves(selectedVertex);
+            boolean isValidMove = normalMove.stream().anyMatch(move -> {
+                        Vertex targetVertex = move.getTargetVertex(gameEngine);
+                        return targetVertex != null && targetVertex.getVertextNumber() == vertex;
+                    });
+            if (!isValidMove) {
+                GameAlerts.alertInvalidMove();
+                return;
+            }
 
             moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove);
 

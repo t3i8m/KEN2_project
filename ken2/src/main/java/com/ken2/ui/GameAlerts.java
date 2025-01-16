@@ -23,7 +23,7 @@ public class GameAlerts {
 
     // 2
     public static void alertInvalidMove() {
-        showAlert("Invalid Move", "You cannot move your ring to this position. Please select a highlited position.");
+        showAlert("Invalid Move", "You cannot move your ring to this position. Please select a highlighted position.");
     }
 
     // 1

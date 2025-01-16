@@ -1,5 +1,7 @@
 package com.ken2.Game_Components.Board;
 
+import com.ken2.engine.GameEngine;
+
 import java.util.ArrayList;
 
 /** Vertex is a simple placeholder for the playing object (ring or coin)
@@ -32,6 +34,8 @@ public class Vertex {
             this.playObjects[1] = other.playObjects[1].clone();
         }
     }
+
+
 
     public void setVertexNumber(int vertexNumber){
         this.vertexNumber = vertexNumber;

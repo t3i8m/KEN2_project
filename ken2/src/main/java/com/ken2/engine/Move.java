@@ -158,7 +158,16 @@ public class Move {
         return reward;
     }
 
-
+    public Vertex getTargetVertex(GameEngine engine){
+        if (engine == null || engine.gameBoard == null) {
+            return null;
+        }
+        int vertexNumber = engine.gameBoard.getVertexNumberFromPosition(xPosition,yPosition);
+        if (vertexNumber < 0) {
+            return null;
+        }
+        return engine.gameBoard.getVertex(vertexNumber);
+    }
 
     
 }
