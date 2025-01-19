@@ -797,7 +797,8 @@ public class MainApp extends Application {
                     gameEngine.currentState.winner = "white";
 
                     updateWinsText();
-                    showGameOverAlert("White wins!");
+                    GameAlerts.alertGameEnd("White player wins!");
+                    //showGameOverAlert("White wins!");
                     // showAlert("Game Over", "White wins!");
                     //endGame();
                     return;
@@ -814,7 +815,8 @@ public class MainApp extends Application {
                     gameEngine.currentState.winner = "black";
                     blackWins++; 
                     updateWinsText();
-                    showGameOverAlert("Black wins!");
+                    GameAlerts.alertGameEnd("Black player wins!");
+                    //showGameOverAlert("Black wins!");
 
 
                     // showAlert("Game Over", "Black wins!");
@@ -874,6 +876,16 @@ public class MainApp extends Application {
             Move currentMove = gameEngine.gameSimulation.simulateMove(gameEngine.currentState.gameBoard,
                     gameEngine.currentState.gameBoard.getVertex(gameEngine.currentState.selectedChipVertex),
                     gameEngine.currentState.gameBoard.getVertex(vertex));
+
+            ArrayList<Move> normalMove = gameEngine.possibleMoves(selectedVertex);
+            boolean isValidMove = normalMove.stream().anyMatch(move -> {
+                Vertex targetVertex = move.getTargetVertex(gameEngine);
+                return targetVertex != null && targetVertex.getVertextNumber()==vertex;
+            });
+            if(!isValidMove){
+                GameAlerts.alertInvalidMove();
+                return;
+            }
 
             moveRing(gameEngine.currentState.selectedChipVertex, vertex, gc, Move_Valid, currentMove);
 
@@ -1321,7 +1333,9 @@ public class MainApp extends Application {
 
     private void botTurn(GraphicsContext gc) {
         if (isGameOver) {
-            restartGame();
+           // restartGame();
+
+            return;
         }
 
         if (isGameOver || gameEngine.isInChipRemovalMode() || gameEngine.isInRingRemovalMode()) {
@@ -1420,8 +1434,8 @@ public class MainApp extends Application {
                     // System.out.println(prevGameStateNew.getGameBoard().strMaker());
 
                     // System.out.println(newState.getGameBoard().strMaker());
-                    reward = Reward.calculateReward(gameEngine, prevGameStateNew, move, newState, activeBot.getColor());
-                    System.out.println("TOTAL REWARD = " + reward+" BOT color: "+activeBot.getColor());
+                    // reward = Reward.calculateReward(gameEngine, prevGameStateNew, move, newState, activeBot.getColor());
+                    // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+activeBot.getColor());
                     resetTurn();
                     // updateGameBoard(gameBoard, gc);
                     updateOnscreenText();
@@ -1494,14 +1508,14 @@ public class MainApp extends Application {
     private void resetTurn(){
        
         if (isGameOver) {
-            newState = gameEngine.currentState.clone();
-            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            // newState = gameEngine.currentState.clone();
+            // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
-            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
-            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+            // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            // reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
     
-            previuosState = gameEngine.currentState.clone();
+            // previuosState = gameEngine.currentState.clone();
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){

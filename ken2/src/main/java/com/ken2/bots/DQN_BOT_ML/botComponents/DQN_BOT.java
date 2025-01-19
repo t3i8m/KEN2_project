@@ -372,12 +372,14 @@ public class DQN_BOT  extends BotAbstract{
     public int chooseAction(double[] qValues, ArrayList<Move> allPossible) {
         int maxActions = Math.min(qValues.length, allPossible.size());
     
-        if (random.nextDouble() < epsilon) { 
-            // System.out.println(random.nextDouble());
-            return random.nextInt(maxActions);
-        } else {
-            return argMax(qValues, maxActions); 
-        }
+        // if (random.nextDouble() < epsilon) { 
+        //     // System.out.println(random.nextDouble());
+        //     return random.nextInt(maxActions);
+        // } else {
+        //     return argMax(qValues, maxActions); 
+        // }
+        return argMax(qValues, maxActions); 
+
     }
     
     //finds an index with the highest q-value
