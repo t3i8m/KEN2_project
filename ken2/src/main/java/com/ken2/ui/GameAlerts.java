@@ -58,7 +58,7 @@ public class GameAlerts {
 
     // Alert for the end of the game
     public static void alertGameEnd(String winningPlayer) {
-        showAlert("Congratulations", "The game has ended. Winner: " + winningPlayer);
+        showAlert("WINNER WINNER CHICKEN DINNER", "The game has ended. Winner: " + winningPlayer);
     }
 
     public static void alertGameEndDraw(String winningPlayer) {
