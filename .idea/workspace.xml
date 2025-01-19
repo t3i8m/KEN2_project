@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
