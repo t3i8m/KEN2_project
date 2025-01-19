@@ -1508,14 +1508,14 @@ public class MainApp extends Application {
     private void resetTurn(){
        
         if (isGameOver) {
-            // newState = gameEngine.currentState.clone();
-            // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            newState = gameEngine.currentState.clone();
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
-            // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-            // reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
-            // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
     
-            // previuosState = gameEngine.currentState.clone();
+            previuosState = gameEngine.currentState.clone();
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
