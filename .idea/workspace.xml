@@ -6,8 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/Move.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/assets/black chip.png" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/assets/black chip.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/assets/white chip.png" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/assets/white chip.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_MAIN.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/botComponents/DQN_MAIN.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/DQN_BOT_ML/utils/Reward.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/Headless.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/Headless.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/GameAlerts.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/GameAlerts.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
