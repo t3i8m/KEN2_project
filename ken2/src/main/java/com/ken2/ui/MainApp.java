@@ -674,8 +674,8 @@ public class MainApp extends Application {
         if (v != null && v.hasCoin() && v.getCoin().getColour().toLowerCase().equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
             gc.clearRect(
-                    gameEngine.vertexCoordinates[vertex][0] + pieceDimension  / 4,
-                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension  / 4 ,pieceDimension, pieceDimension
+                    gameEngine.vertexCoordinates[vertex][0] + pieceDimension  / 8,
+                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension  / 8 ,pieceDimension, pieceDimension
             );
             gameEngine.currentState.chipsRemaining+=1;
            // chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
