@@ -21,7 +21,7 @@ public class AlphaBetaBot extends BotAbstract {
 
     @Override
     public String getName() {
-        return "";
+        return "ML-Alpha-Beta";
     }
 
     public Move makeMove(GameState state) {
@@ -310,6 +310,7 @@ public class AlphaBetaBot extends BotAbstract {
 
         return true;
     }
+
 
 
 }

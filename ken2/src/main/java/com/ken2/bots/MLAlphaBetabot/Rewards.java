@@ -29,4 +29,20 @@ public class Rewards {
         rewrds.put(direction,rewrds.get(direction)-value);
     }
 
+
+
+    // Make a evaluation method
+
+    // Then make a method that evalutes all the steps in a particular direction and average that and alter the
+    // rewards in that direction.
+
+    // You can take all the methods in one array from the allpossiblemoves variable and get the moves in one
+    // direction that u want it too work in
+
+    // Then during this evaluation of methods u can store the top 3 moves in that direction
+
+    // After going thru all the moves and altering the weights choose the direction with the most weights and
+    // choose a random method from the top 3 in that direction
+
+
 }

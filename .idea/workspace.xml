@@ -4,18 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaResult.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Model.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Trainer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Features.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Model.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Trainer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="Started the MLABbot">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Model.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Trainer.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +25,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -47,21 +46,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Tim/Documents/UM/project2_1/KEN2_project",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MLABbot&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Tim/Documents/UM/project2_1/KEN2_project&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.ken2.bots.MLAlphaBetabot" />
@@ -87,11 +86,25 @@
       <option name="presentableId" value="Default" />
       <updated>1732185827470</updated>
       <workItem from="1732185828776" duration="1391000" />
-      <workItem from="1737133465242" duration="16984000" />
+      <workItem from="1737133465242" duration="18359000" />
+      <workItem from="1737302385561" duration="9206000" />
     </task>
+    <task id="LOCAL-00001" summary="Started the MLABbot">
+      <option name="closed" value="true" />
+      <created>1737194701413</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737194701413</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Started the MLABbot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started the MLABbot" />
   </component>
 </project>
