@@ -42,6 +42,7 @@ public class GameState implements Cloneable{
     private ArrayList<Vertex >vertexesOfFlippedCoins;
     private List<Integer> allPossibleCoinsToRemove;
     public String currentPlayer;
+    public String winner = null;
 
 
     /**
@@ -50,6 +51,7 @@ public class GameState implements Cloneable{
     public GameState(){
         ringsWhite=5;
         ringsBlack=5;
+
         chipsRemaining=51;
         ringsPlaced=0;
         isWhiteTurn=true;
@@ -63,6 +65,8 @@ public class GameState implements Cloneable{
         vertexesOfFlippedCoins=new ArrayList<>();
         allPossibleCoinsToRemove = new ArrayList<>();
         this.currentPlayer = "white";
+        this.updateChipsRingCountForEach();
+
     }
 
     public void switchPlayer() {
@@ -166,6 +170,7 @@ public class GameState implements Cloneable{
 
     public int getRingCountForColor(String color){
         this.updateChipsRingCountForEach();
+
         if(color.toLowerCase().equals("white")){
             return this.ringsWhite;
         }else{
@@ -206,17 +211,17 @@ public class GameState implements Cloneable{
             Vertex[][] gboard = board.getBoard();
             this.chipsWhite=0;
             this.chipsBlack=0;
-            // this.ringsWhite=0;
-            // this.ringsBlack=0;
+            this.ringsWhite=0;
+            this.ringsBlack=0;
             for(int i = 0; i<gboard.length;i++){
                 for(int j = 0; j<gboard[i].length;j++){
                     if(gboard[i][j]!=null){
                         if(gboard[i][j].getPlayObject()[0]!=null){
                             PlayObj currRing = gboard[i][j].getPlayObject()[0];
                             if(currRing.getColour().toLowerCase().equals("white")){
-                                // this.ringsWhite++;
+                                this.ringsWhite++;
                             } else{
-                                // this.ringsBlack++;
+                                this.ringsBlack++;
                         }
                         }
                         if(gboard[i][j].getPlayObject()[1]!=null){
@@ -280,9 +285,10 @@ public class GameState implements Cloneable{
     public GameState clone() {
         try {
             GameState copy = (GameState) super.clone();
-    
+            copy.winner=winner;
             copy.gameBoard = new Game_Board(this.gameBoard); 
-    
+            copy.ringsWhite=this.ringsWhite;
+            copy.ringsBlack = this.ringsBlack;
             copy.chipNumber = this.chipNumber != null ? new ArrayList<>(this.chipNumber) : new ArrayList<>();
             copy.ringVertexNumbers = this.ringVertexNumbers != null ? new ArrayList<>(this.ringVertexNumbers) : new ArrayList<>();
             copy.vertexesOfFlippedCoins = this.vertexesOfFlippedCoins != null 

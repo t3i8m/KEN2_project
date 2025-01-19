@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Class that manages multiple matches between two bots on the given board.
  * It also provides functionality to export detailed move-by-move data to a CSV file.
@@ -40,6 +41,7 @@ public class Headless {
 
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
+    private Move currMove;
 
     
 
@@ -202,7 +204,7 @@ public class Headless {
         int moveNumber = 1;
         //////
         //////////
-
+        gameEngine.currentState.winner=null;
         while (true) {
             try{
                 GameState state = gameEngine.currentState;
@@ -236,7 +238,7 @@ public class Headless {
     
                         return "u";
                     }
-    
+                    currMove=ringPlacement;
                     int chosenVertex = board.getVertexNumberFromPosition(
                             ringPlacement.getXposition(),
                             ringPlacement.getYposition()
@@ -282,7 +284,7 @@ public class Headless {
     
                         return "u";
                     }
-    
+                    currMove=move;
                     Vertex fromVertex = move.getStartingVertex();
                     if (fromVertex == null) {
                         System.out.println("fromVertex is null. CurrentBot: " + currentBot.getName());
@@ -309,7 +311,7 @@ public class Headless {
                             gameEngine.currentState.gameBoard.getVertex(fromIndex),
                             gameEngine.currentState.gameBoard.getVertex(toIndex)
                     );
-    
+                    currMove=currentMove;
                     Vertex sourceV = gameEngine.currentState.gameBoard.getVertex(fromIndex);
                     if (sourceV == null) {
                         System.out.println("sourceV is null. CurrentBot: " + currentBot.getName());
@@ -415,11 +417,14 @@ public class Headless {
                         if (winnerColor.equalsIgnoreCase("white")) {
                             whiteScore++;
                             if (whiteScore == 3) {
+                                gameEngine.currentState.winner = "white";
                                 gameResult = "white";
                             }
                         } else {
                             blackScore++;
                             if (blackScore == 3) {
+                                gameEngine.currentState.winner = "black;";
+
                                 gameResult = "black";
                             }
                         }
@@ -459,9 +464,13 @@ public class Headless {
                     return "draw";
                 }
                 if (whiteScore == 3) {
+                    gameEngine.currentState.winner = "white";
+
                     return "white";
                 }
                 if (blackScore == 3) {
+                    gameEngine.currentState.winner = "black";
+
                     return "black";
                 }
     

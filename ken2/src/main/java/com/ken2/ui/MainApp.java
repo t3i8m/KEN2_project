@@ -127,6 +127,7 @@ public class MainApp extends Application {
     private int draws = 0;
     private int gamesPlayed = 0;
     private boolean isGameOver=false;
+    private Move currMove;
 
 
 
@@ -739,9 +740,16 @@ public class MainApp extends Application {
 
             gameEngine.setRingSelectionMode(false); // Exit ring selection mode
             gameEngine.setChipRemovalMode(true);
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            // if(currentPlayer.getColor().toLowerCase().equals("white")){
+            //     gameEngine.currentState.ringsWhite--;
+            // }else{
+            //     gameEngine.currentState.ringsBlack--;
+            // }
+
             chipsToRemove = 5;
             // chipsToRemove = winningChips.size();
-            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
             // if (!currentPlayer.isBot()){
             //     showAlert("Select Chips to Remove", "Please select 5 chips of your color to remove from the board.");
@@ -786,6 +794,8 @@ public class MainApp extends Application {
                 if (whiteScore == 3) {
                     this.isGameOver=true;
                     whiteWins++; 
+                    gameEngine.currentState.winner = "white";
+
                     updateWinsText();
                     showGameOverAlert("White wins!");
                     // showAlert("Game Over", "White wins!");
@@ -801,7 +811,7 @@ public class MainApp extends Application {
                 // Check if Black has won
                 if (blackScore == 3) {
                     this.isGameOver=true;
-
+                    gameEngine.currentState.winner = "black";
                     blackWins++; 
                     updateWinsText();
                     showGameOverAlert("Black wins!");
@@ -869,19 +879,19 @@ public class MainApp extends Application {
 
             if (Move_Valid[0] == 1){
                
-
+                // currMove = currentMove;
                 String color = gameEngine.currentState.currentPlayerColor();
                 // gameEngine.checkWinning(vertex, color);
                 // if (gameEngine.win(vertex, color)==false)
                 // if()
 
                 // GameEngine newG = gameEngine.clone();
-                newState = gameEngine.currentState.clone();
-                Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+                // newState = gameEngine.currentState.clone();
+                // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
-                System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-                reward = Reward.calculateReward(gameEngine, previuosState, currentMove, newState, currentPlayer.getColor().toLowerCase());
-                System.out.println("TOTAL REWARD = " + reward+" BOT color: "+color);
+                // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+                // reward = Reward.calculateReward(gameEngine, previuosState, currentMove, newState, currentPlayer.getColor().toLowerCase());
+                // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+color);
 
                 resetTurn();
                 //resetTurn();
@@ -918,6 +928,8 @@ public class MainApp extends Application {
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         try{
             if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
+                currMove = currentMove;
+
                 Vertex sourceVertex = gameEngine.currentState.gameBoard.getVertex(fromVertex);
                 Vertex targetVertex = gameEngine.currentState.gameBoard.getVertex(toVertex);
 
@@ -1480,9 +1492,16 @@ public class MainApp extends Application {
 
 
     private void resetTurn(){
-        // previuosState = gameEngine.currentState.clone();
-
+       
         if (isGameOver) {
+            newState = gameEngine.currentState.clone();
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+    
+            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+    
+            previuosState = gameEngine.currentState.clone();
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
@@ -1494,6 +1513,16 @@ public class MainApp extends Application {
             //     gameEngine.currentState.isWhiteTurn = false;
 
             // }
+
+            newState = gameEngine.currentState.clone();
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+    
+            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+    
+            previuosState = gameEngine.currentState.clone();
+    
 
             gameEngine.currentState.resetTurn();
             gameEngine.currentState.selectedChipVertex = -1;
@@ -1678,6 +1707,7 @@ public class MainApp extends Application {
         displayGameStatistics();
         this.isGameOver = false;
         isGameStarted = false;
+        gameEngine.currentState.winner = null;
         gameEngine.currentState.chipsRemaining = 51;
         chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
         startGameButton.setDisable(false);
