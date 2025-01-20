@@ -451,8 +451,8 @@ public class MainApp extends Application {
         );
 
         rulesAlert.setResizable(true);
-        rulesAlert.getDialogPane().setMinWidth(600); // Adjust width to fit the content
-        rulesAlert.getDialogPane().setMinHeight(400); // Adjust height to fit the content
+        rulesAlert.getDialogPane().setMinWidth(600);
+        rulesAlert.getDialogPane().setMinHeight(400);
 
         rulesAlert.showAndWait();
     }
@@ -673,9 +673,10 @@ public class MainApp extends Application {
         String currColor = v.getCoin().getColour().toLowerCase();
         if (v != null && v.hasCoin() && v.getCoin().getColour().toLowerCase().equalsIgnoreCase(gameEngine.getWinningColor().toLowerCase())) {
             v.setPlayObject(null);
-            gc.clearRect(gameEngine.vertexCoordinates[vertex][0] + pieceDimension/4 -1,
-                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension/4 -1, pieceDimension, pieceDimension);
-
+            gc.clearRect(
+                    gameEngine.vertexCoordinates[vertex][0] + pieceDimension  / 10,
+                    gameEngine.vertexCoordinates[vertex][1] + pieceDimension  / 10 ,pieceDimension, pieceDimension
+            );
             gameEngine.currentState.chipsRemaining+=1;
            // chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
 
@@ -732,6 +733,7 @@ public class MainApp extends Application {
             // System.out.println("Winning Chips Identified: " + gameEngine.getWinningChips());
             gameEngine.currentState.setAllPossibleCoinsToRemove(gameEngine.getWinningChips());
             if (gameEngine.getWinningChips().size() > 5){
+               // GameAlerts.
 
 
             }
@@ -1508,14 +1510,14 @@ public class MainApp extends Application {
     private void resetTurn(){
        
         if (isGameOver) {
-            // newState = gameEngine.currentState.clone();
-            // Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
+            newState = gameEngine.currentState.clone();
+            Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
-            // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-            // reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
-            // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
     
-            // previuosState = gameEngine.currentState.clone();
+            previuosState = gameEngine.currentState.clone();
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
@@ -1718,16 +1720,21 @@ public class MainApp extends Application {
     // }
 
     private void restartGame() {
+        gamesPlayed++;
+        updateGamesPlayedText();
         displayGameStatistics();
         this.isGameOver = false;
         isGameStarted = false;
-        gameEngine.currentState.winner = null;
+
+       // gameEngine.currentState.winner = null;
         gameEngine.currentState.chipsRemaining = 51;
         chipsRemainText.setText("      Chips Remaining: " + gameEngine.currentState.chipsRemaining);
         startGameButton.setDisable(false);
         whitePlayerComboBox.setDisable(false);
         blackPlayerComboBox.setDisable(false);
+
         gameEngine.resetGame();
+        gameEngine.currentState = gameEngine.getGameState();
         gameEngine.currentState.chipsRemaining = 51;
         currentPlayerIndex = 0;
         whiteScore = 0;
@@ -1737,8 +1744,10 @@ public class MainApp extends Application {
         FirstClickOnCoin = true;
         nadoEtiChips.clear();
         winningChips.clear();
+        highlightedVertices.clear();
+        turnIndicator.setText("White's Turn");
         GraphicsContext gcP = playObjectCanvas.getGraphicsContext2D();
-        gcP.clearRect(0, 0, playObjectCanvas.getWidth(), gcP.getCanvas().getHeight());
+        gcP.clearRect(0, 0, playObjectCanvas.getWidth(), playObjectCanvas.getHeight());
         removeCircleIndicators();
         for (Circle circle : whiteScoreCircle) {
             circle.setStroke(inactiveScoreRingColor);

@@ -121,6 +121,7 @@ public class Reward {
         double reward = 0.0;
 
         if (isWin(engine, newState, currentColor)) {
+            System.out.println("WINNER WINNER CHICKEN DINNER");
             reward += Rewards.WIN.getValue();
         } else if (isLose(engine, newState, currentColor)) {
             reward += Rewards.LOSE.getValue();
