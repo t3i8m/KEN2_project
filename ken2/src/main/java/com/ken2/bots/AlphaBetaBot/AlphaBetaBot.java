@@ -65,6 +65,8 @@ public class AlphaBetaBot extends BotAbstract {
             // System.out.println("No valid move found.");
             return null;
         }
+
+
     }
 
     public AlphaBetaResult alphaBeta(GameState state, GameState prevState, double alpha, double beta, int depth, GameEngine ge, Move currentMove) {

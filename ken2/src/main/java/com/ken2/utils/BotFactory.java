@@ -1,5 +1,6 @@
 package com.ken2.utils;
 
+import com.ken2.bots.AlphaBetaBot.AlphaBetaOld;
 import com.ken2.bots.Bot;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
@@ -24,6 +25,8 @@ public class BotFactory {
                 return new AlphaBetaBot(botColor);
             case "dqn bot":
                 return new DQN_BOT(botColor);
+            case "alphabetaold bot" :
+                return new AlphaBetaOld(botColor);
         }
         return null;
     }

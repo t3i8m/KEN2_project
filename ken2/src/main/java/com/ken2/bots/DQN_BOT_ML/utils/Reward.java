@@ -121,6 +121,10 @@ public class Reward {
         double reward = 0.0;
 
         if (isWin(engine, newState, currentColor)) {
+<<<<<<< Updated upstream
+=======
+            // System.out.println("WINNER WINNER CHICKEN DINNER");
+>>>>>>> Stashed changes
             reward += Rewards.WIN.getValue();
         } else if (isLose(engine, newState, currentColor)) {
             reward += Rewards.LOSE.getValue();

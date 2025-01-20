@@ -13,8 +13,13 @@ import com.ken2.utils.BotFactory;
 public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
+<<<<<<< Updated upstream
         Bot whiteBot = factory.getBot("rulebased bot", "White");
         Bot blackBot = factory.getBot("dqn bot", "Black");
+=======
+        Bot whiteBot = factory.getBot("alphabetaold bot", "White");
+        Bot blackBot = factory.getBot("alphabeta bot", "Black");
+>>>>>>> Stashed changes
 
         Headless headless = new Headless(100, whiteBot, blackBot);
 
@@ -29,6 +34,7 @@ public class HeadlessMain {
         totalBlackWins += headless.getBlackWins();
         totalDraws += headless.getDraws();
         totalInvalidGames += headless.getInvalidGames();
+
         // System.out.println("=========================================");
         // System.out.println("Training completed!");
         // System.out.println("White Wins ("+whiteBot.getName()+"): " + totalWhiteWins);
