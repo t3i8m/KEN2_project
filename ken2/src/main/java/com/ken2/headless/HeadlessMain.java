@@ -14,7 +14,7 @@ public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
         Bot whiteBot = factory.getBot("rulebased bot", "White");
-        Bot blackBot = factory.getBot("alphabeta bot", "Black");
+        Bot blackBot = factory.getBot("dqn bot", "Black");
 
         Headless headless = new Headless(100, whiteBot, blackBot);
 
