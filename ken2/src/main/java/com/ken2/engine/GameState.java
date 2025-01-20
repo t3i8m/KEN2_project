@@ -41,7 +41,8 @@ public class GameState implements Cloneable{
     public boolean isRingSelectionMode;
     private ArrayList<Vertex >vertexesOfFlippedCoins;
     private List<Integer> allPossibleCoinsToRemove;
-    private String currentPlayer;
+    public String currentPlayer;
+    public String winner = null;
 
 
     /**
@@ -50,6 +51,7 @@ public class GameState implements Cloneable{
     public GameState(){
         ringsWhite=5;
         ringsBlack=5;
+
         chipsRemaining=51;
         ringsPlaced=0;
         isWhiteTurn=true;
@@ -63,6 +65,8 @@ public class GameState implements Cloneable{
         vertexesOfFlippedCoins=new ArrayList<>();
         allPossibleCoinsToRemove = new ArrayList<>();
         this.currentPlayer = "white";
+        this.updateChipsRingCountForEach();
+
     }
 
     public void switchPlayer() {
@@ -82,6 +86,7 @@ public class GameState implements Cloneable{
             this.isWhiteTurn=false;
         }
         // System.out.println("Switched player from: " + oldPlayer + " to: " + this.currentPlayer);
+        // System.out.println(this.isWhiteTurn);
     }
 
     public void setCurrentPlayer(String newColor) {
@@ -90,6 +95,7 @@ public class GameState implements Cloneable{
     }
         
     public String getCurrentColor(){
+
         return this.currentPlayer;
     }
     
@@ -164,6 +170,7 @@ public class GameState implements Cloneable{
 
     public int getRingCountForColor(String color){
         this.updateChipsRingCountForEach();
+
         if(color.toLowerCase().equals("white")){
             return this.ringsWhite;
         }else{
@@ -204,17 +211,17 @@ public class GameState implements Cloneable{
             Vertex[][] gboard = board.getBoard();
             this.chipsWhite=0;
             this.chipsBlack=0;
-            // this.ringsWhite=0;
-            // this.ringsBlack=0;
+            this.ringsWhite=0;
+            this.ringsBlack=0;
             for(int i = 0; i<gboard.length;i++){
                 for(int j = 0; j<gboard[i].length;j++){
                     if(gboard[i][j]!=null){
                         if(gboard[i][j].getPlayObject()[0]!=null){
                             PlayObj currRing = gboard[i][j].getPlayObject()[0];
                             if(currRing.getColour().toLowerCase().equals("white")){
-                                // this.ringsWhite++;
+                                this.ringsWhite++;
                             } else{
-                                // this.ringsBlack++;
+                                this.ringsBlack++;
                         }
                         }
                         if(gboard[i][j].getPlayObject()[1]!=null){
@@ -278,9 +285,10 @@ public class GameState implements Cloneable{
     public GameState clone() {
         try {
             GameState copy = (GameState) super.clone();
-    
+            copy.winner=winner;
             copy.gameBoard = new Game_Board(this.gameBoard); 
-    
+            copy.ringsWhite=this.ringsWhite;
+            copy.ringsBlack = this.ringsBlack;
             copy.chipNumber = this.chipNumber != null ? new ArrayList<>(this.chipNumber) : new ArrayList<>();
             copy.ringVertexNumbers = this.ringVertexNumbers != null ? new ArrayList<>(this.ringVertexNumbers) : new ArrayList<>();
             copy.vertexesOfFlippedCoins = this.vertexesOfFlippedCoins != null 
@@ -304,5 +312,41 @@ public class GameState implements Cloneable{
         }
         return false;
     }
+
+    @Override
+public boolean equals(Object obj) {
+    if (this == obj) {
+        return true; 
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+        return false; 
+    }
+
+    GameState other = (GameState) obj;
+
+    return ringsWhite == other.ringsWhite &&
+           ringsBlack == other.ringsBlack &&
+           chipsRemaining == other.chipsRemaining &&
+           chipsWhite == other.chipsWhite &&
+           chipsBlack == other.chipsBlack &&
+           ringsPlaced == other.ringsPlaced &&
+           isWhiteTurn == other.isWhiteTurn &&
+           chipPlacement == other.chipPlacement &&
+           selectedRingVertex == other.selectedRingVertex &&
+           selectedChipVertex == other.selectedChipVertex &&
+           chipPlaced == other.chipPlaced &&
+           chipRingVertex == other.chipRingVertex &&
+           totalChipsFlipped == other.totalChipsFlipped &&
+           isChipRemovalMode == other.isChipRemovalMode &&
+           isRingSelectionMode == other.isRingSelectionMode &&
+           (gameBoard != null ? gameBoard.equals(other.gameBoard) : other.gameBoard == null) &&
+           (gameSimulation != null ? gameSimulation.equals(other.gameSimulation) : other.gameSimulation == null) &&
+           (ringVertexNumbers != null ? ringVertexNumbers.equals(other.ringVertexNumbers) : other.ringVertexNumbers == null) &&
+           (chipNumber != null ? chipNumber.equals(other.chipNumber) : other.chipNumber == null) &&
+           (vertexesOfFlippedCoins != null ? vertexesOfFlippedCoins.equals(other.vertexesOfFlippedCoins) : other.vertexesOfFlippedCoins == null) &&
+           (allPossibleCoinsToRemove != null ? allPossibleCoinsToRemove.equals(other.allPossibleCoinsToRemove) : other.allPossibleCoinsToRemove == null) &&
+           (currentPlayer != null ? currentPlayer.equals(other.currentPlayer) : other.currentPlayer == null);
+}
+
 
 }

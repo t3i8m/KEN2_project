@@ -20,13 +20,23 @@ public class ReplayBuffer {
 
     public ArrayList<Experience> createSample(int sampleSize){
         Random rand = new Random();
-        ArrayList<Experience> container = new ArrayList<>();
-        for(int i =0; i<sampleSize;i++){
-            Experience exp = buffer.get(rand.nextInt(buffer.size()));
-            container.add(exp);
+        ArrayList<Experience> container = new ArrayList<>(sampleSize);
+    
+        ArrayList<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < buffer.size(); i++) {
+            indices.add(i);
         }
+    
+        java.util.Collections.shuffle(indices, rand);
+    
+        int actualSize = Math.min(sampleSize, buffer.size());
+        for (int i = 0; i < actualSize; i++) {
+            container.add(buffer.get(indices.get(i)));
+        }
+    
         return container;
     }
+    
 
     public ArrayList<Experience> getBuffer(){
         return this.buffer;

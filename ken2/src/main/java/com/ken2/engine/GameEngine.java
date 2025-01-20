@@ -27,7 +27,7 @@ public class GameEngine {
     private boolean isRingSelectionMode = false;
     private boolean isChipRemovalMode = false;
 
-    private static List<Integer> winningChips = new ArrayList<>();
+    public static List<Integer> winningChips = new ArrayList<>();
     
     
     

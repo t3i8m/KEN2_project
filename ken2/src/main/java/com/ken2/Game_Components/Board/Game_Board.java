@@ -4,6 +4,8 @@ package com.ken2.Game_Components.Board;
 // import java.util.Hashtable;
 import java.util.ArrayList;
 
+import com.ken2.engine.GameState;
+
 
 /**
  * The class that builds the board object for the game
@@ -291,6 +293,53 @@ public class Game_Board {
     }
 
 
+    public  GameState createStatesFromBoards(Game_Board board1) {
+        GameState state1 = new GameState();
+        state1.gameBoard = board1.clone();
+        updateStateFromBoard(state1, board1);
+
+        return state1;
+    }
+
+private  void updateStateFromBoard(GameState state, Game_Board board) {
+    int ringsWhite = 0;
+    int ringsBlack = 0;
+    int chipsWhite = 0;
+    int chipsBlack = 0;
+
+    for (Vertex[] row : board.getBoard()) {
+        for (Vertex vertex : row) {
+            if (vertex != null) {
+                if (vertex.hasRing()) {
+                    String ringColor = vertex.getRing().getColour().toLowerCase();
+                    if ("white".equals(ringColor)) {
+                        ringsWhite++;
+                    } else if ("black".equals(ringColor)) {
+                        ringsBlack++;
+                    }
+                }
+
+                if (vertex.hasCoin()) {
+                    String coinColor = vertex.getCoin().getColour().toLowerCase();
+                    if ("white".equals(coinColor)) {
+                        chipsWhite++;
+                    } else if ("black".equals(coinColor)) {
+                        chipsBlack++;
+                    }
+                }
+            }
+        }
+    }
+
+    state.ringsWhite = ringsWhite;
+    state.ringsBlack = ringsBlack;
+    state.chipsWhite = chipsWhite;
+    state.chipsBlack = chipsBlack;
+
+    state.chipsRemaining = 51 - chipsWhite - chipsBlack;
+
+    state.isWhiteTurn = ringsWhite <= ringsBlack;
+}
 
 }
 

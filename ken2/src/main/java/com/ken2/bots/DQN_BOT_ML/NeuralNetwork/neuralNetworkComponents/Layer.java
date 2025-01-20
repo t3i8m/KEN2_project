@@ -87,7 +87,12 @@ public class Layer {
                 neuronGradients[j] = neuronDelta * lastInputs[j];
             }
     
-            neuron.updateWeights(neuronGradients, 0.01);  
+            neuron.updateWeights(neuronGradients,  0.0005);  
+            // double newBias = neuron.getBias() -  0.0005 * neuronDelta;
+            double clippedDelta = Math.max(-1.0, Math.min(1.0, neuronDelta)); 
+            double newBias = neuron.getBias() - 0.0005 * clippedDelta;
+            neuron.setBias(newBias);
+                        // System.out.println(neuron.getBias());
         }
     
         return newGradients;
@@ -111,5 +116,10 @@ public class Layer {
 
     public List<Neuron> getNeurons(){
         return this.neurons;
+    }
+
+
+    public ActivationFunction getActivationFunction() {
+        return this.activationFunction;
     }
 }

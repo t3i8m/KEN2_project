@@ -121,6 +121,7 @@ public class Reward {
         double reward = 0.0;
 
         if (isWin(engine, newState, currentColor)) {
+            System.out.println("WINNER WINNER CHICKEN DINNER");
             reward += Rewards.WIN.getValue();
         } else if (isLose(engine, newState, currentColor)) {
             reward += Rewards.LOSE.getValue();
@@ -133,6 +134,8 @@ public class Reward {
         }
 
         if (removedYourRing(previousState, newState, currentColor)) {
+            // System.out.println(move);
+            // System.out.println("reward for the removed ring");
             reward += Rewards.YOUR_RING_REMOVAL.getValue();
         }
 
@@ -235,6 +238,8 @@ public class Reward {
             return state.ringsWhite <= 2 && state.chipsRemaining >= 0; 
         } else if (currentColor.toLowerCase().equals("black")) {
             return state.ringsBlack <= 2 && state.chipsRemaining >= 0; 
+        }else if(state.winner!=null && currentColor.toLowerCase().equals(state.winner) && state.chipsRemaining >= 0){
+            return true;
         }
         return false;
     }
@@ -245,6 +250,8 @@ public class Reward {
             return state.ringsBlack <= 2 && state.chipsRemaining >= 0; 
         } else if (currentColor.toLowerCase().equals("black")) {
             return state.ringsWhite <= 2 && state.chipsRemaining >= 0; 
+        } else if(state.winner!=null && !currentColor.toLowerCase().equals(state.winner) && state.chipsRemaining >= 0){
+            return true;
         }
         return false;
     }
@@ -259,23 +266,34 @@ public class Reward {
         return newState.getRingCountForColor(currentColor.toLowerCase()) < previousState.getRingCountForColor(currentColor.toLowerCase());
     }
     public static boolean doubleRowCreated(GameState state, String currentColor) {
-        String currentPlayerColor = currentColor;
+        String currentPlayerColor = currentColor.toLowerCase();
         return countLinesForPlayer(state, 5, currentPlayerColor) >= 2; // at least 2 rows of length 5
     }
 //    public static boolean flippedMarkers(GameState previousState, GameState newState) {
 //    }
 
     public static boolean selfBlock(GameState previousState, GameState newState, String currentColor) {
-        String currentPlayerColor = previousState.currentPlayerColor();
+        String currentPlayerColor = previousState.currentPlayerColor().toLowerCase();
         return countLinesForPlayer(previousState, 3, currentPlayerColor) >
                 countLinesForPlayer(newState, 3, currentPlayerColor);
     }
 
 
     public static boolean removedOpponentRing(GameState previousState, GameState newState, String currentColor) {
-        String opponentColor = currentColor.equals("white") ? "black" : "white";
+        String opponentColor = currentColor.toLowerCase().equals("white") ? "black" : "white";
+        // System.out.println(opponentColor);
+        // System.out.println(currentColor);
+        // System.out.println(newState.getRingCountForColor(opponentColor));
+        // System.out.println(previousState.getRingCountForColor(opponentColor));
+        // System.out.println(previousState.ringsWhite);
+        // System.out.println(previousState.ringsBlack);
+        // System.out.println(previousState.chipsWhite);
+        // System.out.println(previousState.chipsBlack);
+        // System.out.println(previousState.winner);
+        // System.out.println(newState.winner);
         return newState.getRingCountForColor(opponentColor) < previousState.getRingCountForColor(opponentColor);
     }
+
 
     public static boolean createdLine(GameState state,GameState prevState, int length, String currentColor) {
         String currentPlayerColor = currentColor.toLowerCase();
@@ -283,7 +301,7 @@ public class Reward {
     }
 
     public static boolean opponentCreatedLine(GameState previousState, GameState newState, String currentColor) {
-        String opponentColor = currentColor.equals("white") ? "black" : "white"; 
+        String opponentColor = currentColor.toLowerCase().equals("white") ? "black" : "white"; 
         return countLinesForPlayer(newState, 3, opponentColor) > countLinesForPlayer(previousState, 3, opponentColor);
     }
     
