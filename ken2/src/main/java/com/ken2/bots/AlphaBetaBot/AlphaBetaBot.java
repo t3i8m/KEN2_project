@@ -2,6 +2,7 @@ package com.ken2.bots.AlphaBetaBot;
 
 import java.io.EOFException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,12 @@ public class AlphaBetaBot extends BotAbstract {
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
     private boolean switched = false;
+    private int[] zoneA = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 19, 20, 21, 28, 29, 30, 38 };
+    private int[] zoneB = { 9, 10, 17, 18, 25, 26, 27, 35, 36, 37, 45, 46, 54, 55, 56, 63, 64, 65, 71, 72, 73, 80 };
+    private int[] zoneC = { 39, 47, 48, 49, 57, 58, 59, 66, 67, 68, 69, 70, 74, 75, 76, 77, 78, 79, 81, 82, 83, 84 };
+    private int[] zoneD = { 22, 23, 24, 31, 32, 33, 34, 40, 41, 42, 43, 44, 50, 51, 52, 53, 60, 61, 62 };
+    
+
 
     public AlphaBetaBot(String color) {
         super(color);
@@ -44,16 +51,91 @@ public class AlphaBetaBot extends BotAbstract {
             return null;
         }
 
-        if (state.ringsPlaced < 10) {
-            Vertex targetVertex = allFreePositions.get(random.nextInt(allFreePositions.size()));
+        if (state.ringsPlaced < 10) {    int vertexNumber = allFreePositions.get(random.nextInt(allFreePositions.size())).getVertextNumber();
 
-            int vertexNumber = targetVertex.getVertextNumber();
-            int[] targetPosition = board.getVertexPositionByNumber(vertexNumber);
-            PlayObj ring = new Ring(super.getColor());
-            board.updateBoard(vertexNumber, ring);
-            state.ringsPlaced++;
+            // check how many rings are in each zone
+            //white is + black is -
+            int scoreA = calculateZoneScore(board, 0);
+            int scoreB = calculateZoneScore(board, 0);
+            int scoreC = calculateZoneScore(board, 0);
+            int scoreD = calculateZoneScore(board, 0);
+
+            //flip scores based on player color
+            if(StateRightNow.isWhiteTurn){
+                scoreA = -scoreA;
+                scoreB = -scoreB;
+                scoreC = -scoreC;
+                scoreD = -scoreD;
+            }
+
+            // check choak points of each zone 
+            ArrayList<Integer> freeChoakPoints = new ArrayList<>(
+                Arrays.asList(5,9,38,46,75,79)
+            );
+
+            for(int i = 0 ; i < freeChoakPoints.size(); i++){
+                vertexNumber = freeChoakPoints.get(i);
+                if(!board.getVertex(vertexNumber).hasRing()){
+                int[] targetPosition = makePosition(state, board, vertexNumber);
+                return new Move(targetPosition[0], targetPosition[1], null);   
+                }
+            }
+
+            // see if any score is less than -2. if so, selecet that zone
+
+            if(scoreA < -2){
+                boolean keepLooking = true;
+                while (keepLooking) {
+                    vertexNumber = zoneA[random.nextInt(zoneA.length)];
+                    if(!board.getVertex(vertexNumber).hasRing()){
+                        keepLooking = false;
+                    }
+                }
+                int[] targetPosition = makePosition(state, board, vertexNumber);
+                return new Move(targetPosition[0], targetPosition[1], null);
+            }
+            if(scoreB < -2){
+                boolean keepLooking = true;
+                while (keepLooking) {
+                    vertexNumber = zoneB[random.nextInt(zoneB.length)];
+                    if(!board.getVertex(vertexNumber).hasRing()){
+                        keepLooking = false;
+                    }
+                }
+                int[] targetPosition = makePosition(state, board, vertexNumber);
+                return new Move(targetPosition[0], targetPosition[1], null);
+            }
+
+            if(scoreC < -2){
+                boolean keepLooking = true;
+                while (keepLooking) {
+                    vertexNumber = zoneC[random.nextInt(zoneC.length)];
+                    if(!board.getVertex(vertexNumber).hasRing()){
+                        keepLooking = false;
+                    }
+                }
+                int[] targetPosition = makePosition(state, board, vertexNumber);
+                return new Move(targetPosition[0], targetPosition[1], null);
+            }
+
+            if(scoreD < -2){
+                boolean keepLooking = true;
+                while (keepLooking) {
+                    vertexNumber = zoneD[random.nextInt(zoneD.length)];
+                    if(!board.getVertex(vertexNumber).hasRing()){
+                        keepLooking = false;
+                    }
+                }
+                int[] targetPosition = makePosition(state, board, vertexNumber);
+                return new Move(targetPosition[0], targetPosition[1], null);
+            }
+
+            vertexNumber = allFreePositions.get(random.nextInt(allFreePositions.size())).getVertextNumber();
+            int[] targetPosition = makePosition(state, board, vertexNumber);
             return new Move(targetPosition[0], targetPosition[1], null);
         }
+        
+        
         StateRightNow.setCurrentPlayer(super.getColor().toLowerCase());
         AlphaBetaResult result = alphaBeta(this.StateRightNow,this.StateRightNow.clone(), alpha, beta, 1, ge, null);
         // StateRightNow.switchPlayerNEW();
@@ -65,6 +147,30 @@ public class AlphaBetaBot extends BotAbstract {
             // System.out.println("No valid move found.");
             return null;
         }
+    }
+
+    
+    private int[] makePosition(GameState state, Game_Board board, int vertexNumber) {
+        int[] targetPosition = board.getVertexPositionByNumber(vertexNumber);
+        PlayObj ring = new Ring(super.getColor());
+        board.updateBoard(vertexNumber, ring);
+        state.ringsPlaced++;
+        return targetPosition;
+    }
+
+    private int calculateZoneScore(Game_Board board, int score) {
+        for(int i=0; i < zoneA.length; i++){
+            Vertex selected = board.getVertex(zoneA[i]);
+            if(selected.hasRing()){
+                PlayObj ring = selected.getRing();
+                if (ring.getColour().equalsIgnoreCase("White")){
+                    score++;
+                }else {
+                    score--;
+                }
+            }
+        }
+        return score;
     }
 
     public AlphaBetaResult alphaBeta(GameState state, GameState prevState, double alpha, double beta, int depth, GameEngine ge, Move currentMove) {
