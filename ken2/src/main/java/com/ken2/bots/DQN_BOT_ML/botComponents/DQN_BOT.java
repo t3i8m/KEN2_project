@@ -51,7 +51,7 @@ public class DQN_BOT  extends BotAbstract{
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
     private int updateCount = 0;
-    private final int TARGET_UPDATE_FREQUENCY = 1000;
+    private final int TARGET_UPDATE_FREQUENCY = 100;
 
     public DQN_BOT(String color){
         super(color);
@@ -72,7 +72,7 @@ public class DQN_BOT  extends BotAbstract{
         this.mask = new int[actionSize];
         this.epsilonMin = 0.01;
         this.epsilonDecay = 0.995;
-        this.gamma = 0.99;
+        this.gamma = 0.1;
         this.random = new Random();
 
     }
@@ -191,8 +191,26 @@ public class DQN_BOT  extends BotAbstract{
 
     public void storeExperience(double[] state, int action, double reward, double[] nextState) {
         Experience experience = new Experience(state, action, reward, nextState);
-        replayBuffer.add(experience);
+        // replayBuffer.add(experience);
+        double priority = calculateTDError(experience);
+
+        replayBuffer.add(experience, priority);
+       
     }
+
+    public double calculateTDError(Experience exp) {
+        double[] currentQ = qNetwork.predict(exp.getState());
+        double[] nextQ = targetNetwork.predict(exp.getNextState());
+        int[] maskForNextState = getMask(exp.getNextState());
+        nextQ = filterQValues(nextQ, maskForNextState);
+
+        int action = exp.getAction();
+        double reward = exp.getReward();
+        double maxNextQ = Arrays.stream(nextQ).max().orElse(0.0);
+        
+        return Math.abs(reward + gamma * maxNextQ - currentQ[action]);
+    }
+    
 
     private double[] filterQValues(double[] prevQvalues, int[] mask){
         // double[] newQValues = prevQvalues;
@@ -251,9 +269,9 @@ public class DQN_BOT  extends BotAbstract{
         ArrayList<Experience> sample = replayBuffer.createSample(batchSize);
         
         for(Experience exp: sample){
-            double[] state     = exp.getState();
-            int action         = exp.getAction();
-            double reward      = exp.getReward();
+            double[] state = exp.getState();
+            int action = exp.getAction();
+            double reward = exp.getReward();
             double[] nextState = exp.getNextState();
 
             if (Arrays.stream(nextState).anyMatch(v -> Double.isNaN(v) || Double.isInfinite(v))) {
@@ -284,6 +302,10 @@ public class DQN_BOT  extends BotAbstract{
             double maxNextQ = Arrays.stream(nextQValuesTarget).max().orElse(0.0);
     
             double targetQ = reward + (gamma * maxNextQ);
+
+            double tdError = Math.abs(targetQ - qValues[action]);
+            // double priority = Math.pow(tdError + epsilon, 1);
+
             qValues[action] = targetQ;
     
             qNetwork.trainMiniBatch(new double[][] { state }, new double[][] { qValues });

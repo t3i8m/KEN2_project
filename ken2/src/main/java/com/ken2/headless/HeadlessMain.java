@@ -13,6 +13,8 @@ import com.ken2.utils.BotFactory;
 public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
+        Bot whiteBot = factory.getBot("rulebased bot", "White");
+        Bot blackBot = factory.getBot("dqn bot", "Black");
         Bot whiteBot = factory.getBot("dqn bot", "White");
         Bot blackBot = factory.getBot("rulebased bot", "Black");
 
