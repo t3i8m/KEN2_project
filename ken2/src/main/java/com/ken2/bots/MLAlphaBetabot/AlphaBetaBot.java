@@ -7,10 +7,7 @@ import java.util.Random;
 
 import com.ken2.Game_Components.Board.*;
 import com.ken2.bots.BotAbstract;
-import com.ken2.engine.GameEngine;
-import com.ken2.engine.GameSimulation;
-import com.ken2.engine.GameState;
-import com.ken2.engine.Move;
+import com.ken2.engine.*;
 
 public class AlphaBetaBot extends BotAbstract {
     private GameState StateRightNow;
@@ -77,11 +74,12 @@ public class AlphaBetaBot extends BotAbstract {
                 allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
 
         HashMap<Vertex, ArrayList<Move>>
-                vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
+                AllMovespossible = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
+
+        HashMap<Direction,ArrayList<Move>> vertexMove = orderMoves(separateMoves(AllMovespossible));
 
         // // // // // // // // // // // // // /// // // // // // // /// //
         // Add a function to grade the moves from here                   //
-        // Say we go to the Trainer class and get the proper solution    //
         // // // // // // // // // // // // // /// // // // // // // /// //
 
         GameSimulation gs = new GameSimulation();
@@ -93,7 +91,7 @@ public class AlphaBetaBot extends BotAbstract {
         if (state.currentPlayerColor().equalsIgnoreCase(this.getColor())) {
             value = Double.NEGATIVE_INFINITY;
 
-            for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
+            for (Map.Entry<Direction, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 for (Move m : entry.getValue()) {
                     if(entry==null){
                         continue;
@@ -135,7 +133,7 @@ public class AlphaBetaBot extends BotAbstract {
         } else {
             value = Double.POSITIVE_INFINITY;
 
-            for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
+            for (Map.Entry<Direction, ArrayList<Move>> entry : vertexMove.entrySet()) {
                 for (Move m : entry.getValue()) {
                     if(entry==null){
                         continue;
@@ -171,6 +169,25 @@ public class AlphaBetaBot extends BotAbstract {
             }
             return new AlphaBetaResult(value, bestMove);
         }
+    }
+
+    // Returns fewer moves of the best value with the direction in order of weights
+    private HashMap<Direction,ArrayList<Move>> orderMoves(HashMap<Direction, ArrayList<Move>> allPossibleMoves){
+
+        HashMap<Direction,ArrayList<Move>> ratedMoves = new HashMap<>();
+
+
+
+
+        return ratedMoves;
+    }
+
+    // Seperates the moves and stores them along with their respective directions
+    private HashMap<Direction,ArrayList<Move>> separateMoves(HashMap<Vertex, ArrayList<Move>> allPossibleMoves){
+
+        HashMap<Direction,ArrayList<Move>> seperatedMoves = new HashMap<>();
+
+        return seperatedMoves;
     }
 
     private double evaluate(GameState state, GameEngine ge, String color) {
