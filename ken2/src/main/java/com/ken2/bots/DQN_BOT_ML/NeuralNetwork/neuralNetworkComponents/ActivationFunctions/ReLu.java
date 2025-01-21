@@ -17,7 +17,7 @@ public class ReLu implements ActivationFunction{
         if(x<=0){
             return 0;
         } else{
-            return x;
+            return 1;
         }
     }
 }

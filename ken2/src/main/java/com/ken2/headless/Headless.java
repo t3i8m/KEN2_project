@@ -38,6 +38,8 @@ public class Headless {
     private int blackWins = 0;
     private int draws     = 0;
     private int notValid  = 0;
+    private double episodeReward;
+
 
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
@@ -204,6 +206,9 @@ public class Headless {
         int moveNumber = 1;
         //////
         //////////
+        ///         episodeReward = 0.0;
+        episodeReward = 0.0;
+
         gameEngine.currentState.winner=null;
         while (true) {
             try{
@@ -458,6 +463,10 @@ public class Headless {
                         return gameResult;
                     }
                 }
+                if(currentBot.getName().toLowerCase().equals("dqn bot")){
+                    // episodeReward += r;
+
+                }
     
                 if (gameEngine.currentState.chipsRemaining <= 0) {
                     System.out.println("HELLO");
@@ -473,7 +482,8 @@ public class Headless {
 
                     return "black";
                 }
-    
+
+
                 gameEngine.currentState.resetTurn();
                 switchTurn(gameEngine.currentState);
                 moveNumber+=1;
@@ -489,6 +499,8 @@ public class Headless {
 
 
     }
+
+    
 
     /**
      * Changes the turn from one player to another.
