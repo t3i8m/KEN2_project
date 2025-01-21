@@ -18,6 +18,7 @@ import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
+import com.ken2.Game_Components.Board.game_board_tester;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.NeuralNetwork;
@@ -38,7 +39,7 @@ import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
 public class DQN_BOT  extends BotAbstract{
-    private NeuralNetwork qNetwork;
+    public NeuralNetwork qNetwork;
     private NeuralNetwork targetNetwork; 
     public double epsilon; //max epsilon for the egreedy
     public double epsilonMin; // min epsilon for the egreedy
@@ -46,12 +47,12 @@ public class DQN_BOT  extends BotAbstract{
     private double gamma;  //discount for the Q update
     private Random random;
     private int actionSize;
-    private ReplayBuffer replayBuffer = new ReplayBuffer(1000);
+    private ReplayBuffer replayBuffer = new ReplayBuffer(100000);
     private int[] mask;
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
     private int updateCount = 0;
-    private final int TARGET_UPDATE_FREQUENCY = 100;
+    private final int TARGET_UPDATE_FREQUENCY = 250;
 
     public DQN_BOT(String color){
         super(color);
@@ -66,13 +67,14 @@ public class DQN_BOT  extends BotAbstract{
             // this.qNetwork.saveWeights();
             System.out.println(ex);
         }
-        loadEpsilon();
+        // loadEpsilon();
+        this.epsilon = 0.1;
         this.targetNetwork = copyNetwork(this.qNetwork);
 
         this.mask = new int[actionSize];
         this.epsilonMin = 0.01;
         this.epsilonDecay = 0.995;
-        this.gamma = 0.1;
+        this.gamma = 0.9;
         this.random = new Random();
 
     }
@@ -86,6 +88,7 @@ public class DQN_BOT  extends BotAbstract{
         this.gamma = gamma;
         this.random = new Random();
     }
+    private int stepCount = 0;
 
     public Move makeMove(GameState state){
         Game_Board board = state.getGameBoard();
@@ -98,6 +101,8 @@ public class DQN_BOT  extends BotAbstract{
             System.out.println("stateVector has NaN/Inf: " + Arrays.toString(stateVector));
         }
         double[] qValues = qNetwork.predict(stateVector);
+        // System.out.println("[LOG] Q-values(raw) = " + Arrays.toString(qValues));
+
         if (Arrays.stream(qValues).anyMatch(Double::isNaN)) {
             System.out.println("NaN in qValues after predict for state=" 
                                + Arrays.toString(stateVector)
@@ -124,13 +129,20 @@ public class DQN_BOT  extends BotAbstract{
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
         HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
         ArrayList<Move> allValidMoves = filterValidMoves(vertexMove, state);
+        // ArrayList<Move> allValidMoves= sortMoves(allValidMoves2,state,  state, new GameEngine());
 
         this.mask = fillMask(allValidMoves);
+        // System.out.println("[LOG] mask = " + Arrays.toString(this.mask));
+
         qValues = filterQValues(qValues, this.mask);
+        // System.out.println("[LOG] Q-values(filtered) = " + Arrays.toString(qValues));
 
        
         actionMapping.initializeActions(allValidMoves);
         int actionIndex = chooseAction(qValues, allValidMoves);
+        System.out.println("[LOG] actionIndex = " + actionIndex + 
+                       " / epsilon = " + epsilon +
+                       " / allValidMoves.size() = " + allValidMoves.size());
 
         if (epsilon > epsilonMin) {
             epsilon *= epsilonDecay;
@@ -144,12 +156,24 @@ public class DQN_BOT  extends BotAbstract{
             System.out.println(ex);
             chosenMove=null;
         }
-
+        System.out.println(
+            "[DEBUG] Chosen index = " + actionIndex +
+            ", chosenMove = " + chosenMove
+        );
         // System.out.println(chosenMove);
         // // System.out.println(chosenMove);
         // System.out.println("Q Values: " + Arrays.toString(qValues));
         // System.out.println("Chosen Action Index: " + actionIndex);
         // System.out.println("Chosen Move: " + chosenMove);
+        System.out.println("[DEBUG] actionIndex=" + actionIndex 
+            + ", from=" + chosenMove.getStartingVertex().getVertextNumber()
+            + ", to=" + board.getVertexNumberFromPosition(
+                chosenMove.getXposition(),
+                chosenMove.getYposition()
+            )
+            + ", direction=" + chosenMove.getDirection()
+        );
+
         if (chosenMove == null || allValidMoves.size()==0)  {
             System.out.println("All Possible Moves: " + allValidMoves.size());
 
@@ -159,13 +183,23 @@ public class DQN_BOT  extends BotAbstract{
 
         double reward = Reward.calculateRewardWITHOUT(ge, state, chosenMove, nextState, super.getColor());
         BoardTransformation boardTransformNEW = new BoardTransformation(nextState.getGameBoard());
-
+    
+        chosenMove.setReward(reward);
+        // System.out.println("Episode reward = " + reward);
+        System.out.println("[LOG] Chosen Move = " + chosenMove + " / reward = " + reward);
+        
         // System.out.println(reward);
-        // System.out.println(state.getGameBoard().strMaker());
+        // System.out.println(Arrays.toString(stateVector));
+        // System.out.println(Arrays.toString(boardTransformNEW.toVector(getColor())));
         // System.out.println(chosenMove);
         // System.out.println(nextState.getGameBoard().strMaker());
-        storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"white":"black"));
+        storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"white":"black"), chosenMove, state, nextState);
         // storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"black":"white"));
+        stepCount++;
+
+        // if (replayBuffer.getBuffer().size() > 32 && stepCount % 10 == 0) {
+        //     train(32);
+        // }
         return chosenMove;
     }
 
@@ -189,11 +223,12 @@ public class DQN_BOT  extends BotAbstract{
 
     }
 
-    public void storeExperience(double[] state, int action, double reward, double[] nextState) {
-        Experience experience = new Experience(state, action, reward, nextState);
+    public void storeExperience(double[] state, int action, double reward, double[] nextState, Move chosenMove, GameState stateP, GameState nexState) {
+        Experience experience = new Experience(state, action, reward, nextState, chosenMove, stateP, nexState);
         // replayBuffer.add(experience);
         double priority = calculateTDError(experience);
-
+        System.out.println("[DEBUG] storeExperience: actionIndex=" + action 
+        + ", chosenMove=" + chosenMove);
         replayBuffer.add(experience, priority);
        
     }
@@ -262,17 +297,19 @@ public class DQN_BOT  extends BotAbstract{
     
     public void train(int batchSize){
         ArrayList<Experience> buffer = replayBuffer.getBuffer();
+
         if (buffer.size() < batchSize) {
             return; 
         }
     
         ArrayList<Experience> sample = replayBuffer.createSample(batchSize);
-        
+        double totalLoss = 0.0;
         for(Experience exp: sample){
             double[] state = exp.getState();
             int action = exp.getAction();
             double reward = exp.getReward();
             double[] nextState = exp.getNextState();
+            GameState newState = exp.nextState;
 
             if (Arrays.stream(nextState).anyMatch(v -> Double.isNaN(v) || Double.isInfinite(v))) {
                 System.out.println("nextState has NaN/Inf: train" + Arrays.toString(nextState));
@@ -303,17 +340,43 @@ public class DQN_BOT  extends BotAbstract{
     
             double targetQ = reward + (gamma * maxNextQ);
 
-            double tdError = Math.abs(targetQ - qValues[action]);
-            // double priority = Math.pow(tdError + epsilon, 1);
+            // double targetQ;
+            // if (newState.winner!=null) {
+            //     targetQ = reward; 
+            // } else {
+            //     targetQ = reward + gamma * maxNextQ;
+            // }
 
+            double tdError = Math.abs(targetQ - qValues[action]);
+            double oldValue = qValues[action];
+            System.out.println("[TRAIN LOG] reward=" + reward +
+            " oldQ=" + oldValue +
+            " targetQ=" + targetQ +
+            " tdError=" + tdError);
+        
+
+            // double priority = Math.pow(tdError + epsilon, 1);
+            // System.out.println(tdError);
+            // System.out.println("Target Q: "+targetQ);
             qValues[action] = targetQ;
-    
+            // double before = qNetwork.sumWeights();
+
             qNetwork.trainMiniBatch(new double[][] { state }, new double[][] { qValues });
+            // double after = qNetwork.sumWeights();
+            // System.out.println("Delta Weights = " + (after - before));
+            double mse = 0.5 * Math.pow((targetQ - oldValue), 2); 
+            totalLoss += mse;
+
         }
-    
+        double avgLoss = totalLoss / sample.size();
+        System.out.println("[LOG][TRAIN] batchSize=" + sample.size() + 
+                        ", avgLoss=" + avgLoss);
         updateCount += 1;
         if (updateCount % TARGET_UPDATE_FREQUENCY == 0) {
+
             updateTargetNetwork();
+            System.out.println("[LOG][TRAIN] Target network updated!");
+
         }
     }
 
@@ -394,24 +457,73 @@ public class DQN_BOT  extends BotAbstract{
     public int chooseAction(double[] qValues, ArrayList<Move> allPossible) {
         int maxActions = Math.min(qValues.length, allPossible.size());
     
-        // if (random.nextDouble() < epsilon) { 
-        //     // System.out.println(random.nextDouble());
-        //     return random.nextInt(maxActions);
-        // } else {
-        //     return argMax(qValues, maxActions); 
-        // }
-        return argMax(qValues, maxActions); 
+        if (random.nextDouble() < epsilon) { 
+            // System.out.println(random.nextDouble());
+            return random.nextInt(allPossible.size());
+        } else {
+            System.out.println("Q values:"+Arrays.toString(qValues));
+            System.out.println("Max:"+argMax(qValues, maxActions));
+            return argMax(qValues, maxActions); 
+        }
+        // return argMax(qValues, maxActions); 
 
+    }
+
+    private ArrayList<Move> sortMoves(ArrayList<Move> validMoves, GameState state, GameState prevState, GameEngine ge) {
+
+    
+        validMoves.sort((Move m1, Move m2) -> {
+            double value1 = evaluate(moveState(state, m1), prevState, ge, state.getCurrentColor(), m1);
+            double value2 = evaluate(moveState(state, m2), prevState, ge, state.getCurrentColor(), m2);
+            return Double.compare(value2, value1);
+        });
+    
+        return validMoves;
+    }
+
+    private double evaluate(GameState state,GameState prevState, GameEngine ge, String color, Move chosenMove) {
+        if (state == null || prevState == null || chosenMove == null) {
+            System.out.println("Invalid inputs to evaluate: state=" + state + ", prevState=" + prevState + ", chosenMove=" + chosenMove);
+            return Double.NEGATIVE_INFINITY;
+        }
+        
+        // double valuation = 0;
+        // String opponentColor = color.equals("white") ? "black" : "white";
+
+        // double inOurfavour = 0.5;
+        // double notOurfavour = -0.25;
+        // double ourWin = 1;
+        // double theirWin = -1;
+
+        // valuation += state.getChipsCountForColor(color) * inOurfavour
+        //         + state.getChipsCountForColor(opponentColor) * notOurfavour;
+
+        // valuation += state.getRingCountForColor(color) * inOurfavour
+        //         + state.getRingCountForColor(opponentColor) * notOurfavour;
+
+        // valuation += ge.winningColor(state.getVertexesOfFlippedCoins()).equals(color) ? ourWin : theirWin;
+        double valuation = Reward.calculateRewardWITHOUT(ge, prevState, chosenMove, state, color);
+        // System.out.println("Evaluation result: " + valuation + " for move: " + chosenMove);
+        if (Double.isInfinite(valuation) || Double.isNaN(valuation)) {
+            System.out.println("Error in evaluation: value is invalid. Returning fallback value.");
+            return 0; 
+        }
+        return valuation;
     }
     
     //finds an index with the highest q-value
     public int argMax(double[] qValues, int maxActions) {
         int bestAction = 0;
+        double bestq = 0.0;
         for (int i = 1; i < maxActions; i++) {
             if (qValues[i] > qValues[bestAction]) {
                 bestAction = i;
+                bestq=qValues[i];
             }
         }
+        // System.out.println("BEST Q: "+bestq);
+
+        // System.out.println(bestq);
         return bestAction;
     }
     
@@ -421,7 +533,11 @@ public class DQN_BOT  extends BotAbstract{
     }
 
     public void initializeNN(){
-        this.qNetwork = new NeuralNetwork(0.0001, new MSE());
+        this.qNetwork = new NeuralNetwork(0.001, new MSE());
+        // qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
+        // qNetwork.addLayer(new Layer(256, 128, new ReLu())); 
+        // qNetwork.addLayer(new Layer(64, 256, new ReLu())); 
+        // qNetwork.addLayer(new Layer(this.actionSize, 64, new Linear())); 
         qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
         qNetwork.addLayer(new Layer(64, 128, new ReLu())); 
         qNetwork.addLayer(new Layer(this.actionSize, 64, new Linear())); 
