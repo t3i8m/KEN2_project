@@ -48,7 +48,7 @@ public class ParallelDQNExample {
         // for (int i = 0; i < dqnBot.qNetwork.getBatchLossHistory().size(); i++) {
         //     System.out.println(i + "," +  dqnBot.qNetwork.getBatchLossHistory().get(i));
         // }
-        saveBatchLossHistory(dqnBot.qNetwork.getBatchLossHistory());
+        // saveBatchLossHistory(dqnBot.qNetwork.getBatchLossHistory());
         System.out.println("Done parallel training!");
     }
 
