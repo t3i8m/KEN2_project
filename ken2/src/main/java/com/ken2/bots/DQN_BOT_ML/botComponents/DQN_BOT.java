@@ -35,6 +35,7 @@ import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
 public class DQN_BOT  extends BotAbstract{
+    private final int replayBufferSize;
     public NeuralNetwork qNetwork;
     private NeuralNetwork targetNetwork; 
     public double epsilon; //max epsilon for the egreedy
@@ -57,6 +58,7 @@ public class DQN_BOT  extends BotAbstract{
         this.learningRate = learningRate;
         this.gamma = gamma;
         this.epsilon = epsilon;
+        this.replayBufferSize = replayBufferSize;
         this.replayBuffer = new ReplayBuffer(replayBufferSize);
         this.actionSize = actionSize;
 
@@ -81,8 +83,9 @@ public class DQN_BOT  extends BotAbstract{
 
     }
 
-    public DQN_BOT(String color,NeuralNetwork qNetwork, double epsilon, double epsilonMin, double epsilonDecay, double gamma) {
+    public DQN_BOT(String color, int replayBufferSize, NeuralNetwork qNetwork, double epsilon, double epsilonMin, double epsilonDecay, double gamma) {
         super(color);
+        this.replayBufferSize = replayBufferSize;
         this.qNetwork = qNetwork;
         this.epsilon=epsilon;
         this.epsilonMin = epsilonMin;
@@ -647,8 +650,8 @@ public class DQN_BOT  extends BotAbstract{
         Game_Board board = state.getGameBoard();
 
         String thisBotColor = super.getColor().toLowerCase().equals("white")? "white":"black";
-        Bot thisBot = new DQN_BOT(thisBotColor, learningRate, gamma, epsilon, replayBuffer, actionSize);
-        Bot opponentBot = new DQN_BOT(thisBotColor.toLowerCase().equals("white")?"black":"white", learningRate, gamma, epsilon, replayBuffer, actionSize);
+        Bot thisBot = new DQN_BOT(thisBotColor, learningRate, gamma, epsilon, replayBufferSize, actionSize);
+        Bot opponentBot = new DQN_BOT(thisBotColor.toLowerCase().equals("white")?"black":"white", learningRate, gamma, epsilon, replayBufferSize, actionSize);
 
         String currentPlayerColor="";
     
