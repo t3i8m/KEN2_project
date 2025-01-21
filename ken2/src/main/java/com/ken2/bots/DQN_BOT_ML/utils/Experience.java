@@ -8,6 +8,7 @@ public class Experience {
     private final double[] newState;
     private final int action;
     private final double reward;
+    private double cumulativeReward;
     public Move chosenMove;
     public GameState stateP;
     public GameState nextState;
@@ -22,6 +23,15 @@ public class Experience {
         this.chosenMove=chosenMove;
         this.stateP = stateP;
         this.nextState=nextState;
+        this.cumulativeReward = reward; // Initialise cumulative reward with the current reward
+    }
+
+    public void updateCumulativeReward(double newReward) {
+        this.cumulativeReward += newReward;
+    }
+
+    public double getCumulativeReward() {
+        return this.cumulativeReward;
     }
 
     public double[] getState(){

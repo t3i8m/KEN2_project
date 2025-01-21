@@ -11,6 +11,7 @@ public class ReplayBuffer {
     private double topRatio;
     private Random random;
     private ArrayList<Double> priorities = new ArrayList<>();
+    private double cumulativeReward;
 
     public ReplayBuffer(int capacity){
         this.capacity=capacity;
@@ -18,9 +19,11 @@ public class ReplayBuffer {
         this.buffer = new ArrayList<>(capacity);
         this.priorities = new ArrayList<>(capacity);
         this.random = new Random();
+        this.cumulativeReward = 0;
     }
 
     public synchronized  void add(Experience newExperience, double priority){
+        cumulativeReward += newExperience.getReward();
         if(buffer.size()>=capacity){
             buffer.remove(0);
             priorities.remove(0);
@@ -81,7 +84,7 @@ public class ReplayBuffer {
     //         ArrayList<Experience> sample = new ArrayList<>(sampleSize);
 
     //         int numTopSamples = (int) Math.round(sampleSize * topRatio);
-    //         numTopSamples = Math.min(numTopSamples, buffer.size()); 
+    //         numTopSamples = Math.min(numTopSamples, buffer.size());
     //         int numRandomSamples = sampleSize - numTopSamples;
 
     //         List<Integer> topIndices = getTopIndices(numTopSamples);
@@ -105,12 +108,12 @@ public class ReplayBuffer {
     //     if (sampleSize <= 0) {
     //         throw new IllegalArgumentException("Sample size must be positive.");
     //     }
-    
+
     //     sampleSize = Math.min(sampleSize, buffer.size());
     //     ArrayList<Experience> sample = new ArrayList<>(sampleSize);
-    
+
     //     List<Integer> topIndices = getTopIndices(sampleSize);
-        
+
     //     for (int index : topIndices) {
     //         sample.add(buffer.get(index));
     //         System.out.println(buffer.get(index).getReward());
@@ -121,27 +124,27 @@ public class ReplayBuffer {
 
     //         // }
     //     }
-    
+
     //     // Collections.shuffle(sample, random);
-    
+
     //     return sample;
     // }
-    
+
     // public synchronized  ArrayList<Experience> createSample(int sampleSize){
-    //     int size = Math.min(buffer.size(), priorities.size()); 
+    //     int size = Math.min(buffer.size(), priorities.size());
     //     if (size == 0) {
     //         return new ArrayList<>();
     //     }
     //     int actualSize = Math.min(sampleSize, buffer.size());
     //     ArrayList<Experience> sample = new ArrayList<>(actualSize);
-    
+
     //     int topN = (int)(actualSize * topRatio); // e.g. topRatio=0.5
     //     ArrayList<Experience> topIndices = getTopIndices(topN);
     //     for(Experience idx : topIndices){
     //         sample.add(idx);
     //         // System.out.println(buffer.get(idx));
     //     }
-    
+
     //     int remaining = actualSize - topN;
     //     Collections.shuffle(buffer, random);
     //     for(int i = 0; i < remaining; i++){
@@ -149,10 +152,10 @@ public class ReplayBuffer {
     //         // System.out.println(buffer.get(i));
 
     //     }
-    
+
     //     return sample;
     // }
-    
+
 
 
     private synchronized  ArrayList<Experience> getTopIndices(int topN){
@@ -165,7 +168,7 @@ public class ReplayBuffer {
             topN = realSize;
         }
         indices = indices.subList(0, realSize);
-        indices.sort((i1, i2) -> Double.compare(priorities.get(i2), priorities.get(i1))); 
+        indices.sort((i1, i2) -> Double.compare(priorities.get(i2), priorities.get(i1)));
 
         ArrayList<Experience> result = new ArrayList<>(topN);
         for (int i = 0; i < topN; i++){
@@ -222,5 +225,8 @@ public class ReplayBuffer {
     public ArrayList<Experience> getBuffer(){
         return this.buffer;
     }
-    
+
+    public double getCumulativeReward() {
+        return cumulativeReward;
+    }
 }

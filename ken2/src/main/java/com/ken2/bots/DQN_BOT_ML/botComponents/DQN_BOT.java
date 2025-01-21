@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import com.ken2.Game_Components.Board.Game_Board;
 import com.ken2.Game_Components.Board.PlayObj;
 import com.ken2.Game_Components.Board.Ring;
 import com.ken2.Game_Components.Board.Vertex;
-import com.ken2.Game_Components.Board.game_board_tester;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.NeuralNetwork;
@@ -30,11 +28,9 @@ import com.ken2.bots.DQN_BOT_ML.utils.Experience;
 import com.ken2.bots.DQN_BOT_ML.utils.ActionIndexer;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.Layer;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.Neuron;
-import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.ActivationFunctions.ActivationFunction;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.ActivationFunctions.Linear;
 import com.ken2.bots.DQN_BOT_ML.NeuralNetwork.neuralNetworkComponents.ActivationFunctions.ReLu;
 import com.ken2.engine.GameEngine;
-import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
@@ -826,6 +822,10 @@ public class DQN_BOT  extends BotAbstract{
 
     private void switchTurn(GameState state) {
         state.isWhiteTurn = !state.isWhiteTurn;
+    }
+
+    public double getCumulativeReward() {
+        return cumulativeReward = replayBuffer.getCumulativeReward();
     }
     
 }
