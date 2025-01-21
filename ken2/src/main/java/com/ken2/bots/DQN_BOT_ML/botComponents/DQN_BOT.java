@@ -68,13 +68,13 @@ public class DQN_BOT  extends BotAbstract{
             System.out.println(ex);
         }
         // loadEpsilon();
-        this.epsilon = 0.01;
+        this.epsilon = 0.1;
         this.targetNetwork = copyNetwork(this.qNetwork);
 
         this.mask = new int[actionSize];
         this.epsilonMin = 0.01;
         this.epsilonDecay = 0.995;
-        this.gamma = 0.01;
+        this.gamma = 0.9;
         this.random = new Random();
 
     }
