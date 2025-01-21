@@ -14,9 +14,11 @@ public class HeadlessMain {
     public static void main(String[] args){
         BotFactory factory = new BotFactory();
         Bot whiteBot = factory.getBot("rulebased bot", "White");
-        Bot blackBot = factory.getBot("dqn bot", "Black");
+        Bot blackBot = factory.getBot("alpha", "Black");
+        // IDK THE ALPHABETA BOT NAME just put that here and run ur tests
 
-        Headless headless = new Headless(100, whiteBot, blackBot);
+
+        Headless headless = new Headless(5, whiteBot, blackBot);
 
         headless.runGames(); // without csv export
         // headless.exportGamesToCsv();// with csv export

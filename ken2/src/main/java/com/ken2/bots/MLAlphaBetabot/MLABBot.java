@@ -11,22 +11,22 @@ import com.ken2.Game_Components.Board.*;
 import com.ken2.bots.Bot;
 import com.ken2.bots.BotAbstract;
 import com.ken2.bots.DQN_BOT_ML.utils.Reward;
+import com.ken2.bots.MLAlphaBetabot.Learnings;
 import com.ken2.bots.RuleBased.RuleBasedBot;
-import com.ken2.engine.GameEngine;
-import com.ken2.engine.GameSimulation;
-import com.ken2.engine.GameState;
-import com.ken2.engine.Move;
+import com.ken2.engine.*;
 
-import javafx.scene.control.skin.TextInputControlSkin.Direction;
-
-public class AlphaBetaBot extends BotAbstract {
+public class MLABBot extends BotAbstract {
     private GameState StateRightNow;
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
     private boolean switched = false;
 
-    public AlphaBetaBot(String color) {
+    private Learnings learnWeights;
+
+
+    public MLABBot(String color) {
         super(color);
+        learnWeights = new Learnings(color);
     }
 
     public Move makeMove(GameState state) {
@@ -71,7 +71,7 @@ public class AlphaBetaBot extends BotAbstract {
         GameEngine ge2 = new GameEngine();
         // System.out.println(state.getCurrentColor());
         if (depth == 0) {
-            String playerColor = state.getCurrentColor().toLowerCase().equals("white")?"black":"white"; 
+            String playerColor = state.getCurrentColor().toLowerCase().equals("white")?"black":"white";
             double evaluation = evaluate(state, prevState, ge, prevState.getCurrentColor(), currentMove);
             // System.out.println("Depth=0 | Evaluation: " + evaluation + " | Move: " + currentMove+" color"+prevState.getCurrentColor());
 
@@ -85,13 +85,14 @@ public class AlphaBetaBot extends BotAbstract {
         // System.out.println(isMaximizingPlayer);
         double value = isMaximizingPlayer ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 
-        
+
         Move bestMove = null;
-    
+
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.getCurrentColor().toLowerCase());
         HashMap<Vertex, ArrayList<Move>> vertexMove = ge2.getAllMovesFromAllPositions(allRingPositions, state.getGameBoard());
-//        HashMap<Vertex, ArrayList<Move>> validMoves = filterValidMoves(vertexMove, state);
-        HashMap<Vertex, ArrayList<Move>> validMoves = vertexMove;
+        learnWeights.evaluateAndAdjust(separateMoves(vertexMove),state);
+        HashMap<Vertex, ArrayList<Move>> validMoves = filterValidMoves(vertexMove, state);
+
         // System.out.println(state.getGameBoard().strMaker());
 
         // System.out.println("Valid moves count: " + validMoves.size() + " at depth=" + depth);
@@ -99,7 +100,7 @@ public class AlphaBetaBot extends BotAbstract {
 
         if (validMoves.isEmpty()) {
             System.out.println("No valid moves at depth=" + depth);
-            
+
             return new AlphaBetaResult(evaluate(state, prevState, ge, prevState.getCurrentColor().toLowerCase(), currentMove), null);
         }
         // System.out.println(state.getCurrentColor());
@@ -125,12 +126,12 @@ public class AlphaBetaBot extends BotAbstract {
             // if(!switched){
 
             // }
-            // if (newState.getRingCountForColor(newState.getCurrentColor().toLowerCase()) < (state.getRingCountForColor(newState.getCurrentColor().toLowerCase()) )) { 
+            // if (newState.getRingCountForColor(newState.getCurrentColor().toLowerCase()) < (state.getRingCountForColor(newState.getCurrentColor().toLowerCase()) )) {
             //     m.setReward(Double.POSITIVE_INFINITY);
             //     newState.switchPlayerNEW();
 
             //     System.out.println("Winning move found at depth=" + depth + ": " + m);
-            //     return new AlphaBetaResult(Double.POSITIVE_INFINITY, m); 
+            //     return new AlphaBetaResult(Double.POSITIVE_INFINITY, m);
             // }
             if(!switched){
 
@@ -149,9 +150,9 @@ public class AlphaBetaBot extends BotAbstract {
 
 
             // state.switchPlayer();
-            // System.out.println("Entering alphaBeta: Depth=" + depth + 
-            //    ", Alpha=" + alpha + 
-            //    ", Beta=" + beta + 
+            // System.out.println("Entering alphaBeta: Depth=" + depth +
+            //    ", Alpha=" + alpha +
+            //    ", Beta=" + beta +
             //    ", CurrentPlayer=" + state.getCurrentColor());
 
             AlphaBetaResult result = alphaBeta(newState, state, alpha, beta, depth - 1, ge, m);
@@ -160,7 +161,7 @@ public class AlphaBetaBot extends BotAbstract {
             // System.out.println("Depth=" + depth +
             // " | CurrentPlayer=" + state.getCurrentColor() +
             // " | NextPlayer=" + newState.getCurrentColor());
-        
+
             if (isMaximizingPlayer) {
                 if (currentValue > value) {
                     value = currentValue;
@@ -190,72 +191,102 @@ public class AlphaBetaBot extends BotAbstract {
                     break;
                 }
             }
-            
+
             // System.out.println("Depth=" + depth + ", Current Move=" + m + ", Current Value=" + currentValue + ", Value=" + value);
 
             // System.out.println("After Iteration: Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
             // System.out.println("Depth=" + depth + ", Alpha=" + alpha + ", Beta=" + beta + ", Value=" + value);
         }
-    // }
-    
+        // }
+
         return new AlphaBetaResult(value, bestMove);
     }
+
+
+    //Seperates the moves and stores them along with their respective directions
+    private HashMap<Direction,ArrayList<Move>> separateMoves(HashMap<Vertex, ArrayList<Move>> allPossibleMoves){
+
+        HashMap<Direction,ArrayList<Move>> seperatedMoves = new HashMap<>();
+        seperatedMoves.put(Direction.UP,new ArrayList<>());
+        seperatedMoves.put(Direction.DOWN,new ArrayList<>());
+        seperatedMoves.put(Direction.RIGHT_UP,new ArrayList<>());
+        seperatedMoves.put(Direction.RIGHT_DOWN,new ArrayList<>());
+        seperatedMoves.put(Direction.LEFT_UP,new ArrayList<>());
+        seperatedMoves.put(Direction.LEFT_DOWN,new ArrayList<>());
+
+        ArrayList<Move> moves = new ArrayList<>();
+
+        // make 1 dimension list with all of the possible moves
+        for (ArrayList<Move> move : allPossibleMoves.values()) {
+            moves.addAll(move);
+        }
+
+        // make
+        for (Move move: moves){
+            ArrayList<Move> temp = seperatedMoves.get(move.getDirection());
+            temp.add(move);
+            seperatedMoves.put(move.getDirection(),temp);
+        }
+
+        return seperatedMoves;
+    }
+
 
     private List<Move> sortMoves(HashMap<Vertex, ArrayList<Move>> validMoves, GameState state, GameState prevState, GameEngine ge) {
         List<Move> allMoves = new ArrayList<>();
         for (ArrayList<Move> moves : validMoves.values()) {
             allMoves.addAll(moves);
         }
-    
+
         allMoves.sort((Move m1, Move m2) -> {
             double value1 = evaluate(moveState(state, m1), prevState, ge, state.getCurrentColor(), m1);
             double value2 = evaluate(moveState(state, m2), prevState, ge, state.getCurrentColor(), m2);
             return Double.compare(value2, value1);
         });
-    
+
         return allMoves;
     }
-    
+
 
     private HashMap<Vertex, ArrayList<Move>> filterValidMoves(HashMap<Vertex, ArrayList<Move>> vertexMove, GameState state) {
         HashMap<Vertex, ArrayList<Move>> validMoves = new HashMap<>();
         GameEngine ge = new GameEngine();
-    
+
         for (Map.Entry<Vertex, ArrayList<Move>> entry : vertexMove.entrySet()) {
             if (entry == null || entry.getValue() == null) {
-                continue; 
+                continue;
             }
-    
+
             ArrayList<Move> validMovesForVertex = new ArrayList<>();
             for (Move m : entry.getValue()) {
                 if (isValidMove(state, m)) {
                     validMovesForVertex.add(m);
                 }
             }
-    
+
             if (!validMovesForVertex.isEmpty()) {
                 validMovesForVertex.sort((Move m1, Move m2) -> {
                     double value1 = evaluate(moveState(state, m1), state, ge, state.getCurrentColor(), m1);
                     double value2 = evaluate(moveState(state, m2), state, ge, state.getCurrentColor(), m2);
-                    return Double.compare(value2, value1); 
+                    return Double.compare(value2, value1);
                 });
-    
+
                 ArrayList<Move> topMoves = new ArrayList<>(validMovesForVertex.subList(0, Math.min(1, validMovesForVertex.size())));
                 validMoves.put(entry.getKey(), topMoves);
             }
         }
-    
+
         return validMoves;
     }
-    
-    
+
+
 
     private double evaluate(GameState state,GameState prevState, GameEngine ge, String color, Move chosenMove) {
         if (state == null || prevState == null || chosenMove == null) {
             System.out.println("Invalid inputs to evaluate: state=" + state + ", prevState=" + prevState + ", chosenMove=" + chosenMove);
             return Double.NEGATIVE_INFINITY;
         }
-        
+
         // double valuation = 0;
         // String opponentColor = color.equals("white") ? "black" : "white";
 
@@ -275,16 +306,21 @@ public class AlphaBetaBot extends BotAbstract {
         // System.out.println("Evaluation result: " + valuation + " for move: " + chosenMove);
         if (Double.isInfinite(valuation) || Double.isNaN(valuation)) {
             System.out.println("Error in evaluation: value is invalid. Returning fallback value.");
-            return 0; 
-
+            return 0;
         }
 
+        // Machine Learning weights implemented
+        double weight = learnWeights.getRewards().get(chosenMove.getDirection());
+        System.out.println("Printting the w eights:      "+weight);
+
+//        valuation += valuation*weight;
+        System.out.println("Printting the valuations:      "+weight);
         return valuation;
     }
 
- private GameState moveState(GameState state, Move move) {
+    private GameState moveState(GameState state, Move move) {
         GameState newState = state.clone();
-        
+
         Game_Board board = newState.getGameBoard();
 
         String thisBotColor = super.getColor().toLowerCase().equals("white")? "white":"black";
@@ -292,17 +328,17 @@ public class AlphaBetaBot extends BotAbstract {
         Bot opponentBot = new AlphaBetaBot(thisBotColor.toLowerCase().equals("white")?"black":"white");
 
         String currentPlayerColor="";
-    
+
         currentPlayerColor = state.currentPlayerColor().toLowerCase().equals("white") ? "white" : "black";
 
         GameEngine tempEngine = new GameEngine();
         tempEngine.currentState = newState.clone();
-    
+
         Vertex fromVertex = move.getStartingVertex();
-    
+
         if (fromVertex == null) {
             System.out.println("Error: Source vertex is null.");
-            return state; 
+            return state;
         }
 
         int fromIndex = fromVertex.getVertextNumber();
@@ -310,7 +346,7 @@ public class AlphaBetaBot extends BotAbstract {
                 move.getXposition(),
                 move.getYposition()
         );
-    
+
         if (toIndex == -1) {
             System.out.println("Error: Invalid target vertex index.");
             return state;
@@ -318,14 +354,14 @@ public class AlphaBetaBot extends BotAbstract {
 
         tempEngine.placeChip(fromIndex);
         Move currentMove = tempEngine.gameSimulation.simulateMove(
-            board,
-            tempEngine.currentState.gameBoard.getVertex(fromIndex),
-            tempEngine.currentState.gameBoard.getVertex(toIndex)
+                board,
+                tempEngine.currentState.gameBoard.getVertex(fromIndex),
+                tempEngine.currentState.gameBoard.getVertex(toIndex)
         );
 
         Vertex sourceV = tempEngine.currentState.gameBoard.getVertex(fromIndex);
 
-    
+
         if (sourceV == null) {
             System.out.println("sourceV is null. : ");
 
@@ -342,7 +378,7 @@ public class AlphaBetaBot extends BotAbstract {
             return state;
         }
 
-    
+
         List<Coin> flippedCoins = currentMove.getFlippedCoins();
         ArrayList<Vertex> verticesToFlip = new ArrayList<>();
         if (flippedCoins != null && !flippedCoins.isEmpty()) {
@@ -371,7 +407,7 @@ public class AlphaBetaBot extends BotAbstract {
         }
         targetV.setRing(ringToMove);
 
-    
+
         tempEngine.currentState.chipsRemaining--;
         tempEngine.currentState.chipRingVertex = -1;
         tempEngine.currentState.chipPlaced = false;
@@ -433,8 +469,8 @@ public class AlphaBetaBot extends BotAbstract {
     public void handleWinningRing(int vertex, GameEngine gameEngine) {
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null
-            && v.hasRing()
-            && v.getRing().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
+                && v.hasRing()
+                && v.getRing().getColour().equalsIgnoreCase(gameEngine.getWinningColor())) {
 
             v.setRing(null);
             gameEngine.findAndSetAllWinningChips(gameEngine.getWinningColor());
@@ -501,104 +537,104 @@ public class AlphaBetaBot extends BotAbstract {
     private boolean isValidMove(GameState state, Move move) {
         Vertex[][] board = state.getGameBoard().getBoard();
         Vertex startVertex = move.getStartingVertex();
-    
+
         if (startVertex == null || !startVertex.hasRing()) {
 
             return false;
         }
-    
+
         PlayObj ring = (Ring)startVertex.getRing();
         if (!ring.getColour().toLowerCase().equals(state.getCurrentColor().toLowerCase())) {
-            
+
             return false;
         }
-    
+
         int startX = startVertex.getXposition();
         int startY = startVertex.getYposition();
         int targetX = move.getXposition();
         int targetY = move.getYposition();
-    
+
         com.ken2.engine.Direction direction = move.getDirection();
-    
+
         if (direction == null) {
 
             return false;
         }
-    
+
         int deltaX = direction.getDeltaX();
         int deltaY = direction.getDeltaY();
-    
+
         if (deltaX == 0 && deltaY == 0) {
 
             return false;
         }
-    
+
         int dx = targetX - startX;
         int dy = targetY - startY;
-    
+
         if (deltaX == 0) {
             if (dx != 0) {
-                return false; 
+                return false;
             }
             if (deltaY == 0 || dy % deltaY != 0 || (dy / deltaY) <= 0) {
-                return false; 
+                return false;
             }
         } else if (deltaY == 0) {
             if (dy != 0) {
-                return false; 
+                return false;
             }
             if (deltaX == 0 || dx % deltaX != 0 || (dx / deltaX) <= 0) {
-                return false; 
+                return false;
             }
         } else {
             if (dx % deltaX != 0 || dy % deltaY != 0) {
-                return false; 
+                return false;
             }
             int stepsX = dx / deltaX;
             int stepsY = dy / deltaY;
             if (stepsX != stepsY || stepsX <= 0) {
-                return false; 
+                return false;
             }
         }
-    
+
         int currentX = startX;
         int currentY = startY;
-    
+
         while (true) {
             currentX += deltaX;
             currentY += deltaY;
-    
+
             if (currentX == targetX && currentY == targetY) {
                 break;
             }
-    
+
             if (currentX < 0 || currentX >= board.length || currentY < 0 || currentY >= board[0].length) {
 
-                return false; 
+                return false;
             }
-    
+
             Vertex currentVertex = board[currentX][currentY];
-    
+
             if (currentVertex != null && currentVertex.hasRing()) {
 
-                return false; 
+                return false;
             }
-    
+
         }
-    
+
         Vertex targetVertex = board[targetX][targetY];
-    
+
         if (targetVertex == null || targetVertex.hasRing() || targetVertex.hasCoin()) {
 
-            return false; 
+            return false;
         }
-    
+
         return true;
     }
 
     public String getName() {
         return "AlphaBeta";
     }
-    
-    
+
+
 }

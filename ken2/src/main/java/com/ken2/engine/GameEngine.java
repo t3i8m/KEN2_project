@@ -217,7 +217,9 @@ public class GameEngine {
 
                 for(Move m: allMoves.get(v)){
                     m.setStartingVertex(v);
+//                    System.out.println("Move starting vertex: " + m.getStartingVertex());
                 }
+
             }
             return allMoves;
         }

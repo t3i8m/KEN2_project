@@ -5,11 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="Started the MLABbot">
+      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/BranchResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Learnings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/MLABBot.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/MLABbot2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Model.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Trainer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/AlphaBetaBotOLD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLAlphaBetabot/Rewards.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Features.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Model.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/PolicyGradientAB/Trainer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/engine/GameEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/utils/BotFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/utils/BotFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/MLAlphaBetabot/AlphaBetaBot.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/MLAlphaBetabot/Rewards.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/PolicyGradientAB/Features.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/PolicyGradientAB/Model.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/bots/PolicyGradientAB/Trainer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/engine/GameEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/headless/HeadlessMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/ui/MainApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/target/classes/com/ken2/utils/BotFactory.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,28 +65,64 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;MLABbot&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Tim/Documents/UM/project2_1/KEN2_project&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.MainApp.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "MLABbot",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Tim/Documents/UM/project2_1/KEN2_project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.ken2.bots.MLAlphaBetabot" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ken2.bots.MLAlphaBetabot" />
       <recent name="com.ken2.bots.MLAlphaBetabot.testLearn" />
     </key>
+  </component>
+  <component name="RunManager" selected="Application.HeadlessMain">
+    <configuration name="HeadlessMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ken2.headless.HeadlessMain" />
+      <module name="ken2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ken2.headless.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ken2.ui.MainApp" />
+      <module name="ken2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ken2.ui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.HeadlessMain" />
+        <item itemvalue="Application.MainApp" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>

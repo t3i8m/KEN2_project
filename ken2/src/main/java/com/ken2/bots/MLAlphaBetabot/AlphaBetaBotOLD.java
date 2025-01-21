@@ -12,16 +12,18 @@ import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
-public class AlphaBetaBot extends BotAbstract {
+import javafx.scene.control.skin.TextInputControlSkin.Direction;
+
+public class AlphaBetaBotOLD extends BotAbstract {
     private GameState StateRightNow;
 
-    public AlphaBetaBot(String color) {
+    public AlphaBetaBotOLD(String color) {
         super(color);
     }
 
     @Override
     public String getName() {
-        return "ML-Alpha-Beta";
+        return "AlphaBetaBotOLD";
     }
 
     public Move makeMove(GameState state) {
@@ -39,7 +41,6 @@ public class AlphaBetaBot extends BotAbstract {
             return null;
         }
 
-        // Ring placement
         if (state.ringsPlaced < 10) {
             Vertex targetVertex = allFreePositions.get(random.nextInt(allFreePositions.size()));
 
@@ -62,30 +63,16 @@ public class AlphaBetaBot extends BotAbstract {
         }
     }
 
-    public AlphaBetaResult
-    alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge) {
-
+    public AlphaBetaResult alphaBeta(GameState state, double alpha, double beta, int depth, GameEngine ge) {
         if (depth == 0) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
-
         GameEngine ge2 = new GameEngine();
         Move bestMove = null;
         double value;
-
-        ArrayList<Vertex>
-                allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
-
-        HashMap<Vertex, ArrayList<Move>>
-                vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
-
-        // // // // // // // // // // // // // /// // // // // // // /// //
-        // Add a function to grade the moves from here                   //
-        // Say we go to the Trainer class and get the proper solution    //
-        // // // // // // // // // // // // // /// // // // // // // /// //
-
+        ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
+        HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
         GameSimulation gs = new GameSimulation();
-
         if (vertexMove.isEmpty()) {
             return new AlphaBetaResult(evaluate(state, ge, state.currentPlayerColor()), null);
         }
@@ -103,14 +90,14 @@ public class AlphaBetaBot extends BotAbstract {
                     int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
 
                     if (!isValidMove(state, m)) {
-                        continue;
+                        continue; 
                     }
                     if(vertexFrom<0 || vertexTo<0){
                         continue;
                     }
 
                     Vertex targetVertex = state.getGameBoard().getVertex(
-                            state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
+                        state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
                     );
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
 
@@ -144,13 +131,13 @@ public class AlphaBetaBot extends BotAbstract {
                     int vertexTo = state.gameBoard.getVertexNumberFromPosition(m.getXposition(), m.getYposition());
 
                     if (!isValidMove(state, m)) {
-                        continue;
+                        continue; 
                     }
                     if(vertexFrom<0 || vertexTo<0){
                         continue;
                     }
                     Vertex targetVertex = state.getGameBoard().getVertex(
-                            state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
+                        state.getGameBoard().getVertexNumberFromPosition(m.getXposition(), m.getYposition())
                     );
                     if (targetVertex == null || targetVertex.hasCoin() || targetVertex.hasRing()) continue;
                     // m = gs.simulateMove(state.gameBoard, m.getStartingVertex(), state.gameBoard.getVertex(vertexTo));
@@ -207,7 +194,7 @@ public class AlphaBetaBot extends BotAbstract {
         if (targetVertex == null || targetVertex.hasRing() || targetVertex.hasCoin()) return state;
         if (sourceVertex == null || !sourceVertex.hasRing()) return state;
 
-
+    
         Ring ringToMove = (Ring) sourceVertex.getRing();
         if (ringToMove != null) {
             sourceVertex.setRing(null);
@@ -222,95 +209,94 @@ public class AlphaBetaBot extends BotAbstract {
     private boolean isValidMove(GameState state, Move move) {
         Vertex[][] board = state.getGameBoard().getBoard();
         Vertex startVertex = move.getStartingVertex();
-
+    
         if (startVertex == null || !startVertex.hasRing()) {
             return false;
         }
-
+    
         PlayObj ring = (Ring)startVertex.getRing();
-
+    
         if (!ring.getColour().equals(state.currentPlayerColor())) {
             return false;
         }
-
+    
         int startX = startVertex.getXposition();
         int startY = startVertex.getYposition();
         int targetX = move.getXposition();
         int targetY = move.getYposition();
-
+    
         com.ken2.engine.Direction direction = move.getDirection();
-
+    
         if (direction == null) {
             return false;
         }
-
+    
         int deltaX = direction.getDeltaX();
         int deltaY = direction.getDeltaY();
-
+    
         if (deltaX == 0 && deltaY == 0) {
             return false;
         }
-
+    
         int dx = targetX - startX;
         int dy = targetY - startY;
-
+    
         if (deltaX == 0) {
             if (dx != 0) {
-                return false;
+                return false; 
             }
             if (deltaY == 0 || dy % deltaY != 0 || (dy / deltaY) <= 0) {
-                return false;
+                return false; 
             }
         } else if (deltaY == 0) {
             if (dy != 0) {
-                return false;
+                return false; 
             }
             if (deltaX == 0 || dx % deltaX != 0 || (dx / deltaX) <= 0) {
-                return false;
+                return false; 
             }
         } else {
             if (dx % deltaX != 0 || dy % deltaY != 0) {
-                return false;
+                return false; 
             }
             int stepsX = dx / deltaX;
             int stepsY = dy / deltaY;
             if (stepsX != stepsY || stepsX <= 0) {
-                return false;
+                return false; 
             }
         }
-
+    
         int currentX = startX;
         int currentY = startY;
-
+    
         while (true) {
             currentX += deltaX;
             currentY += deltaY;
-
+    
             if (currentX == targetX && currentY == targetY) {
                 break;
             }
-
+    
             if (currentX < 0 || currentX >= board.length || currentY < 0 || currentY >= board[0].length) {
-                return false;
+                return false; 
             }
-
+    
             Vertex currentVertex = board[currentX][currentY];
-
+    
             if (currentVertex != null && currentVertex.hasRing()) {
-                return false;
+                return false; 
             }
-
+    
         }
-
+    
         Vertex targetVertex = board[targetX][targetY];
-
+    
         if (targetVertex == null || targetVertex.hasRing() || targetVertex.hasCoin()) {
-            return false;
+            return false; 
         }
-
+    
         return true;
     }
-
-
-
+    
+    
 }
