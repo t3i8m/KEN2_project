@@ -2,6 +2,7 @@ package com.ken2.bots.DQN_BOT_ML.utils;
 
 import com.ken2.bots.DQN_BOT_ML.botComponents.DQNTrainer;
 import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
+import com.ken2.bots.DQN_BOT_ML.utils.Hyperparameters;
 
 public class ExperimentalConfig {
     public static void main(String[] args) {
