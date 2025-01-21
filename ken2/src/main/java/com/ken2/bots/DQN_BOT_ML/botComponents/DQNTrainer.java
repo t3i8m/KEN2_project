@@ -4,6 +4,7 @@ package com.ken2.bots.DQN_BOT_ML.botComponents;
 import com.ken2.bots.Bot;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
 import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
+import com.ken2.bots.DQN_BOT_ML.utils.ExperimentalConfig;
 import com.ken2.bots.DQN_BOT_ML.utils.RewardLogger;
 import com.ken2.bots.DQN_BOT_ML.utils.RollingAverageLogger;
 import com.ken2.bots.RuleBased.RuleBasedBot;
@@ -15,18 +16,20 @@ import com.ken2.engine.Move;
 import java.util.ArrayList;
 
 public class DQNTrainer {
+    private int configNumber;
     private DQN_BOT dqnBot;
     private int episodes;  
     private int maxMovesPerEpisode; 
     private double epsilonDecay; 
     private String opponentBotType; 
 
-    public DQNTrainer(DQN_BOT dqnBot, int episodes, int maxMovesPerEpisode, double epsilonDecay, String opponentBotType) {
+    public DQNTrainer(DQN_BOT dqnBot, int episodes, int maxMovesPerEpisode, double epsilonDecay, String opponentBotType, int configNumber) {
         this.dqnBot = dqnBot;
         this.episodes = episodes;
         this.maxMovesPerEpisode = maxMovesPerEpisode;
         this.epsilonDecay = epsilonDecay;
-        this.opponentBotType = opponentBotType; 
+        this.opponentBotType = opponentBotType;
+        this.configNumber = configNumber;
     }
 
     public void train() {
@@ -39,8 +42,8 @@ public class DQNTrainer {
         double rollingAverage;
         ArrayList<Double> episodeFinalRewards = new ArrayList<>();
         Bot opponentBotA = initializeOpponentBot(opponentBotType);
-        RewardLogger cumulativeRewardLogger = new RewardLogger("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\results\\cumulative_reward.csv");
-        RollingAverageLogger rollingAverageLogger = new RollingAverageLogger("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\results\\rolling_average_reward.csv");
+        RewardLogger cumulativeRewardLogger = new RewardLogger("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\results\\cumulative_reward" + configNumber + ".csv");
+        RollingAverageLogger rollingAverageLogger = new RollingAverageLogger("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\results\\rolling_average_reward" + configNumber + ".csv");
 
         for (int episode = 1; episode <= episodes; episode++) {
             cumulativeRewardLogger.resetEpisode();
