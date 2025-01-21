@@ -41,18 +41,24 @@ public class DQN_BOT  extends BotAbstract{
     public double epsilonMin; // min epsilon for the egreedy
     public double epsilonDecay; // speed of the epsilon decrease
     private double gamma;  //discount for the Q update
+    private double learningRate;
     private Random random;
     private int actionSize;
-    private ReplayBuffer replayBuffer = new ReplayBuffer(100000);
+    private ReplayBuffer replayBuffer;
     private int[] mask;
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
     private int updateCount = 0;
     private final int TARGET_UPDATE_FREQUENCY = 250;
 
-    public DQN_BOT(String color){
+    public DQN_BOT(String color, double learningRate, double gamma, double epsilon, int replayBufferSize, int actionSize){
         super(color);
         this.actionSize = 100;
+        this.learningRate = learningRate;
+        this.gamma = gamma;
+        this.epsilon = epsilon;
+        this.replayBuffer = new ReplayBuffer(replayBufferSize);
+        this.actionSize = actionSize;
 
         initializeNN();
         try{
@@ -381,7 +387,7 @@ public class DQN_BOT  extends BotAbstract{
     }
 
     private NeuralNetwork copyNetwork(NeuralNetwork source) {
-    NeuralNetwork newNet = new NeuralNetwork(source.getLearningRate(), source.getLossFunction());
+    NeuralNetwork newNet = new NeuralNetwork(learningRate, source.getLossFunction());
     
     for (Layer layer : source.getLayers()) {
         int numberOfNeurons = layer.getNeurons().size();
@@ -529,7 +535,7 @@ public class DQN_BOT  extends BotAbstract{
     }
 
     public void initializeNN(){
-        this.qNetwork = new NeuralNetwork(0.001, new MSE());
+        this.qNetwork = new NeuralNetwork(learningRate, new MSE());
         // qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
         // qNetwork.addLayer(new Layer(256, 128, new ReLu())); 
         // qNetwork.addLayer(new Layer(64, 256, new ReLu())); 
@@ -641,8 +647,8 @@ public class DQN_BOT  extends BotAbstract{
         Game_Board board = state.getGameBoard();
 
         String thisBotColor = super.getColor().toLowerCase().equals("white")? "white":"black";
-        Bot thisBot = new DQN_BOT(thisBotColor);
-        Bot opponentBot = new DQN_BOT(thisBotColor.toLowerCase().equals("white")?"black":"white");
+        Bot thisBot = new DQN_BOT(thisBotColor, learningRate, gamma, epsilon, replayBuffer, actionSize);
+        Bot opponentBot = new DQN_BOT(thisBotColor.toLowerCase().equals("white")?"black":"white", learningRate, gamma, epsilon, replayBuffer, actionSize);
 
         String currentPlayerColor="";
     
@@ -825,7 +831,7 @@ public class DQN_BOT  extends BotAbstract{
     }
 
     public double getCumulativeReward() {
-        return cumulativeReward = replayBuffer.getCumulativeReward();
+        return replayBuffer.getCumulativeReward();
     }
     
 }

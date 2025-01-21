@@ -23,7 +23,7 @@ public class BotFactory {
             case "alphabeta bot":
                 return new AlphaBetaBot(botColor);
             case "dqn bot":
-                return new DQN_BOT(botColor);
+                return new DQN_BOT(botColor, 0.2, 0.95, 0.6, 10000, 64);
         }
         return null;
     }

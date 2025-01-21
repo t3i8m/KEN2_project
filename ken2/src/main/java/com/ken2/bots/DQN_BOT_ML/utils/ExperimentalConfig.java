@@ -95,8 +95,8 @@ public class ExperimentalConfig {
 
         for (Hyperparameters config : configs) {
 
-            System.out.println("Config: " + config);
-            System.out.println("Performance: " + );
+            //System.out.println("Config: " + config);
+            //System.out.println("Performance: " + );
         }
     }
 

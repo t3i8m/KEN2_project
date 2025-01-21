@@ -17,7 +17,7 @@ public class ParallelDQNExample {
 
     private static ReplayBuffer replayBuffer = new ReplayBuffer(10000);
 
-    private static DQN_BOT dqnBot = new DQN_BOT("white");
+    private static DQN_BOT dqnBot = new DQN_BOT("white", 0.2, 0.95, 0.6, 10000, 64);
 
     public static void main(String[] args) {
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
