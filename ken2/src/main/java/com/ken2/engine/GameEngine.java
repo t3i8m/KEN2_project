@@ -99,21 +99,16 @@ public class GameEngine {
             }
 
             Coin newChip = new Coin(chipColor.toLowerCase());
-            // System.out.println("WE ADD TO THE COIN VERTEX: "+ vertex);
             newChip.setVertex(vertex);
 
             boardVertex.setPlayObject(newChip);
             currentState.chipRingVertex = vertex;
-            // System.out.println("After setting chip, hasCoin at (" + boardVertex.getXposition() + ", " + boardVertex.getYposition() + "): " + boardVertex.hasCoin());
             currentState.chipNumber.add(vertex);
-            // currentState.chipsRemaining--;
             currentState.chipPlaced = true;//after chip placement we can move the ring
             currentState.resetTurn();
             return true;
         } else {
-            // System.out.println("HEasdasdsasdRE");
 
-            // showAlert("Warning", "Cannot place a chip here");
         }
         return false;
 
@@ -150,12 +145,8 @@ public class GameEngine {
                 allMovesdig.addAll(moveList);
             }
             if (allMovesdig.isEmpty()) {
-                // System.out.println("No possible moves available.");
-                // allMoves.put(v, null);
-
 
             } else{
-                // allMoves.put(v, allMovesdig);
 
             }
             allMoves.put(v, allMovesdig);
@@ -253,9 +244,6 @@ public class GameEngine {
             }
 
         }
-        // setRingSelectionMode(win);
-
-        //        System.out.println("WIN STATE: "+win);
         return color;
     }
 
@@ -280,9 +268,6 @@ public class GameEngine {
     public boolean isInRingRemovalMode(){
         return isRingSelectionMode;
     }
-    public boolean ringselectionmode(){
-        return isRingSelectionMode;
-    }
     public void setWinningRing(boolean winningRing) {
         this.winningRing = winningRing;
     }
@@ -293,10 +278,6 @@ public class GameEngine {
 
     public static List<Integer> getWinningChips() {
         return winningChips;
-    }
-
-    public void clearWinningChips() {
-        winningChips.clear();
     }
 
     public void setWinningChips(List<Integer> chips) {
@@ -321,11 +302,6 @@ public class GameEngine {
         int k = 0;
         int x = currentState.gameBoard.getVertex(start).getXposition();
         int y = currentState.gameBoard.getVertex(start).getYposition();
-        // if(currentState.gameBoard.getVertex(start)!=null){
-        //     if(currentState.gameBoard.getVertex(start).hasCoin() && currentState.gameBoard.getVertex(start).getCoin().getColour().toLowerCase().equals(chipColor)){
-        //         k=1;
-        //     }
-        // }
         while(true){
             x+=dx;
             y+=dy;
@@ -337,27 +313,23 @@ public class GameEngine {
             if(!v.hasCoin() ){
                 return k;
             }
-            //System.out.println("CHECKING "+v.getVertextNumber());
             if(v==null || !v.hasCoin() || !v.getCoin().getColour().toLowerCase().equals(chipColor)){
-                //System.out.println("PROBLEM: "+v.getVertextNumber());
+
                 if(v!=null){
-                    //System.out.println("HAS COIN "+v.hasCoin());
-                    //System.out.println(v.getCoin());
+
                     if(v.hasCoin()){
-                        //System.out.println("COLOR WE NEED: "+chipColor);
-                        //System.out.println("SAME COLOR: "+v.getCoin().getColour().toLowerCase().equals(chipColor));
+
                     }
                 }
 
-                //System.out.println("K: "+k);
                 return k;
             }
             k++;
-            //System.out.println("COUNT IT "+k);
+
 
 
         }
-        // return k;
+
     }
 
     public List<Integer> getChipsInDirection(int startVertex, String chipColor, int dx, int dy) {
@@ -463,24 +435,6 @@ public class GameEngine {
         return winningChips;
     }
 
-    public List<Integer> findWinningChipsFromVertex(int startVertex, String chipColor) {
-        List<Integer> winningChips = new ArrayList<>();
-        // System.out.println("Finding winning chips from vertex: " + startVertex);
-
-        for (Direction direction : Direction.values()) {
-            // System.out.println("Checking direction: " + direction.name());
-            List<Integer> chipsInDirection = getChipsInDirection(startVertex, chipColor, direction.getDeltaX(), direction.getDeltaY());
-            winningChips.addAll(chipsInDirection);
-        }
-
-        if (!winningChips.contains(startVertex)) {
-            // System.out.println("Including starting vertex: " + startVertex);
-            winningChips.add(startVertex);
-        }
-
-        // System.out.println("Winning chips from vertex " + startVertex + ": " + winningChips);
-        return winningChips;
-    }
 
     public void findAndSetAllWinningChips(String chipColor) {
         // List<Integer> allWinningChips = findAllWinningChips(chipColor);

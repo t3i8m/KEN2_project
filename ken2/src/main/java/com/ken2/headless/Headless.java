@@ -224,17 +224,6 @@ public class Headless {
                 Bot currentBot = state.isWhiteTurn ? whiteBot : blackBot;
     
                 currentPlayerColor = state.isWhiteTurn ? "white" : "black";
-                // System.out.println(state.currentPlayerColor());
-                // System.out.println(currentPlayerColor);
-
-                // System.out.println(currentPlayerColor);
-                // BoardTransformation boardToVector = new BoardTransformation(board);
-                // System.out.println("BEFORE: \n"+board.strMaker());
-                // double[] vectorBoard = boardToVector.toVector(currentPlayerColor);
-    
-                // System.out.println("AFTER: \n"+boardToVector.fromVector(vectorBoard).strMaker());
-                // System.out.println(Arrays.toString(vectorBoard));
-                // System.out.println(currentPlayerColor);
     
                 if (state.ringsPlaced < 10) {
                     Move ringPlacement = currentBot.makeMove(state);
@@ -271,14 +260,6 @@ public class Headless {
                         rec.coinsFlippedVertices = "";
                         logs.add(rec);
                     }
-    
-                    ////////////
-                    // newState = state.clone();
-    
-                    // System.out.println("\n"+"Move " + moveNumber +":");
-                    // reward = Reward.calculateReward(gameEngine, previuos, ringPlacement, newState, currentPlayerColor);
-                    // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-    
     
                 } else {
                     Move move = currentBot.makeMove(state.clone());
@@ -389,16 +370,8 @@ public class Headless {
                             rec.gameResult = "draw";
                             logs.add(rec);
                         }
-                        // newState = gameEngine.currentState.clone();
-                        // System.out.println(gameEngine.currentState.chipsRemaining);
-                        // System.out.println("\n"+"Move " + moveNumber +":");
-                        // reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
-                        // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-    
                         return "draw";
                     }
-    
-                    // GameEngine newGE = gameEngine.clone();
     
                     String gameResult = null;
                     boolean isWinningRow = gameEngine.win(gameEngine.currentState.getVertexesOfFlippedCoins());
@@ -436,13 +409,6 @@ public class Headless {
     
     
                     }
-                    
-                    
-                    // newState = gameEngine.currentState.clone();
-                    // System.out.println("\n"+"Move " + moveNumber +":");
-                    // reward = Reward.calculateReward(gameEngine, previuos, move, newState, currentPlayerColor);
-                    // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayerColor+" BOT type "+currentBot.getName());
-    
                     if (logs != null) {
                         GameMoveRecord rec = new GameMoveRecord();
                         rec.gameIndex = gameIndex;

@@ -275,15 +275,6 @@ public class GameState implements Cloneable{
             throw new AssertionError("Cloning not supported", e);
         }
     }
-    public boolean isBotTurn(ArrayList<Bot> bots) {
-        boolean isWhiteTurn = this.isWhiteTurn;
-        for (Bot bot : bots) {
-            if (("White".equals(bot.getColor()) && isWhiteTurn) || ("Black".equals(bot.getColor()) && !isWhiteTurn)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
 public boolean equals(Object obj) {

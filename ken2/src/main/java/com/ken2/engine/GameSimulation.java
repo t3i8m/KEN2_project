@@ -147,46 +147,8 @@ public class GameSimulation {
         for (Vertex vertex : coinFlips) {
             Coin coin = (Coin)vertex.getCoin();
             coin.flipCoin();
-            // Vertex vertex = gameBoard.getVertexByCoin(coin);
-                // System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
 
         }
     }
-    private ArrayList<Move> getMovesForRing(Game_Board board, Vertex ringPosition) {
-        ArrayList<Move> possibleMoves = new ArrayList<>();
-        Vertex[][] gameBoard = board.getBoard();
-    
-        int startX = ringPosition.getXposition();
-        int startY = ringPosition.getYposition();
-    
-        for (Direction direction : Direction.values()) {
-            int currentX = startX;
-            int currentY = startY;
-    
-            while (true) {
-                currentX += direction.getDeltaX();
-                currentY += direction.getDeltaY();
-    
-                if (currentX < 0 || currentX >= gameBoard.length || currentY < 0 || currentY >= gameBoard[0].length) {
-                    break;
-                }
-    
-                Vertex targetVertex = board.getVertex(board.getVertexNumberFromPosition(currentX, currentY));
-                if (targetVertex == null || targetVertex.hasRing()) {
-                    break; 
-                }
-    
-                Move move = new Move(ringPosition.getVertextNumber(), targetVertex.getVertextNumber(), null, direction);
-                possibleMoves.add(move);
-    
-                if (targetVertex.hasCoin()) {
-                    break;
-                }
-            }
-        }
-    
-        return possibleMoves;
-    }
-    
 
 }
