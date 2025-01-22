@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * ReplayBuffer is a utility class for storing and sampling experiences during reinforcement learning.
+ * It supports prioritized replay by associating a priority with each experience.
+ */
 public class ReplayBuffer {
     private ArrayList<Experience> buffer = new ArrayList<>();
     private int capacity;
@@ -12,6 +16,11 @@ public class ReplayBuffer {
     private Random random;
     private ArrayList<Double> priorities = new ArrayList<>();
 
+    /**
+     * Constructs a ReplayBuffer with a specified capacity.
+     *
+     * @param capacity The maximum number of experiences the buffer can hold.
+     */
     public ReplayBuffer(int capacity){
         this.capacity=capacity;
         this.topRatio = 0.5;
@@ -20,18 +29,28 @@ public class ReplayBuffer {
         this.random = new Random();
     }
 
+    /**
+     * Adds a new experience to the buffer. If the buffer is full, removes the oldest experience.
+     *
+     * @param newExperience The new experience to add.
+     * @param priority       The priority associated with the new experience.
+     */
     public synchronized  void add(Experience newExperience, double priority){
         if(buffer.size()>=capacity){
             buffer.remove(0);
             priorities.remove(0);
         }
         buffer.add(newExperience);
-        // priorities.add(Math.abs(newExperience.getReward()));
-        // normalizePriorities();
-        // priorities.add(newExperience.getReward());
+
         priorities.add(Math.abs(priority) + 1e-5);
     }
 
+    /**
+     * Creates a sample of experiences from the buffer.
+     * 
+     * @param sampleSize The size of the sample.
+     * @return A list of sampled experiences.
+     */
     public ArrayList<Experience> createSample(int sampleSize){
         Random random = new Random();
 
@@ -52,109 +71,18 @@ public class ReplayBuffer {
     
         return container;
 
-        // double sumPriorities = priorities.stream().mapToDouble(p -> Math.pow(p, 1)).sum();
-        // ArrayList<Experience> sample = new ArrayList<>();
-    
-        // for (int i = 0; i < sampleSize; i++) {
-        //     double rand = random.nextDouble() * sumPriorities;
-        //     double cumulative = 0.0;
-            
-        //     for (int j = 0; j < priorities.size(); j++) {
-        //         cumulative += priorities.get(j);
-        //         if (rand <= cumulative) {
-
-        //             sample.add(buffer.get(j));
-        //             break;
-        //         }
-        //     }
-        // }
-        // return sample;
     
     }
 
-    // public ArrayList<Experience> createSample(int sampleSize){
-    //         if (sampleSize <= 0) {
-    //             throw new IllegalArgumentException("");
-    //         }
-
-    //         sampleSize = Math.min(sampleSize, buffer.size());
-    //         ArrayList<Experience> sample = new ArrayList<>(sampleSize);
-
-    //         int numTopSamples = (int) Math.round(sampleSize * topRatio);
-    //         numTopSamples = Math.min(numTopSamples, buffer.size()); 
-    //         int numRandomSamples = sampleSize - numTopSamples;
-
-    //         List<Integer> topIndices = getTopIndices(numTopSamples);
-
-    //         for (int index : topIndices) {
-    //             sample.add(buffer.get(index));
-    //         }
-
-    //         List<Integer> randomIndices = getRandomIndices(numRandomSamples, topIndices);
-
-    //         for (int index : randomIndices) {
-    //             sample.add(buffer.get(index));
-    //         }
-
-    //         Collections.shuffle(sample, random);
-
-    //         return sample;
-    // }
-
-    // public ArrayList<Experience> createSample(int sampleSize){
-    //     if (sampleSize <= 0) {
-    //         throw new IllegalArgumentException("Sample size must be positive.");
-    //     }
     
-    //     sampleSize = Math.min(sampleSize, buffer.size());
-    //     ArrayList<Experience> sample = new ArrayList<>(sampleSize);
-    
-    //     List<Integer> topIndices = getTopIndices(sampleSize);
-        
-    //     for (int index : topIndices) {
-    //         sample.add(buffer.get(index));
-    //         System.out.println(buffer.get(index).getReward());
-    //         // if(buffer.get(index).getReward()==133.68){
-    //         //     System.out.println(buffer.get(index).stateP.getGameBoard().strMaker());
-    //         //     System.out.println(buffer.get(index).chosenMove);
-    //         //     System.out.println(buffer.get(index).nextState.getGameBoard().strMaker());
-
-    //         // }
-    //     }
-    
-    //     // Collections.shuffle(sample, random);
-    
-    //     return sample;
-    // }
-    
-    // public synchronized  ArrayList<Experience> createSample(int sampleSize){
-    //     int size = Math.min(buffer.size(), priorities.size()); 
-    //     if (size == 0) {
-    //         return new ArrayList<>();
-    //     }
-    //     int actualSize = Math.min(sampleSize, buffer.size());
-    //     ArrayList<Experience> sample = new ArrayList<>(actualSize);
-    
-    //     int topN = (int)(actualSize * topRatio); // e.g. topRatio=0.5
-    //     ArrayList<Experience> topIndices = getTopIndices(topN);
-    //     for(Experience idx : topIndices){
-    //         sample.add(idx);
-    //         // System.out.println(buffer.get(idx));
-    //     }
-    
-    //     int remaining = actualSize - topN;
-    //     Collections.shuffle(buffer, random);
-    //     for(int i = 0; i < remaining; i++){
-    //         sample.add(buffer.get(i));
-    //         // System.out.println(buffer.get(i));
-
-    //     }
-    
-    //     return sample;
-    // }
     
 
-
+    /**
+     * Retrieves the top-priority indices from the buffer.
+     *
+     * @param topN The number of top-priority experiences to retrieve.
+     * @return A list of the highest-priority experiences.
+     */
     private synchronized  ArrayList<Experience> getTopIndices(int topN){
         List<Integer> indices = new ArrayList<>();
         for(int i = 0; i < buffer.size(); i++){
@@ -175,7 +103,13 @@ public class ReplayBuffer {
         return result;
     }
 
-
+    /**
+     * Retrieves random indices from the buffer, excluding specific indices.
+     *
+     * @param numSamples The number of random indices to retrieve.
+     * @param exclude    A list of indices to exclude from sampling.
+     * @return A list of random indices.
+     */
     private List<Integer> getRandomIndices(int numSamples, List<Integer> exclude){
         List<Integer> availableIndices = new ArrayList<>();
         for(int i = 0; i < buffer.size(); i++){
@@ -189,36 +123,12 @@ public class ReplayBuffer {
         return availableIndices.subList(0, Math.min(numSamples, availableIndices.size()));
     }
 
-    // public void normalizePriorities() {
-    //     double sumRewards = buffer.stream()
-    //                               .mapToDouble(exp -> Math.abs(exp.getReward()))
-    //                               .sum();
-    
-    //     if (sumRewards == 0) {
-    //         sumRewards = 1e-6;
-    //     }
-    
-    //     for (int i = 0; i < buffer.size(); i++) {
-    //         Experience exp = buffer.get(i);
-    //         double normalizedPriority = Math.abs(exp.getReward()) / sumRewards;
-    //         priorities.set(i, normalizedPriority);
-    //     }
-    // }
-
-    // public void updatePriorities(ArrayList<Integer> indices, ArrayList<Double> newPriorities) {
-    //     for (int i = 0; i < indices.size(); i++) {
-    //         int index = indices.get(i);
-    //         if (index >= 0 && index < priorities.size()) {
-    //             priorities.set(index, Math.abs(newPriorities.get(i)));
-    //         }
-    //     }
-    //     normalizePriorities();
-    // }
-    
-    
-    
-    
-
+   
+    /**
+     * Returns the current experience buffer.
+     *
+     * @return The list of stored experiences.
+     */
     public ArrayList<Experience> getBuffer(){
         return this.buffer;
     }
