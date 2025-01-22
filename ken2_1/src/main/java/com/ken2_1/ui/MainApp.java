@@ -1447,7 +1447,7 @@ public class MainApp extends Application {
         stats.append("\n");
         stats.append("=======================================================\n");
     
-        System.out.println(stats.toString());
+        // System.out.println(stats.toString());
     }
     /**
      * Restarts the game, resetting game state and UI elements.

@@ -74,11 +74,11 @@ public class DQN_BOT  extends BotAbstract{
             System.out.println(ex);
         }
         // loadEpsilon();
-        this.epsilon = 0.1;
+        this.epsilon = 0.0001;
         this.targetNetwork = copyNetwork(this.qNetwork);
 
         this.mask = new int[actionSize];
-        this.epsilonMin = 0.01;
+        this.epsilonMin = 0.0001;
         this.epsilonDecay = 0.995;
         this.gamma = 0.9;
         this.random = new Random();
@@ -98,8 +98,8 @@ public class DQN_BOT  extends BotAbstract{
     public DQN_BOT(String color,NeuralNetwork qNetwork, double epsilon, double epsilonMin, double epsilonDecay, double gamma) {
         super(color);
         this.qNetwork = qNetwork;
-        this.epsilon=epsilon;
-        this.epsilonMin = epsilonMin;
+        this.epsilon=0.0001;
+        this.epsilonMin = 0.0001;
         this.epsilonDecay=epsilonDecay;
         this.gamma = gamma;
         this.random = new Random();
@@ -161,13 +161,13 @@ public class DQN_BOT  extends BotAbstract{
        
         actionMapping.initializeActions(allValidMoves);
         int actionIndex = chooseAction(qValues, allValidMoves);
-        System.out.println("[LOG] actionIndex = " + actionIndex + 
-                       " / epsilon = " + epsilon +
-                       " / allValidMoves.size() = " + allValidMoves.size());
+        // System.out.println("[LOG] actionIndex = " + actionIndex + 
+        //                " / epsilon = " + epsilon +
+        //                " / allValidMoves.size() = " + allValidMoves.size());
 
-        if (epsilon > epsilonMin) {
-            epsilon *= epsilonDecay;
-        }
+        // if (epsilon > epsilonMin) {
+        //     epsilon *= epsilonDecay;
+        // }
 
         Move chosenMove;
         try{
@@ -240,9 +240,9 @@ public class DQN_BOT  extends BotAbstract{
         Experience experience = new Experience(state, action, reward, nextState, chosenMove, stateP, nexState);
         // replayBuffer.add(experience);
         double priority = calculateTDError(experience);
-        System.out.println("[DEBUG] storeExperience: actionIndex=" + action 
-        + ", chosenMove=" + chosenMove);
-        replayBuffer.add(experience, priority);
+        // System.out.println("[DEBUG] storeExperience: actionIndex=" + action 
+        // + ", chosenMove=" + chosenMove);
+        // replayBuffer.add(experience, priority);
        
     }
 
@@ -523,12 +523,12 @@ public class DQN_BOT  extends BotAbstract{
     public int chooseAction(double[] qValues, ArrayList<Move> allPossible) {
         int maxActions = Math.min(qValues.length, allPossible.size());
     
-        if (random.nextDouble() < epsilon) { 
-            return random.nextInt(allPossible.size());
-        } else {
+        // if (random.nextDouble() < epsilon) { 
+        //     return random.nextInt(allPossible.size());
+        // } else {
            
             return argMax(qValues, maxActions); 
-        }
+        // }
 
     }
 
