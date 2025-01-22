@@ -281,30 +281,8 @@ public class Reward {
 
     public static boolean removedOpponentRing(GameState previousState, GameState newState, String currentColor) {
         String opponentColor = currentColor.toLowerCase().equals("white") ? "black" : "white";
-        // System.out.println(opponentColor);
-        // System.out.println(currentColor);
-        // System.out.println(newState.getRingCountForColor(opponentColor));
-        // System.out.println(previousState.getRingCountForColor(opponentColor));
-        // System.out.println(previousState.ringsWhite);
-        // System.out.println(previousState.ringsBlack);
-        // System.out.println(previousState.chipsWhite);
-        // System.out.println(previousState.chipsBlack);
-        // System.out.println(previousState.winner);
-        // System.out.println(newState.winner);
         return newState.getRingCountForColor(opponentColor) < previousState.getRingCountForColor(opponentColor);
     }
-
-
-    public static boolean createdLine(GameState state,GameState prevState, int length, String currentColor) {
-        String currentPlayerColor = currentColor.toLowerCase();
-        return countLinesForPlayer(state, length, currentPlayerColor) >0;
-    }
-
-    public static boolean opponentCreatedLine(GameState previousState, GameState newState, String currentColor) {
-        String opponentColor = currentColor.toLowerCase().equals("white") ? "black" : "white"; 
-        return countLinesForPlayer(newState, 3, opponentColor) > countLinesForPlayer(previousState, 3, opponentColor);
-    }
-    
 
     public static boolean successfulMove(Move move, GameState previousState, GameState newState) {
         return !newState.equals(previousState); // Any valid state change is a success

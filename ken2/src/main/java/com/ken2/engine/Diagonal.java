@@ -21,8 +21,6 @@ public class Diagonal {
     private Game_Board gameBoard;
 
 
-
-
     public Diagonal(Direction direction, int[] diskPosition, Game_Board gameBoard){
         this.direction = direction;
         this.diskPosition = diskPosition;
@@ -95,14 +93,6 @@ public class Diagonal {
         // flipCoins();
         return possibleMoves;
     }
-    // public void flipCoins(ArrayList<Coin> coinFlips) {
-    //     for (Coin coin : coinFlips) {
-    //         coin.flipCoin();
-    //         Vertex vertex = gameBoard.getVertexByCoin(coin);
-    //             System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
-
-    //     }
-    // }
 
 
 

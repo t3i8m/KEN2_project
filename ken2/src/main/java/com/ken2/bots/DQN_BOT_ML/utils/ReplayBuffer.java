@@ -26,9 +26,7 @@ public class ReplayBuffer {
             priorities.remove(0);
         }
         buffer.add(newExperience);
-        // priorities.add(Math.abs(newExperience.getReward()));
-        // normalizePriorities();
-        // priorities.add(newExperience.getReward());
+
         priorities.add(Math.abs(priority) + 1e-5);
     }
 

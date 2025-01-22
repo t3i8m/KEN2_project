@@ -13,8 +13,6 @@ public class Move {
     private int xPosition;
     private int yPosition;
     private Direction direction; //enum object with direction params
-    // private int[] targetPosition = null;
-    // private int[] fromPosition = null;
     private Vertex startingVertex;
     private double reward = -10000000000.0;
 
@@ -38,25 +36,6 @@ public class Move {
         this.direction = direction;
 
     }
-
-    // public Move(int[] targetPosition, int[] fromPosition) {
-    //     this.targetPosition = targetPosition;
-    //     this.fromPosition = fromPosition;
-
-    //     this.xPosition = targetPosition[0];
-    //     this.yPosition = targetPosition[1];
-    //     this.coinFlip = new ArrayList<>(); // Initialize as empty list
-
-    // }
-
-    // public int[] getTargetPosition(){
-    //     return this.targetPosition;
-    // }
-
-    
-    // public int[] getFromPosition(){
-    //     return this.fromPosition;
-    // }
 
     public void setStartingVertex(Vertex newVertex){
         this.startingVertex = newVertex;

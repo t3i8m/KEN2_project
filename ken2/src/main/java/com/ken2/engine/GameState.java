@@ -69,13 +69,6 @@ public class GameState implements Cloneable{
 
     }
 
-    public void switchPlayer() {
-
-        this.currentPlayer = this.currentPlayer.toLowerCase().equals("white") ? "black" : "white";
-        this.isWhiteTurn = this.currentPlayer.equalsIgnoreCase("white");
-        // isWhiteTurn = !isWhiteTurn;
-    }
-
     public void switchPlayerNEW() {
         String oldPlayer = this.currentPlayer;
         if (this.currentPlayer.equalsIgnoreCase("black")) {
@@ -85,8 +78,6 @@ public class GameState implements Cloneable{
             this.currentPlayer = "black";
             this.isWhiteTurn=false;
         }
-        // System.out.println("Switched player from: " + oldPlayer + " to: " + this.currentPlayer);
-        // System.out.println(this.isWhiteTurn);
     }
 
     public void setCurrentPlayer(String newColor) {
@@ -98,8 +89,6 @@ public class GameState implements Cloneable{
 
         return this.currentPlayer;
     }
-    
-    
 
     public void setAllPossibleCoinsToRemove(List<Integer> llPossibleCoinsToRemove){
         this.allPossibleCoinsToRemove = llPossibleCoinsToRemove;
@@ -125,10 +114,6 @@ public class GameState implements Cloneable{
         return isWhiteTurn ? "White" : "Black";
     }
 
-    public void setIsWhite(boolean newVal){
-        isWhiteTurn=newVal;
-    }
-
     /**
      * Get current gameBoard
      * @return gameBoard
@@ -136,14 +121,6 @@ public class GameState implements Cloneable{
     public Game_Board getGameBoard(){
         return this.gameBoard;
     }
-
-    // public void switchTurn() {
-    //     isWhiteTurn = !isWhiteTurn;
-    //     chipPlacement = true;
-    //     chipPlaced = false;
-    //     selectedRingVertex = -1;
-    //     selectedChipVertex = -1;
-    // }
     
 
     /**
@@ -182,9 +159,6 @@ public class GameState implements Cloneable{
      * To reset variables for every turn
      */
     public void resetTurn() {
-        // isWhiteTurn = !isWhiteTurn;
-        // chipPlacement = true;
-        // chipPlaced = false;
     }
 
     public ArrayList<Vertex> getAllVertexOfColor(String color){
@@ -278,8 +252,6 @@ public class GameState implements Cloneable{
     
         return valuation;
     }
-    
-
 
     @Override
     public GameState clone() {

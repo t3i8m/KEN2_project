@@ -116,34 +116,6 @@ public class GameSimulation {
         return null; // No matching direction found
     }
 
-    // public Direction getDirectionBetween(int startX, int startY, int targetX, int targetY) {
-    //     int deltaX = targetX - startX;
-    //     int deltaY = targetY - startY;
-    
-    //     if (deltaX == 0 && deltaY == 0) {
-    //         return null;
-    //     }
-    
-    //     int gcd = gcd(Math.abs(deltaX), Math.abs(deltaY));
-    //     int stepX = (gcd != 0) ? deltaX / gcd : 0;
-    //     int stepY = (gcd != 0) ? deltaY / gcd : 0;
-    
-    //     for (Direction direction : Direction.values()) {
-    //         if (stepX == direction.getDeltaX() && stepY == direction.getDeltaY()) {
-    //             return direction;
-    //         }
-    //     }
-    
-    //     return null; 
-    // }
-    
-    // private int gcd(int a, int b) {
-    //     if (b == 0) {
-    //         return a;
-    //     }
-    //     return gcd(b, a % b);
-    // }
-
     // simulate a move from the given start/target positions
     public Move simulateMove(Game_Board board, Vertex startVertex, Vertex targetVertex){
 
@@ -171,15 +143,6 @@ public class GameSimulation {
         return null;
     }
 
-    public void flipCoins(ArrayList<Coin> coinFlips, Game_Board gameBoard) {
-        for (Coin coin : coinFlips) {
-            coin.flipCoin();
-            Vertex vertex = gameBoard.getVertexByCoin(coin);
-                // System.out.println("Coin color flipped and updated on the board at vertex: " + vertex.getVertextNumber());
-
-        }
-    }
-
     public void flipCoinsByVertex(ArrayList<Vertex> coinFlips, Game_Board gameBoard) {
         for (Vertex vertex : coinFlips) {
             Coin coin = (Coin)vertex.getCoin();
@@ -189,18 +152,6 @@ public class GameSimulation {
 
         }
     }
-
-    public HashMap<Vertex, ArrayList<Move>> getAllMovesFromAllPositions(ArrayList<Vertex> allRingPositions, Game_Board board) {
-        HashMap<Vertex, ArrayList<Move>> allMoves = new HashMap<>();
-        for (Vertex v : allRingPositions) {
-            if (v != null && v.hasRing()) {
-                ArrayList<Move> movesFromVertex = getMovesForRing(board, v); 
-                allMoves.put(v, movesFromVertex);
-            }
-        }
-        return allMoves;
-    }
-
     private ArrayList<Move> getMovesForRing(Game_Board board, Vertex ringPosition) {
         ArrayList<Move> possibleMoves = new ArrayList<>();
         Vertex[][] gameBoard = board.getBoard();

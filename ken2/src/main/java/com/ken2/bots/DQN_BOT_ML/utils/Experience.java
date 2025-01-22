@@ -28,10 +28,6 @@ public class Experience {
         return this.state;
     }
 
-    public double[] getnewState(){
-        return this.newState;
-    }
-
     public int getAction(){
         return this.action;
     }

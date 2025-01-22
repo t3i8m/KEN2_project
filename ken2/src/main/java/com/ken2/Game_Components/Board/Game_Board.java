@@ -1,7 +1,6 @@
 package com.ken2.Game_Components.Board;
 
-// import java.util.Dictionary;
-// import java.util.Hashtable;
+
 import java.util.ArrayList;
 
 import com.ken2.engine.GameState;
@@ -42,9 +41,6 @@ public class Game_Board {
         }
     }
 
-
-    
-
     public Vertex[][] getBoard(){
         return the_Board;
     }
@@ -63,26 +59,6 @@ public class Game_Board {
         }
         return vertices;
     }
-
-
-    /**
-     * Returns the total number of vertices on the board.
-     * @return The total number of non-null vertices.
-     */
-    public int getTotalVertices() {
-        int count = 0;
-        for (Vertex[] row : the_Board) {
-            for (Vertex v : row) {
-                if (v != null) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-
-
 
     /**
      * Fills the vertices according to the shape of the board
@@ -104,19 +80,11 @@ public class Game_Board {
                 the_Board[18-i][j]=null;
             }
         }
-        // assign a vertex number for each not null vertex
-        // System.out.println(this.strMaker());
         for (int i = 0; i < the_Board[0].length; i++) {
             // System.out.println("column: "+Integer.toString(i));
             for (int j=0; j < the_Board.length; j+=1) {
                 if (the_Board[j][i] != null) {
-                    // System.out.println("row: "+Integer.toString(j));
-                    the_Board[j][i].setVertexNumber(vertexNumber);  
-                    // System.out.println("x: "+Integer.toString(the_Board[j][i].getXposition()));
-                    // System.out.println("y: "+Integer.toString(the_Board[j][i].getYposition()));
-
-                    // System.out.println("Vertex number "+Integer.toString(the_Board[j][i].getVertextNumber()));
-
+                    the_Board[j][i].setVertexNumber(vertexNumber);
                     vertexNumber++;  
                 }
             }
@@ -213,16 +181,6 @@ public class Game_Board {
         }
     }
 
-    public void replaceRing(int prevVertexNumber,int newVertexNumber) {
-        Vertex pVertex = getVertex(prevVertexNumber);
-        Vertex nVertex = getVertex(newVertexNumber);
-        PlayObj choosenRing = pVertex.getRing();
-        if (choosenRing != null) {
-            pVertex.setRing(null);
-            nVertex.setRing(choosenRing);
-        } 
-    }
-
     public ArrayList<Vertex> getAllFreeVertexes(){
         ArrayList<Vertex> takenPositions = new ArrayList<Vertex>();
         for (int i = 0; i < this.the_Board.length; i++) {
@@ -234,22 +192,6 @@ public class Game_Board {
         }
         return takenPositions;
     }
-
-    // public ArrayList<Vertex> getVertexAllOfVertexesOfSpecificColour(String colour){
-    //     ArrayList<Vertex> positionsVertexes = new ArrayList<Vertex>();
-    //     for (int i = 0; i < this.the_Board.length; i++) {
-    //         for (int j = 0; j < this.the_Board[i].length; j++) {
-    //             if (the_Board[i][j] != null) {
-    //                 if(the_Board[i][j].hasRing()){
-    //                     if(the_Board[i][j].getRing().getColour().toLowerCase()==colour.toLowerCase()){
-    //                         positionsVertexes.add(the_Board[i][j]);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return positionsVertexes;
-    // }
     public Vertex getVertexByCoin(Coin coin) {
         for (int i = 0; i < the_Board.length; i++) {
             for (int j = 0; j < the_Board[i].length; j++) {
