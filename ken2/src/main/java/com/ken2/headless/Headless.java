@@ -130,59 +130,6 @@ public class Headless {
     public int getInvalidGames() {
         return notValid;
     }
-    
-
-    /**
-     * Runs the specified number of matches and writes detailed move data to a CSV file.
-     * Also prints overall statistics at the end.
-     */
-    public void exportGamesToCsv() {
-        String csvFilePath = "ken2\\src\\main\\java\\com\\ken2\\headless\\result\\moves_log.csv";
-        try (PrintWriter writer = new PrintWriter(new FileWriter(csvFilePath))) {
-            // Write CSV header
-            writer.println("GameIndex,MoveNumber,CurrentPlayer,MoveType,FromVertex,ToVertex,ChipsRemaining,WhiteScore,BlackScore,CoinsFlippedVertices,GameResult");
-
-            for (int i = 0; i < games; i++) {
-                List<GameMoveRecord> logs = new ArrayList<>();
-                String result;
-                try {
-                    result = runSingleGame(whiteBot, blackBot, logs, i + 1);
-                } catch (Exception ex) {
-                    System.out.println(ex);
-                    result = "u";
-                }
-                switch (result) {
-                    case "white": whiteWins++; break;
-                    case "black": blackWins++; break;
-                    case "draw":  draws++;     break;
-                    case "u":     notValid++;  break;
-                }
-
-                // Write each move log to CSV
-                for (GameMoveRecord record : logs) {
-                    writer.println(record.toCsvLine());
-                }
-            }
-
-            double whitePercent = 100.0 * whiteWins / games;
-            double blackPercent = 100.0 * blackWins / games;
-            double drawsPercent = 100.0 * draws / games;
-            double notValidPercent = 100.0 * notValid / games;
-
-
-            System.out.println("=========================================");
-            System.out.println("CSV Export completed: " + csvFilePath);
-            System.out.println("Games played:       " + games);
-            System.out.println(String.format("White wins:         %d (%.2f%%)", whiteWins, whitePercent));
-            System.out.println(String.format("Black wins:         %d (%.2f%%)", blackWins, blackPercent));
-            System.out.println(String.format("Draws:              %d (%.2f%%)", draws, drawsPercent));
-            System.out.println(String.format("Not Valid games:    %d (%.2f%%)", notValid, notValidPercent));
-            System.out.println("=========================================");
-
-        } catch (IOException e) {
-            System.err.println("Failed to write CSV file: " + e.getMessage());
-        }
-    }
 
     /**
      * Manages a single match between the two bots (White and Black).
@@ -204,9 +151,6 @@ public class Headless {
         int whiteScore = 0;
         int blackScore = 0;
         int moveNumber = 1;
-        //////
-        //////////
-        ///         episodeReward = 0.0;
         episodeReward = 0.0;
 
         gameEngine.currentState.winner=null;
@@ -465,9 +409,6 @@ public class Headless {
 
 
     }
-
-    
-
     /**
      * Changes the turn from one player to another.
      *

@@ -464,7 +464,6 @@ public class MainApp extends Application {
 
 
     private void switchPlayer() {
-        // gameEngine.currentState.currentPlayer=gameEngine.currentState.currentPlayer.equals("white")?"black":"white";
         gameEngine.currentState.isWhiteTurn = !gameEngine.currentState.isWhiteTurn;
         currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
     }
@@ -630,8 +629,6 @@ public class MainApp extends Application {
         } else {
         }
     }
-
-
     public void handleWinningRing(int vertex, GraphicsContext gc) {
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null && v.hasRing() && v.getRing().getColour().toLowerCase().equals(gameEngine.getWinningColor().toLowerCase())) {
@@ -661,7 +658,6 @@ public class MainApp extends Application {
             drawHighlighter(ringVertex, true); 
         }
     }
-
     private List<Integer> getRemovableRings() {
         List<Integer> removableRings = new ArrayList<>();
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
@@ -1084,12 +1080,6 @@ public class MainApp extends Application {
         return circle;
     }
 
-    // /
-    //  * created bot for the player if bot is selected
-    //  * @param color
-    //  * @param comboBox
-    //  */
-
     private void botTurn(GraphicsContext gc) {
         if (isGameOver) {
            // restartGame();
@@ -1158,9 +1148,6 @@ public class MainApp extends Application {
         }
         
         }
-
-    
-
     private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
 
         //clear canvas
