@@ -10,6 +10,10 @@ import java.util.concurrent.Executors;
 import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
 import com.ken2.bots.DQN_BOT_ML.utils.ReplayBuffer;
 
+/**
+ * Demonstrates parallel training of a DQN bot using multiple threads.
+ * Each thread runs a set of episodes in parallel, and the replay buffer is shared across threads.
+ */
 public class ParallelDQNExample {
     private static final int NUM_THREADS = 5;      
     private static final int EPISODES_PER_THREAD = 30;  
@@ -24,34 +28,26 @@ public class ParallelDQNExample {
 
         for (int i = 0; i < NUM_THREADS; i++) {
             executor.submit(new GameWorker(EPISODES_PER_THREAD, replayBuffer, dqnBot));
-
         }
 
         executor.shutdown();
-
-
         while (!executor.isTerminated()) {
             try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-
-            // double before = dqnBot.qNetwork.sumWeights();
             dqnBot.train(TRAIN_BATCH_SIZE);
-            // double after = dqnBot.qNetwork.sumWeights();
-
-            // System.out.println("Delta Weights = " + (after - before));
         }
 
         dqnBot.train(TRAIN_BATCH_SIZE);
-
-
         dqnBot.getQNetwork().saveWeights();
         dqnBot.saveEpsilon();
-        // for (int i = 0; i < dqnBot.qNetwork.getBatchLossHistory().size(); i++) {
-        //     System.out.println(i + "," +  dqnBot.qNetwork.getBatchLossHistory().get(i));
-        // }
-        // saveBatchLossHistory(dqnBot.qNetwork.getBatchLossHistory());
+       
         System.out.println("Done parallel training!");
     }
-
+    
+    /**
+     * Saves the batch loss history to a CSV file for post-training analysis.
+     *
+     * @param batchLossHistory List of batch loss values.
+     */
     private static void saveBatchLossHistory(List<Double> batchLossHistory) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\parallel_trainning\\batch_loss.csv"))) {
             writer.write("Batch,Loss\n");  
