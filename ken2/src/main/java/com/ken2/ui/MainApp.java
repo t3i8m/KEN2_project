@@ -197,6 +197,7 @@ public class MainApp extends Application {
         whitePlayerComboBox.getItems().add("RuleBased Bot");
         whitePlayerComboBox.getItems().add("AlphaBeta Bot");
         whitePlayerComboBox.getItems().add("DQN Bot");
+        whitePlayerComboBox.getItems().add("ML Alpha Beta");
 
 
         whitePlayerComboBox.getSelectionModel().selectFirst();
@@ -216,6 +217,7 @@ public class MainApp extends Application {
         blackPlayerComboBox.getItems().add("RuleBased Bot");
         blackPlayerComboBox.getItems().add("AlphaBeta Bot");
         blackPlayerComboBox.getItems().add("DQN Bot");
+        blackPlayerComboBox.getItems().add("ML Alpha Beta");
 
 
         blackPlayerComboBox.getSelectionModel().selectFirst();
