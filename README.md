@@ -32,7 +32,7 @@ mvn clean javafx:run
 ```
 
 ### Through an IDE
-To run the game through an IDE you need to run the [MainApp](src/main/java/com/ken2_1/ui/MainApp.java).
+To run the game through an IDE you need to run the [MainApp] "src/main/java/com/ken2_1/ui/MainApp.java".
 
 
 ## Rules
