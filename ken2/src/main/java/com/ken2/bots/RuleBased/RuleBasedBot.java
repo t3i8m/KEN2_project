@@ -8,13 +8,28 @@ import java.util.Random;
 import com.ken2.Game_Components.Board.*;
 import com.ken2.bots.BotAbstract;
 
+/**
+ * A Rule-Based Bot implementation for decision-making in a game.
+ * The bot places rings or makes moves based on a simple set of rules,
+ * often choosing moves randomly from valid options.
+ */
 public class RuleBasedBot extends BotAbstract {
 
+    /**
+     * Constructor to initialize the bot with its color.
+     *
+     * @param color The color of the bot ("white" or "black").
+     */
     public RuleBasedBot(String color){
         super(color);
     }
 
-
+    /**
+     * Decides the next move for the bot based on the current game state.
+     *
+     * @param state The current game state.
+     * @return The move to be executed by the bot.
+     */
     public Move makeMove(GameState state){
         Game_Board board = state.getGameBoard(); 
         Random random = new Random();
@@ -22,7 +37,6 @@ public class RuleBasedBot extends BotAbstract {
         ArrayList<Vertex> allFreePositions = board.getAllFreeVertexes();
 
         if (allFreePositions.isEmpty()) {
-            // System.out.println("No free positions available on the board.");
             return null;
         }
         
@@ -41,7 +55,6 @@ public class RuleBasedBot extends BotAbstract {
             while(work){
                 ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(super.getColor());
                 if (coordinatesOfTheRings == null || coordinatesOfTheRings.isEmpty()) {
-                    // System.out.println("No rings available for the color: " + super.getColor());
                     return null;
                 }
 
@@ -50,13 +63,8 @@ public class RuleBasedBot extends BotAbstract {
                 Move simulatedMove = selectRandomMove(gs, startingRing, board);
                 int vertexTo = board.getVertexNumberFromPosition(simulatedMove.getXposition(), simulatedMove.getYposition());
 
-                // System.out.println("STARTING RING "+startingRing.getVertextNumber());
-                // System.out.println("SIMULATED MOVE X "+simulatedMove.getXposition());
-                // System.out.println("SIMULATED MOVE Y "+simulatedMove.getYposition());
-
-                // Move simulatedMove = gs.simulateMove(board, startingRing, ); 
+               
                 if (simulatedMove == null || vertexTo<0) {
-                    // System.out.println("Simulation of the move has returned null. Check the GameSimulation class.");
                 } else {
                     work=false;
                     simulatedMove.setStartingVertex(startingRing);
@@ -68,6 +76,14 @@ public class RuleBasedBot extends BotAbstract {
         return null;
     }
 
+    /**
+     * Simulates and selects a random move for the given ring.
+     *
+     * @param gs            The game simulation object.
+     * @param startingRing  The vertex where the ring to be moved is located.
+     * @param board         The current game board.
+     * @return A randomly selected valid move.
+     */
     public Move selectRandomMove(GameSimulation gs, Vertex startingRing, Game_Board board){
         gs.startSimulation(board.getBoard().clone(), startingRing.getXposition(), startingRing.getYposition());
 
@@ -92,7 +108,11 @@ public class RuleBasedBot extends BotAbstract {
         return randomMove;
     }
 
-
+    /**
+     * Gets the name of the bot.
+     *
+     * @return The bot's name ("RuleBased").
+     */
     @Override
     public String getName() {
         return "RuleBased";

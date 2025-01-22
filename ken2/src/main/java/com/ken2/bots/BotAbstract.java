@@ -8,40 +8,60 @@ import com.ken2.Game_Components.Board.Vertex;
 import com.ken2.engine.Direction;
 import com.ken2.engine.GameState;
 
-// abstract class for all of the bots
+/**
+ * Abstract class for all bots.
+ * Implements common functionality and enforces a structure for derived bots.
+ */
 public abstract class BotAbstract implements Bot{
     private String color;
 
+    /**
+     * Constructor to initialize the bot's color.
+     *
+     * @param color The color of the bot ("white" or "black").
+     */
     public BotAbstract(String color){
         this.color = color;
     }
-    
+
+    /**
+     * Returns the color of the bot.
+     *
+     * @return The color ("white" or "black").
+     */
     @Override
     public String getColor(){
         return this.color;
     }
 
-    // randomly selects a ring to remove
+    /**
+     * Randomly selects a ring to remove from the board.
+     * 
+     * @param state The current game state.
+     * @return The vertex where the ring is removed, or null if no rings are available.
+     */
     @Override
     public Vertex removeRing(GameState state){
         Random random = new Random();
         ArrayList<Vertex> coordinatesOfTheRings = state.getAllVertexOfColor(this.getColor());
         if (coordinatesOfTheRings == null || coordinatesOfTheRings.isEmpty()) {
-            // System.out.println("No rings available for the color: " + this.getColor());
             return null;
         }
-        // System.out.println("-------------------------------");
         Vertex potentialRing = coordinatesOfTheRings.get(random.nextInt(coordinatesOfTheRings.size()));
-        // System.out.println("BOT WANTS TO REMOVE RING "+potentialRing.getVertextNumber());
 
         return potentialRing;
     }
 
+    /**
+     * Randomly selects chips to remove from the board as part of the game's rules.
+     * 
+     * @param state The current game state.
+     * @return A list of vertices where chips are removed, or null if not enough chips are available.
+     */
     @Override
     public ArrayList<Integer> removeChips(GameState state) {
         ArrayList<Integer> chipsToRemove = new ArrayList<>();
         List <Integer> allChips = state.getAllPossibleCoinsToRemove();
-        // System.out.println(allChips);
 
         if(allChips.size()<5 ||allChips==null){
             return null;
@@ -52,7 +72,6 @@ public abstract class BotAbstract implements Bot{
             chipsToRemove.add(vert);
             if(chipsToRemove.size()==4){
                 chipsToRemove.add(allChips.getLast());
-                // System.out.println("BOT SELECTED CHIPS TO REMOVE: " + chipsToRemove);
 
                 return chipsToRemove;
             }
