@@ -21,11 +21,10 @@ import com.ken2.engine.Move;
  */
 public class AlphaBetaBot extends BotAbstract {
 
-    // Fields to manage the current state of the bot and the game
-    private GameState StateRightNow; // Stores the current game state
-    private int chipsToRemove; // Number of chips left to remove in a winning sequence
-    private List<Integer> winningChips = new ArrayList<>(); // List of chips forming a winning pattern
-    private boolean switched = false; // Flag to check if the turn has switched during evaluation
+    private GameState StateRightNow; 
+    private int chipsToRemove; 
+    private List<Integer> winningChips = new ArrayList<>(); 
+    private boolean switched = false; 
 
     /**
      * Constructor to initialize the bot with its color.
