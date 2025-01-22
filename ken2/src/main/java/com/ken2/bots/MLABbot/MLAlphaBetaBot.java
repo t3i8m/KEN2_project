@@ -14,17 +14,6 @@ import java.util.*;
 public class MLAlphaBetaBot extends BotAbstract{
 
 
-    // Very simple
-
-    // Replace the filter moves with our Learning class
-
-    // Return just the top 3 moves of each direction if there exists any
-    // RETURN THE MOVES IN S LIST OF MOVES
-
-    // then the ALPHABETA runs as usual (< Lets use the new alpha beta method as that seems a bit better >)
-    // but we are not using the filter moves or the sortmoves that are previously coded in by TIM :)
-
-
     private GameState StateRightNow;
     private int chipsToRemove;
     private List<Integer> winningChips = new ArrayList<>();
@@ -175,27 +164,6 @@ public class MLAlphaBetaBot extends BotAbstract{
         }
 
         return new AlphaBetaResult(value, bestMove);
-    }
-
-
-
-
-
-
-
-    private List<Move> sortMoves(HashMap<Vertex, ArrayList<Move>> validMoves, GameState state, GameState prevState, GameEngine ge) {
-        List<Move> allMoves = new ArrayList<>();
-        for (ArrayList<Move> moves : validMoves.values()) {
-            allMoves.addAll(moves);
-        }
-
-        allMoves.sort((Move m1, Move m2) -> {
-            double value1 = evaluate(moveState(state, m1), prevState, ge, state.getCurrentColor(), m1);
-            double value2 = evaluate(moveState(state, m2), prevState, ge, state.getCurrentColor(), m2);
-            return Double.compare(value2, value1);
-        });
-
-        return allMoves;
     }
 
 

@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/Learnings.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/MLAlphaBetaBot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/savedrewards.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/utils/BotFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/utils/BotFactory.java" afterDir="false" />
+    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="Implemented the final Machine Learning Alpha Beta bot">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/MLAlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/MLAlphaBetaBot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,11 +79,24 @@
       <option name="presentableId" value="Default" />
       <updated>1732185827470</updated>
       <workItem from="1732185828776" duration="1391000" />
-      <workItem from="1737562042601" duration="690000" />
+      <workItem from="1737562042601" duration="1475000" />
     </task>
+    <task id="LOCAL-00001" summary="Implemented the final Machine Learning Alpha Beta bot">
+      <option name="closed" value="true" />
+      <created>1737562992889</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737562992889</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implemented the final Machine Learning Alpha Beta bot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented the final Machine Learning Alpha Beta bot" />
   </component>
 </project>
