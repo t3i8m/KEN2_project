@@ -1,8 +1,6 @@
 package com.ken2.bots.DQN_BOT_ML.utils;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.ken2.Game_Components.Board.Vertex;
@@ -11,8 +9,22 @@ import com.ken2.engine.GameEngine;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
+/**
+ * Provides methods to calculate rewards for specific game transitions.
+ * Used in reinforcement learning to train AI agents.
+ */
 public class Reward {
 
+    /**
+     * Calculates the total reward for a given move and state transition.
+     *
+     * @param engine        Game engine to evaluate the game state.
+     * @param previousState The game state before the move.
+     * @param move          The move performed.
+     * @param newState      The game state after the move.
+     * @param currentColor  The color of the current player ("white" or "black").
+     * @return The normalized reward value.
+     */
     public static double calculateReward(GameEngine engine, GameState previousState, Move move, GameState newState, String currentColor) {
         double reward = 0.0;
 
@@ -111,12 +123,24 @@ public class Reward {
         return Rewards.normalizeReward(reward);
     }
 
+    /**
+     * Determines if a line of chips of a specified length was created for your opponent.
+     */
     public static boolean opponentCreatedLine(GameState previousState, GameState newState, int length, String currentColor) {
         String opponentColor = currentColor.equalsIgnoreCase("white") ? "black" : "white";
         return countLinesForPlayer(newState, length, opponentColor) > countLinesForPlayer(previousState, length, opponentColor);
     }
     
-
+    /**
+     * Calculates the total reward for a given move and state transition. With no logs.
+     *
+     * @param engine        Game engine to evaluate the game state.
+     * @param previousState The game state before the move.
+     * @param move          The move performed.
+     * @param newState      The game state after the move.
+     * @param currentColor  The color of the current player ("white" or "black").
+     * @return The normalized reward value.
+     */
     public static double calculateRewardWITHOUT(GameEngine engine, GameState previousState, Move move, GameState newState, String currentColor) {
         double reward = 0.0;
 
@@ -199,14 +223,20 @@ public class Reward {
 
         return Rewards.normalizeReward(reward);
     }
-
+   
+    /**
+     * Determines if a line of chips of a specified length was created.
+     */
     public static boolean createdNewLine(GameState previousState, GameState newState, int length, String playerColor) {
         Set<String> previousLines = getAllLines(previousState, length, playerColor);
         Set<String> newLines = getAllLines(newState, length, playerColor);
-        newLines.removeAll(previousLines); // Only keep newly created lines
+        newLines.removeAll(previousLines); 
         return !newLines.isEmpty();
     }
 
+    /**
+     * Returns a set of all lines of a specific length for a player.
+     */
     private static Set<String> getAllLines(GameState state, int length, String playerColor) {
         Set<String> lines = new HashSet<>();
         Vertex[][] board = state.getGameBoard().getBoard();
@@ -232,7 +262,9 @@ public class Reward {
 
 
 
-
+    /**
+     * Checks if the current player wins the game.
+     */
     public static boolean isWin(GameEngine gameEngine, GameState state, String currentColor) {
         if (currentColor.toLowerCase().equals("white")) {
             return state.ringsWhite <= 2 && state.chipsRemaining >= 0; 
@@ -244,7 +276,9 @@ public class Reward {
         return false;
     }
     
-
+    /**
+     * Checks if the current player loses the game.
+     */
     public static boolean isLose(GameEngine gameEngine, GameState state, String currentColor) {
         if (currentColor.toLowerCase().equals("white")) {
             return state.ringsBlack <= 2 && state.chipsRemaining >= 0; 
@@ -257,38 +291,68 @@ public class Reward {
     }
     
 
-
+    /**
+     * Checks for the draw.
+     */
     public static boolean isDraw(GameState state) {
         return state.chipsRemaining <= 0;
     }
-    public static boolean removedYourRing(GameState previousState, GameState newState, String currentColor) {
 
+    /**
+     * Checks if the current player has had one of their rings removed.
+     *
+     * @param previousState The game state before the move.
+     * @param newState      The game state after the move.
+     * @param currentColor  The current player's color ("white" or "black").
+     * @return {@code true} if the player's ring count decreased; {@code false} otherwise.
+     */
+    public static boolean removedYourRing(GameState previousState, GameState newState, String currentColor) {
         return newState.getRingCountForColor(currentColor.toLowerCase()) < previousState.getRingCountForColor(currentColor.toLowerCase());
     }
-    public static boolean doubleRowCreated(GameState state, String currentColor) {
-        String currentPlayerColor = currentColor.toLowerCase();
-        return countLinesForPlayer(state, 5, currentPlayerColor) >= 2; // at least 2 rows of length 5
-    }
-//    public static boolean flippedMarkers(GameState previousState, GameState newState) {
-//    }
 
+
+    /**
+     * Determines if the player blocked their own potential line of chips.
+     *
+     * @param previousState The game state before the move.
+     * @param newState      The game state after the move.
+     * @param currentColor  The current player's color ("white" or "black").
+     * @return {@code true} if the number of 3-chip lines decreased; {@code false} otherwise.
+     */
     public static boolean selfBlock(GameState previousState, GameState newState, String currentColor) {
         String currentPlayerColor = previousState.currentPlayerColor().toLowerCase();
         return countLinesForPlayer(previousState, 3, currentPlayerColor) >
                 countLinesForPlayer(newState, 3, currentPlayerColor);
     }
 
-
+    /**
+     * Checks if the current player successfully removed one of the opponent's rings.
+     *
+     * @param previousState The game state before the move.
+     * @param newState      The game state after the move.
+     * @param currentColor  The current player's color ("white" or "black").
+     * @return {@code true} if the opponent's ring count decreased; {@code false} otherwise.
+     */
     public static boolean removedOpponentRing(GameState previousState, GameState newState, String currentColor) {
         String opponentColor = currentColor.toLowerCase().equals("white") ? "black" : "white";
         return newState.getRingCountForColor(opponentColor) < previousState.getRingCountForColor(opponentColor);
     }
-
+    
+    /**
+     * Checks if the move resulted in a valid state change.
+     *
+     * @param move          The move performed.
+     * @param previousState The game state before the move.
+     * @param newState      The game state after the move.
+     * @return {@code true} if the new state is different from the previous state; {@code false} otherwise.
+     */
     public static boolean successfulMove(Move move, GameState previousState, GameState newState) {
         return !newState.equals(previousState); // Any valid state change is a success
     }
 
-
+    /**
+     * Counts the number of lines of a specific length for the player.
+     */
     public static int countLinesForPlayer(GameState state, int length, String playerColor) {
         int count = 0; 
         Vertex[][] board = state.getGameBoard().getBoard();
@@ -309,7 +373,6 @@ public class Reward {
                                 if (!countedLines.contains(lineIdentifier)) {
                                     countedLines.add(lineIdentifier); 
                                     count++;
-                                    // System.out.println("Line of length " + length + " found starting at vertex " + start + " in direction " + dir.name()+" "+playerColor);
                                 }
                             }
                         }
@@ -321,7 +384,9 @@ public class Reward {
         return count;
     }
     
-
+    /**
+     * Counts the number of new chips.
+     */
     private static int countChipsInOneDirection(GameState state, int start, String chipColor, int dx, int dy) {
         int count = 0;
         int x = state.getGameBoard().getVertex(start).getXposition();
@@ -346,6 +411,9 @@ public class Reward {
         return count;
     }
 
+    /**
+     * Counts the number of chips flipped during a move.
+     */
     public static int[] countFlippedChips(GameState previousState, GameState newState, String currentColor) {
         int ownFlips = 0;
         int opponentFlips = 0;
@@ -373,6 +441,9 @@ public class Reward {
         return new int[]{ownFlips, opponentFlips};
     }
 
+    /**
+     * Generates a unique identifier for a line of chips.
+     */
     private static String generateLineIdentifier(int startVertex, Direction dir, int length) {
         return startVertex + "-" + dir.name() + "-" + length;
     }

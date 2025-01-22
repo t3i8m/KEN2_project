@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/Game_Components/Board/Game_Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/Game_Components/Board/Game_Board.java" afterDir="false" />
@@ -19,6 +20,11 @@
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/HeadlessMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/headless/HeadlessMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/GameAlerts.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/ui/MainApp.java" afterDir="false" />
+=======
+    <list default="true" id="b2d2ef9a-38c7-4fa5-94f8-7edc7e626ac0" name="Changes" comment="Implemented the final Machine Learning Alpha Beta bot">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/MLAlphaBetaBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/ken2/src/main/java/com/ken2/bots/MLABbot/MLAlphaBetaBot.java" afterDir="false" />
+>>>>>>> 0182bfe77f90fc8ef94ca3e188b9da3d54f2fc32
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +56,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -65,13 +72,37 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.MainApp.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Coding stuff/ProjectmAIN/ken2/src/main/java/com/ken2/bots/MLABbot",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+>>>>>>> 0182bfe77f90fc8ef94ca3e188b9da3d54f2fc32
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Coding stuff\ProjectmAIN\ken2\src\main\java\com\ken2\bots\MLABbot" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ken2.bots.MLABbot" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
       </set>
     </attachedChunks>
   </component>
@@ -84,10 +115,24 @@
       <option name="presentableId" value="Default" />
       <updated>1732185827470</updated>
       <workItem from="1732185828776" duration="1391000" />
+      <workItem from="1737562042601" duration="1475000" />
     </task>
+    <task id="LOCAL-00001" summary="Implemented the final Machine Learning Alpha Beta bot">
+      <option name="closed" value="true" />
+      <created>1737562992889</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737562992889</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implemented the final Machine Learning Alpha Beta bot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented the final Machine Learning Alpha Beta bot" />
   </component>
 </project>
