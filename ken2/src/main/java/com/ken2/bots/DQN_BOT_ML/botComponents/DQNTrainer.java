@@ -3,13 +3,15 @@ package com.ken2.bots.DQN_BOT_ML.botComponents;
 
 import com.ken2.bots.Bot;
 import com.ken2.bots.AlphaBetaBot.AlphaBetaBot;
-import com.ken2.bots.DQN_BOT_ML.botComponents.DQN_BOT;
 import com.ken2.bots.RuleBased.RuleBasedBot;
 import com.ken2.headless.Headless;
-import com.ken2.engine.GameState;
-import com.ken2.engine.GameEngine;
-import com.ken2.engine.Move;
 
+
+
+/**
+ * Class for training the DQN-based bot using self-play or play against predefined opponents.
+ * Handles training over multiple episodes and adjusts exploration over time.
+ */
 public class DQNTrainer {
     private DQN_BOT dqnBot;
     private int episodes;  
@@ -17,6 +19,16 @@ public class DQNTrainer {
     private double epsilonDecay; 
     private String opponentBotType; 
 
+
+    /**
+     * Constructor to initialize the trainer with the given parameters.
+     *
+     * @param dqnBot              The DQN-based bot to train.
+     * @param episodes            Number of training episodes.
+     * @param maxMovesPerEpisode  Maximum moves allowed per episode.
+     * @param epsilonDecay        Decay factor for the exploration rate.
+     * @param opponentBotType     Type of opponent bot to train against.
+     */
     public DQNTrainer(DQN_BOT dqnBot, int episodes, int maxMovesPerEpisode, double epsilonDecay, String opponentBotType) {
         this.dqnBot = dqnBot;
         this.episodes = episodes;
@@ -25,6 +37,10 @@ public class DQNTrainer {
         this.opponentBotType = opponentBotType; 
     }
 
+    /**
+     * Starts the training process for the DQN bot.
+     * Conducts multiple episodes of games and adjusts the bot's policy based on results.
+     */
     public void train() {
         int totalWhiteWins = 0;
         int totalBlackWins = 0;
@@ -33,7 +49,6 @@ public class DQNTrainer {
         Bot opponentBotA = initializeOpponentBot(opponentBotType);
 
         for (int episode = 1; episode <= episodes; episode++) {
-            // System.out.println("Starting Episode " + episode);
 
             Bot opponentBot = initializeOpponentBot(opponentBotType);
 
@@ -44,7 +59,6 @@ public class DQNTrainer {
             dqnBot.train(30); 
             dqnBot.epsilon = Math.max(dqnBot.epsilon * epsilonDecay, dqnBot.epsilonMin);
 
-            // System.out.println("Episode " + episode + " completed. Epsilon: " + dqnBot.epsilon);
             totalWhiteWins += gameSimulation.getWhiteWins();
             totalBlackWins += gameSimulation.getBlackWins();
             totalDraws += gameSimulation.getDraws();
@@ -63,6 +77,12 @@ public class DQNTrainer {
         dqnBot.saveEpsilon();
     }
 
+    /**
+     * Initializes the opponent bot based on the specified type.
+     *
+     * @param type The type of opponent bot (e.g., "alphabeta", "random").
+     * @return The initialized opponent bot.
+     */
     private Bot initializeOpponentBot(String type) {
         switch (type.toLowerCase()) {
             case "alphabeta":

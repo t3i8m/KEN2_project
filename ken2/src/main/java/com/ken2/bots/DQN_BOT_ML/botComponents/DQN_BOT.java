@@ -38,6 +38,11 @@ import com.ken2.engine.GameSimulation;
 import com.ken2.engine.GameState;
 import com.ken2.engine.Move;
 
+/**
+ * Implementation of a Deep Q-Network (DQN) based bot for decision-making in a game.
+ * The bot uses a neural network to approximate Q-values and chooses actions based
+ * on an ε-greedy policy.
+ */
 public class DQN_BOT  extends BotAbstract{
     public NeuralNetwork qNetwork;
     private NeuralNetwork targetNetwork; 
@@ -54,6 +59,11 @@ public class DQN_BOT  extends BotAbstract{
     private int updateCount = 0;
     private final int TARGET_UPDATE_FREQUENCY = 250;
 
+    /**
+     * Constructor to initialize the bot with its color.
+     *
+     * @param color The color of the bot (e.g., "white" or "black").
+     */
     public DQN_BOT(String color){
         super(color);
         this.actionSize = 100;
@@ -79,6 +89,16 @@ public class DQN_BOT  extends BotAbstract{
 
     }
 
+    /**
+     * Constructor for advanced initialization with custom parameters.
+     *
+     * @param color         The color of the bot.
+     * @param qNetwork      The Q-network for prediction.
+     * @param epsilon       Initial exploration rate.
+     * @param epsilonMin    Minimum exploration rate.
+     * @param epsilonDecay  Exploration decay rate.
+     * @param gamma         Discount factor for future rewards.
+     */
     public DQN_BOT(String color,NeuralNetwork qNetwork, double epsilon, double epsilonMin, double epsilonDecay, double gamma) {
         super(color);
         this.qNetwork = qNetwork;
@@ -88,8 +108,13 @@ public class DQN_BOT  extends BotAbstract{
         this.gamma = gamma;
         this.random = new Random();
     }
-    private int stepCount = 0;
 
+    /**
+     * Determines the next move for the bot based on the current game state.
+     *
+     * @param state The current game state.
+     * @return The move chosen by the bot.
+     */
     public Move makeMove(GameState state){
         Game_Board board = state.getGameBoard();
         GameEngine ge = new GameEngine();
@@ -100,8 +125,9 @@ public class DQN_BOT  extends BotAbstract{
         if (Arrays.stream(stateVector).anyMatch(v -> Double.isNaN(v) || Double.isInfinite(v))) {
             System.out.println("stateVector has NaN/Inf: " + Arrays.toString(stateVector));
         }
+
+        // Predict Q-values for the current state
         double[] qValues = qNetwork.predict(stateVector);
-        // System.out.println("[LOG] Q-values(raw) = " + Arrays.toString(qValues));
 
         if (Arrays.stream(qValues).anyMatch(Double::isNaN)) {
             System.out.println("NaN in qValues after predict for state=" 
@@ -115,6 +141,7 @@ public class DQN_BOT  extends BotAbstract{
             return null;
         }
 
+        // If fewer than 10 rings are placed, place a new ring randomly
         if (state.ringsPlaced < 10) {
             Vertex targetVertex = allFreePositions.get(random.nextInt(allFreePositions.size()));
             int vertexNumber = targetVertex.getVertextNumber();
@@ -129,13 +156,11 @@ public class DQN_BOT  extends BotAbstract{
         ArrayList<Vertex> allRingPositions = state.getAllVertexOfColor(state.currentPlayerColor());
         HashMap<Vertex, ArrayList<Move>> vertexMove = ge.getAllMovesFromAllPositions(allRingPositions, state.gameBoard);
         ArrayList<Move> allValidMoves = filterValidMoves(vertexMove, state);
-        // ArrayList<Move> allValidMoves= sortMoves(allValidMoves2,state,  state, new GameEngine());
 
+        // Apply a mask to filter valid actions
         this.mask = fillMask(allValidMoves);
-        // System.out.println("[LOG] mask = " + Arrays.toString(this.mask));
 
         qValues = filterQValues(qValues, this.mask);
-        // System.out.println("[LOG] Q-values(filtered) = " + Arrays.toString(qValues));
 
        
         actionMapping.initializeActions(allValidMoves);
@@ -156,53 +181,29 @@ public class DQN_BOT  extends BotAbstract{
             System.out.println(ex);
             chosenMove=null;
         }
-        System.out.println(
-            "[DEBUG] Chosen index = " + actionIndex +
-            ", chosenMove = " + chosenMove
-        );
-        // System.out.println(chosenMove);
-        // // System.out.println(chosenMove);
-        // System.out.println("Q Values: " + Arrays.toString(qValues));
-        // System.out.println("Chosen Action Index: " + actionIndex);
-        // System.out.println("Chosen Move: " + chosenMove);
-        System.out.println("[DEBUG] actionIndex=" + actionIndex 
-            + ", from=" + chosenMove.getStartingVertex().getVertextNumber()
-            + ", to=" + board.getVertexNumberFromPosition(
-                chosenMove.getXposition(),
-                chosenMove.getYposition()
-            )
-            + ", direction=" + chosenMove.getDirection()
-        );
+
 
         if (chosenMove == null || allValidMoves.size()==0)  {
-            System.out.println("All Possible Moves: " + allValidMoves.size());
+            // System.out.println("All Possible Moves: " + allValidMoves.size());
 
-            System.out.println("Action Index " + actionIndex + " does not map to a valid move!");
+            // System.out.println("Action Index " + actionIndex + " does not map to a valid move!");
         }
         GameState nextState = moveState(state.clone(), chosenMove);
 
         double reward = Reward.calculateRewardWITHOUT(ge, state, chosenMove, nextState, super.getColor());
         BoardTransformation boardTransformNEW = new BoardTransformation(nextState.getGameBoard());
-    
         chosenMove.setReward(reward);
-        // System.out.println("Episode reward = " + reward);
-        System.out.println("[LOG] Chosen Move = " + chosenMove + " / reward = " + reward);
         
-        // System.out.println(reward);
-        // System.out.println(Arrays.toString(stateVector));
-        // System.out.println(Arrays.toString(boardTransformNEW.toVector(getColor())));
-        // System.out.println(chosenMove);
-        // System.out.println(nextState.getGameBoard().strMaker());
+        // Store the experience for training
         storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"white":"black"), chosenMove, state, nextState);
-        // storeExperience(stateVector, actionIndex, reward, boardTransformNEW.toVector(super.getColor().toLowerCase().equals("white") ?"black":"white"));
-        stepCount++;
 
-        // if (replayBuffer.getBuffer().size() > 32 && stepCount % 10 == 0) {
-        //     train(32);
-        // }
         return chosenMove;
     }
 
+    /**
+     * Saves the current value of epsilon to a file.
+     * The epsilon value is used for the ε-greedy policy.
+     */
     public void saveEpsilon(){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\NeuralNetwork\\weights\\savedEpsilon.txt"))) {
             writer.write(String.valueOf(this.epsilon));
@@ -212,6 +213,10 @@ public class DQN_BOT  extends BotAbstract{
 
     }
 
+    /**
+     * Loads the epsilon value from a file.
+     * If the file does not exist, epsilon defaults to 1.0.
+     */
     public void loadEpsilon(){
         double loadedEps = 1.0; 
         try (BufferedReader reader = new BufferedReader(new FileReader("ken2\\src\\main\\java\\com\\ken2\\bots\\DQN_BOT_ML\\NeuralNetwork\\weights\\savedEpsilon.txt"))) {
@@ -223,6 +228,18 @@ public class DQN_BOT  extends BotAbstract{
 
     }
 
+    /**
+     * Stores an experience in the replay buffer.
+     * The experience includes the current state, action, reward, and next state.
+     *
+     * @param state      The current state as a feature vector.
+     * @param action     The action taken in the current state.
+     * @param reward     The reward received for taking the action.
+     * @param nextState  The resulting state after the action.
+     * @param chosenMove The chosen move that led to the experience.
+     * @param stateP     The full current game state.
+     * @param nexState   The full next game state.
+     */
     public void storeExperience(double[] state, int action, double reward, double[] nextState, Move chosenMove, GameState stateP, GameState nexState) {
         Experience experience = new Experience(state, action, reward, nextState, chosenMove, stateP, nexState);
         // replayBuffer.add(experience);
@@ -233,6 +250,13 @@ public class DQN_BOT  extends BotAbstract{
        
     }
 
+    /**
+     * Calculates the Temporal Difference (TD) error for a given experience.
+     * The TD error is used to prioritize experiences in the replay buffer.
+     *
+     * @param exp The experience for which the TD error is calculated.
+     * @return The TD error value.
+     */
     public double calculateTDError(Experience exp) {
         double[] currentQ = qNetwork.predict(exp.getState());
         double[] nextQ = targetNetwork.predict(exp.getNextState());
@@ -246,7 +270,14 @@ public class DQN_BOT  extends BotAbstract{
         return Math.abs(reward + gamma * maxNextQ - currentQ[action]);
     }
     
-
+    /**
+     * Filters Q-values based on the mask of valid actions.
+     * Invalid actions are assigned a very low value.
+     *
+     * @param prevQvalues The original Q-values.
+     * @param mask        The mask indicating valid actions.
+     * @return The filtered Q-values.
+     */
     private double[] filterQValues(double[] prevQvalues, int[] mask){
         // double[] newQValues = prevQvalues;
         for(int i = 0; i<mask.length;i++){
@@ -259,6 +290,13 @@ public class DQN_BOT  extends BotAbstract{
         return prevQvalues;
     }
 
+    /**
+     * Creates a mask indicating which actions are valid.
+     * The mask size matches the total number of possible actions.
+     *
+     * @param allMoves The list of all valid moves.
+     * @return The mask array, where 1 indicates a valid action and 0 indicates invalid.
+     */
     private int[] fillMask(ArrayList<Move> allMoves){
         int[] filledMask = new int[actionSize];
 
@@ -273,6 +311,14 @@ public class DQN_BOT  extends BotAbstract{
         return filledMask;
     }
 
+    /**
+     * Filters valid moves from the given vertex-move mapping.
+     * A move is considered valid if it passes the game's validation rules.
+     *
+     * @param vertexMove A map of vertices and their associated moves.
+     * @param state      The current game state.
+     * @return A list of valid moves.
+     */
     private ArrayList<Move> filterValidMoves(HashMap<Vertex, ArrayList<Move>> vertexMove, GameState state) {
         GameEngine ge = new GameEngine();
         ArrayList<Move> validMoves = new ArrayList<>();
@@ -294,7 +340,11 @@ public class DQN_BOT  extends BotAbstract{
         return validMoves;
     }
 
-    
+    /**
+     * Trains the Q-network using a mini-batch of experiences from the replay buffer.
+     *
+     * @param batchSize The number of experiences to sample from the replay buffer.
+     */
     public void train(int batchSize){
         ArrayList<Experience> buffer = replayBuffer.getBuffer();
 
@@ -319,6 +369,7 @@ public class DQN_BOT  extends BotAbstract{
             }
 
             double[] qValues = qNetwork.predict(state);
+
             if (Arrays.stream(qValues).anyMatch(Double::isNaN)) {
                 System.out.println("NaN in qValues after predict for state=" 
                                    + Arrays.toString(state)
@@ -340,70 +391,76 @@ public class DQN_BOT  extends BotAbstract{
     
             double targetQ = reward + (gamma * maxNextQ);
 
-            // double targetQ;
-            // if (newState.winner!=null) {
-            //     targetQ = reward; 
-            // } else {
-            //     targetQ = reward + gamma * maxNextQ;
-            // }
+
 
             double tdError = Math.abs(targetQ - qValues[action]);
             double oldValue = qValues[action];
-            System.out.println("[TRAIN LOG] reward=" + reward +
-            " oldQ=" + oldValue +
-            " targetQ=" + targetQ +
-            " tdError=" + tdError);
-        
-
-            // double priority = Math.pow(tdError + epsilon, 1);
-            // System.out.println(tdError);
-            // System.out.println("Target Q: "+targetQ);
+ 
+   
             qValues[action] = targetQ;
-            // double before = qNetwork.sumWeights();
 
             qNetwork.trainMiniBatch(new double[][] { state }, new double[][] { qValues });
-            // double after = qNetwork.sumWeights();
-            // System.out.println("Delta Weights = " + (after - before));
+           
             double mse = 0.5 * Math.pow((targetQ - oldValue), 2); 
             totalLoss += mse;
 
         }
         double avgLoss = totalLoss / sample.size();
-        System.out.println("[LOG][TRAIN] batchSize=" + sample.size() + 
-                        ", avgLoss=" + avgLoss);
+        
         updateCount += 1;
         if (updateCount % TARGET_UPDATE_FREQUENCY == 0) {
 
             updateTargetNetwork();
-            System.out.println("[LOG][TRAIN] Target network updated!");
 
         }
     }
 
+    /**
+     * Updates the target network by copying weights from the Q-network.
+     */
     private void updateTargetNetwork() {
         copyWeights(qNetwork, targetNetwork);
     }
 
+    /**
+     * Creates a deep copy of the given neural network.
+     * The new network will have the same structure, weights, and biases as the source network.
+     *
+     * @param source The neural network to copy.
+     * @return A new neural network instance identical to the source.
+     */
     private NeuralNetwork copyNetwork(NeuralNetwork source) {
-    NeuralNetwork newNet = new NeuralNetwork(source.getLearningRate(), source.getLossFunction());
-    
-    for (Layer layer : source.getLayers()) {
-        int numberOfNeurons = layer.getNeurons().size();
-        int inputSize = layer.getNeurons().get(0).getWeights().length;
+        NeuralNetwork newNet = new NeuralNetwork(source.getLearningRate(), source.getLossFunction());
         
-        Layer newLayer = new Layer(numberOfNeurons, inputSize, layer.getActivationFunction());
-        
-        newNet.addLayer(newLayer);
-    }
-        
-        copyWeights(source, newNet);
-        return newNet;
+        for (Layer layer : source.getLayers()) {
+            int numberOfNeurons = layer.getNeurons().size();
+            int inputSize = layer.getNeurons().get(0).getWeights().length;
+            
+            Layer newLayer = new Layer(numberOfNeurons, inputSize, layer.getActivationFunction());
+            
+            newNet.addLayer(newLayer);
+        }
+            
+            copyWeights(source, newNet);
+            return newNet;
     }
 
+    /**
+     * Returns the Q-network used by the bot.
+     * The Q-network is responsible for predicting Q-values for states.
+     *
+     * @return The Q-network instance.
+     */
     public NeuralNetwork getQNetwork(){
         return this.qNetwork;
     }
-
+    /**
+     * Copies weights and biases from one neural network to another.
+     * Assumes that the source and target networks have the same structure.
+     *
+     * @param from The source network from which weights and biases are copied.
+     * @param to   The target network to which weights and biases are copied.
+     */
     private void copyWeights(NeuralNetwork from, NeuralNetwork to) {
         for (int i = 0; i < from.getLayers().size(); i++) {
             Layer sourceLayer = from.getLayers().get(i);
@@ -424,7 +481,13 @@ public class DQN_BOT  extends BotAbstract{
         }
     }
     
-
+    /**
+     * Generates a mask indicating valid actions based on the given state vector.
+     * The mask is used to filter invalid actions during Q-value prediction.
+     *
+     * @param nextStateVector The state vector representing the next state.
+     * @return An array where 1 indicates a valid action and 0 indicates an invalid action.
+     */
     private int[] getMask(double[] nextStateVector) {
 
         BoardTransformation bf = new BoardTransformation();
@@ -452,66 +515,35 @@ public class DQN_BOT  extends BotAbstract{
             }
         }
         return mask;
-        }
+    }
 
+    /**
+     * Chooses an action based on Q-values and an ε-greedy strategy.
+     *
+     * @param qValues      The Q-values for the current state.
+     * @param allPossible  The list of all possible moves.
+     * @return The index of the chosen action.
+     */
     public int chooseAction(double[] qValues, ArrayList<Move> allPossible) {
         int maxActions = Math.min(qValues.length, allPossible.size());
     
         if (random.nextDouble() < epsilon) { 
-            // System.out.println(random.nextDouble());
             return random.nextInt(allPossible.size());
         } else {
-            System.out.println("Q values:"+Arrays.toString(qValues));
-            System.out.println("Max:"+argMax(qValues, maxActions));
+           
             return argMax(qValues, maxActions); 
         }
-        // return argMax(qValues, maxActions); 
 
     }
 
-    private ArrayList<Move> sortMoves(ArrayList<Move> validMoves, GameState state, GameState prevState, GameEngine ge) {
 
-    
-        validMoves.sort((Move m1, Move m2) -> {
-            double value1 = evaluate(moveState(state, m1), prevState, ge, state.getCurrentColor(), m1);
-            double value2 = evaluate(moveState(state, m2), prevState, ge, state.getCurrentColor(), m2);
-            return Double.compare(value2, value1);
-        });
-    
-        return validMoves;
-    }
-
-    private double evaluate(GameState state,GameState prevState, GameEngine ge, String color, Move chosenMove) {
-        if (state == null || prevState == null || chosenMove == null) {
-            System.out.println("Invalid inputs to evaluate: state=" + state + ", prevState=" + prevState + ", chosenMove=" + chosenMove);
-            return Double.NEGATIVE_INFINITY;
-        }
-        
-        // double valuation = 0;
-        // String opponentColor = color.equals("white") ? "black" : "white";
-
-        // double inOurfavour = 0.5;
-        // double notOurfavour = -0.25;
-        // double ourWin = 1;
-        // double theirWin = -1;
-
-        // valuation += state.getChipsCountForColor(color) * inOurfavour
-        //         + state.getChipsCountForColor(opponentColor) * notOurfavour;
-
-        // valuation += state.getRingCountForColor(color) * inOurfavour
-        //         + state.getRingCountForColor(opponentColor) * notOurfavour;
-
-        // valuation += ge.winningColor(state.getVertexesOfFlippedCoins()).equals(color) ? ourWin : theirWin;
-        double valuation = Reward.calculateRewardWITHOUT(ge, prevState, chosenMove, state, color);
-        // System.out.println("Evaluation result: " + valuation + " for move: " + chosenMove);
-        if (Double.isInfinite(valuation) || Double.isNaN(valuation)) {
-            System.out.println("Error in evaluation: value is invalid. Returning fallback value.");
-            return 0; 
-        }
-        return valuation;
-    }
-    
-    //finds an index with the highest q-value
+    /**
+     * Finds the index of the action with the highest Q-value.
+     *
+     * @param qValues    The array of Q-values for the available actions.
+     * @param maxActions The number of actions to consider (limits the search to the first maxActions).
+     * @return The index of the action with the highest Q-value.
+     */
     public int argMax(double[] qValues, int maxActions) {
         int bestAction = 0;
         double bestq = 0.0;
@@ -521,30 +553,38 @@ public class DQN_BOT  extends BotAbstract{
                 bestq=qValues[i];
             }
         }
-        // System.out.println("BEST Q: "+bestq);
 
-        // System.out.println(bestq);
         return bestAction;
     }
     
-
+    /**
+     * Returns the name of the bot.
+     *
+     * @return The name of the bot as a string.
+     */
     public String getName() {
         return "DQN BOT";
     }
 
+    /**
+     * Initializes the Q-network with the desired architecture.
+     * The network is configured with a specific number of layers, neurons, and activation functions.
+     */
     public void initializeNN(){
         this.qNetwork = new NeuralNetwork(0.001, new MSE());
-        // qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
-        // qNetwork.addLayer(new Layer(256, 128, new ReLu())); 
-        // qNetwork.addLayer(new Layer(64, 256, new ReLu())); 
-        // qNetwork.addLayer(new Layer(this.actionSize, 64, new Linear())); 
         qNetwork.addLayer(new Layer(128, 86, new ReLu()));  // first hidden layer
         qNetwork.addLayer(new Layer(64, 128, new ReLu())); 
         qNetwork.addLayer(new Layer(this.actionSize, 64, new Linear())); 
     }
 
 
-
+    /**
+     * Validates whether a move is allowed based on the current game state and move details.
+     *
+     * @param state The current game state.
+     * @param move  The move to validate.
+     * @return True if the move is valid, false otherwise.
+     */
     private boolean isValidMove(GameState state, Move move) {
         Vertex[][] board = state.getGameBoard().getBoard();
         Vertex startVertex = move.getStartingVertex();
@@ -639,6 +679,13 @@ public class DQN_BOT  extends BotAbstract{
         return true;
     }
 
+    /**
+     * Applies a move to the current game state and returns the resulting state.
+     *
+     * @param state The current game state.
+     * @param move  The move to apply.
+     * @return The new game state after applying the move.
+     */
     private GameState moveState(GameState state, Move move) {
         GameState newState = state.clone();
         
@@ -766,6 +813,13 @@ public class DQN_BOT  extends BotAbstract{
         return tempEngine.currentState;
     }
 
+    /**
+     * Handles the scenario where a winning condition is met.
+     *
+     * @param tempEngine   The game engine instance.
+     * @param thisBot      The bot making the move.
+     * @param opponentBot  The opponent bot.
+     */
     public void handleWinningRing(int vertex, GameEngine gameEngine) {
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null
@@ -781,6 +835,14 @@ public class DQN_BOT  extends BotAbstract{
         }
     }
 
+    /**
+     * Removes a chip from the game board if it is part of a winning combination.
+     * Updates the game state accordingly and handles chip removal limits.
+     *
+     * @param vertex      The vertex index of the chip to be removed.
+     * @param gameEngine  The game engine managing the current game state.
+     * @param activeBot   The bot currently taking the action.
+     */
     public void handleChipRemove(int vertex, GameEngine gameEngine, Bot activeBot) {
         if (!gameEngine.getWinningChips().contains(vertex)) {
             return;
@@ -824,6 +886,11 @@ public class DQN_BOT  extends BotAbstract{
         }
     }
 
+    /**
+     * Switches the turn between players by toggling the current player's color.
+     *
+     * @param state The current game state.
+     */
     private void switchTurn(GameState state) {
         state.isWhiteTurn = !state.isWhiteTurn;
     }
