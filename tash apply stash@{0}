@@ -1,0 +1,60 @@
+ .idea/libraries/lib.xml                            |   2 [32m+[m
+ .idea/libraries/lib1.xml                           |  10 [32m+[m
+ .idea/misc.xml                                     |   1 [31m-[m
+ .idea/workspace.xml                                |  90 [32m++[m[31m-[m
+ .../java/com/ken2/Game_Components/Board/Board.java |  21 [32m+[m[31m-[m
+ .../java/com/ken2/Game_Components/Board/Coin.java  |  45 [32m+[m[31m-[m
+ .../com/ken2/Game_Components/Board/Game_Board.java | 104 [32m++[m[31m--[m
+ .../java/com/ken2/Game_Components/Board/Ring.java  |  28 [32m+[m[31m-[m
+ ken2/src/main/java/com/ken2/engine/Diagonal.java   |  10 [31m-[m
+ ken2/src/main/java/com/ken2/engine/GameEngine.java | 316 [32m+++[m[31m--------[m
+ .../main/java/com/ken2/engine/GameSimulation.java  |  87 [31m---[m
+ ken2/src/main/java/com/ken2/engine/GameState.java  |  46 [31m--[m
+ ken2/src/main/java/com/ken2/engine/Move.java       |  21 [31m-[m
+ ken2/src/main/java/com/ken2/ui/GameAlerts.java     |  68 [32m+[m[31m--[m
+ ken2/src/main/java/com/ken2/ui/MainApp.java        | 609 [32m++++++[m[31m---------------[m
+ .../com/ken2/Game_Components/Board/Board.class     | Bin [31m524[m -> [32m524[m bytes
+ .../com/ken2/Game_Components/Board/Coin.class      | Bin [31m1351[m -> [32m1357[m bytes
+ .../ken2/Game_Components/Board/Game_Board.class    | Bin [31m8712[m -> [32m8362[m bytes
+ .../com/ken2/Game_Components/Board/PlayObj.class   | Bin [31m471[m -> [32m274[m bytes
+ .../com/ken2/Game_Components/Board/Ring.class      | Bin [31m904[m -> [32m914[m bytes
+ .../com/ken2/Game_Components/Board/Vertex.class    | Bin [31m2300[m -> [32m2300[m bytes
+ .../Game_Components/Board/game_board_tester.class  | Bin [31m1179[m -> [32m1179[m bytes
+ .../com/ken2/bots/AlphaBetaBot/AlphaBetaBot.class  | Bin [31m18325[m -> [32m17940[m bytes
+ .../ken2/bots/AlphaBetaBot/AlphaBetaResult.class   | Bin [31m664[m -> [32m664[m bytes
+ .../target/classes/com/ken2/bots/BotAbstract.class | Bin [31m2320[m -> [32m2306[m bytes
+ .../DQN_BOT_ML/NeuralNetwork/NeuralNetwork.class   | Bin [31m6867[m -> [32m6676[m bytes
+ .../ActivationFunctions/Linear.class               | Bin [31m707[m -> [32m707[m bytes
+ .../ActivationFunctions/ReLu.class                 | Bin [31m767[m -> [32m767[m bytes
+ .../ActivationFunctions/Sigmoid.class              | Bin [31m869[m -> [32m869[m bytes
+ .../neuralNetworkComponents/Layer.class            | Bin [31m4658[m -> [32m4600[m bytes
+ .../neuralNetworkComponents/LoosFunction/MAE.class | Bin [31m1016[m -> [32m1016[m bytes
+ .../neuralNetworkComponents/LoosFunction/MSE.class | Bin [31m1029[m -> [32m1033[m bytes
+ .../neuralNetworkComponents/Neuron.class           | Bin [31m2392[m -> [32m2396[m bytes
+ .../bots/DQN_BOT_ML/botComponents/DQNTrainer.class | Bin [31m3455[m -> [32m3485[m bytes
+ .../bots/DQN_BOT_ML/botComponents/DQN_BOT.class    | Bin [31m28395[m -> [32m27994[m bytes
+ .../bots/DQN_BOT_ML/botComponents/DQN_MAIN.class   | Bin [31m917[m -> [32m917[m bytes
+ .../DQN_BOT_ML/parallel_trainning/GameWorker.class | Bin [31m1151[m -> [32m1153[m bytes
+ .../parallel_trainning/ParallelDQNExample.class    | Bin [31m4022[m -> [32m3972[m bytes
+ .../ken2/bots/DQN_BOT_ML/utils/ActionIndexer.class | Bin [31m1970[m -> [32m1961[m bytes
+ .../DQN_BOT_ML/utils/BoardTransformation.class     | Bin [31m4741[m -> [32m4812[m bytes
+ .../ken2/bots/DQN_BOT_ML/utils/Experience.class    | Bin [31m1199[m -> [32m1199[m bytes
+ .../ken2/bots/DQN_BOT_ML/utils/ReplayBuffer.class  | Bin [31m4876[m -> [32m4917[m bytes
+ .../com/ken2/bots/DQN_BOT_ML/utils/Reward.class    | Bin [31m11086[m -> [32m11138[m bytes
+ .../com/ken2/bots/DQN_BOT_ML/utils/Rewards.class   | Bin [31m3869[m -> [32m3939[m bytes
+ .../com/ken2/bots/RuleBased/RuleBasedBot.class     | Bin [31m3996[m -> [32m3972[m bytes
+ ken2/target/classes/com/ken2/engine/Diagonal.class | Bin [31m2711[m -> [32m2707[m bytes
+ .../target/classes/com/ken2/engine/Direction.class | Bin [31m1951[m -> [32m2039[m bytes
+ .../classes/com/ken2/engine/GameEngine.class       | Bin [31m18143[m -> [32m14881[m bytes
+ .../classes/com/ken2/engine/GameSimulation.class   | Bin [31m7407[m -> [32m4869[m bytes
+ .../target/classes/com/ken2/engine/GameState.class | Bin [31m9293[m -> [32m8318[m bytes
+ ken2/target/classes/com/ken2/engine/Move.class     | Bin [31m4730[m -> [32m4688[m bytes
+ .../classes/com/ken2/headless/GameMoveRecord.class | Bin [31m1306[m -> [32m1298[m bytes
+ .../classes/com/ken2/headless/Headless.class       | Bin [31m15901[m -> [32m15594[m bytes
+ .../classes/com/ken2/headless/HeadlessMain.class   | Bin [31m1222[m -> [32m1222[m bytes
+ ken2/target/classes/com/ken2/ui/GameAlerts.class   | Bin [31m2929[m -> [32m2027[m bytes
+ ken2/target/classes/com/ken2/ui/MainApp.class      | Bin [31m43569[m -> [32m42265[m bytes
+ .../target/classes/com/ken2/utils/BotFactory.class | Bin [31m1025[m -> [32m1067[m bytes
+ ken2/target/classes/com/ken2/utils/Player.class    | Bin [31m1042[m -> [32m1042[m bytes
+ ken2/target/classes/module-info.class              | Bin [31m246[m -> [32m255[m bytes
+ 59 files changed, 496 insertions(+), 962 deletions(-)
