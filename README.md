@@ -66,9 +66,3 @@ The game is played in turns. Players take turns performing the following steps:
 - **Move Restrictions**: You cannot move a ring if it would land on another ring. The movement must end on an empty intersection.
 - **Double Rows**: If creating a row of five simultaneously creates more rows, you must first complete the actions for the primary row before handling the additional rows.
 - **Tie Handling**: If both players remove the third ring during the same turn, the game results in a **tie**.
-
-## What is already done
-
-## What needs to be completed
-
-## Licensing 
