@@ -29,7 +29,7 @@ public class MLAlphaBetaBot extends BotAbstract{
 
     public Move makeMove(GameState state) {
 
-        System.out.println(weights.getRewardsAsString());
+        // System.out.println(weights.getRewardsAsString());
 
         this.StateRightNow = state.clone();
         double alpha = Double.NEGATIVE_INFINITY;
@@ -108,7 +108,7 @@ public class MLAlphaBetaBot extends BotAbstract{
 
 
         if (validMoves.isEmpty()) {
-            System.out.println("No valid moves at depth=" + depth);
+            // System.out.println("No valid moves at depth=" + depth);
 
             return new AlphaBetaResult(evaluate(state, prevState, ge, prevState.getCurrentColor().toLowerCase(), currentMove), null);
         }
@@ -205,13 +205,13 @@ public class MLAlphaBetaBot extends BotAbstract{
 
     private double evaluate(GameState state,GameState prevState, GameEngine ge, String color, Move chosenMove) {
         if (state == null || prevState == null || chosenMove == null) {
-            System.out.println("Invalid inputs to evaluate: state=" + state + ", prevState=" + prevState + ", chosenMove=" + chosenMove);
+            // System.out.println("Invalid inputs to evaluate: state=" + state + ", prevState=" + prevState + ", chosenMove=" + chosenMove);
             return Double.NEGATIVE_INFINITY;
         }
 
         double valuation = Reward.calculateRewardWITHOUT(ge, prevState, chosenMove, state, color);
         if (Double.isInfinite(valuation) || Double.isNaN(valuation)) {
-            System.out.println("Error in evaluation: value is invalid. Returning fallback value.");
+            // System.out.println("Error in evaluation: value is invalid. Returning fallback value.");
             return 0;
 
         }
@@ -237,7 +237,7 @@ public class MLAlphaBetaBot extends BotAbstract{
         Vertex fromVertex = move.getStartingVertex();
 
         if (fromVertex == null) {
-            System.out.println("Error: Source vertex is null.");
+            // System.out.println("Error: Source vertex is null.");
             return state;
         }
 
@@ -248,7 +248,7 @@ public class MLAlphaBetaBot extends BotAbstract{
         );
 
         if (toIndex == -1) {
-            System.out.println("Error: Invalid target vertex index.");
+            // System.out.println("Error: Invalid target vertex index.");
             return state;
         }
 
@@ -263,7 +263,7 @@ public class MLAlphaBetaBot extends BotAbstract{
 
 
         if (sourceV == null) {
-            System.out.println("sourceV is null. : ");
+            // System.out.println("sourceV is null. : ");
 
             return state;
         }
@@ -273,7 +273,7 @@ public class MLAlphaBetaBot extends BotAbstract{
             ringToMove = (Ring) sourceV.getRing();
             sourceV.setRing(null);
         } else {
-            System.out.println("hasRing is null. CurrentBot: " );
+            // System.out.println("hasRing is null. CurrentBot: " );
 
             return state;
         }
@@ -301,7 +301,7 @@ public class MLAlphaBetaBot extends BotAbstract{
         Vertex targetV = tempEngine.currentState.gameBoard.getVertex(toIndex);
 
         if (targetV == null || targetV.hasRing()) {
-            System.out.println("targetV is null. CurrentBot: ");
+            // System.out.println("targetV is null. CurrentBot: ");
 
             return state;
         }

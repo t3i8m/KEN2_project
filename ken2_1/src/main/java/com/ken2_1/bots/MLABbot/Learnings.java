@@ -33,7 +33,7 @@ public class Learnings {
         // Initialize rewards equally for all directions
 
         rewards = readRewardsFromCSV();
-        System.out.println("///////////////////////////////////////////////THE REWARDS HAS BEEN CREATED");
+        // System.out.println("///////////////////////////////////////////////THE REWARDS HAS BEEN CREATED");
     }
 
 
@@ -68,7 +68,7 @@ public class Learnings {
 
             rewards.put(direction, newReward);
 
-            System.out.println("Direction: " + direction + ", New Reward: " + newReward);
+            // System.out.println("Direction: " + direction + ", New Reward: " + newReward);
         }
     }
 
@@ -260,7 +260,7 @@ public class Learnings {
         File file = new File(rewardsFilePath);
 
         if (!file.exists()) {
-            System.out.println("No existing rewards file found. Using default values.");
+            // System.out.println("No existing rewards file found. Using default values.");
             return;
         }
 
@@ -271,7 +271,7 @@ public class Learnings {
             }
         }
 
-        System.out.println("Loaded rewards from CSV: " + getRewardsAsString());
+        // System.out.println("Loaded rewards from CSV: " + getRewardsAsString());
     }
 
     /**

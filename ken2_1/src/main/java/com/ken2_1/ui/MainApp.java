@@ -1313,21 +1313,21 @@ public class MainApp extends Application {
             newState = gameEngine.currentState.clone();
             Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
-            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
-            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+            // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            // reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
     
             previuosState = gameEngine.currentState.clone();
             return;
         }
         if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
-            System.out.println("BEFORE reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
+            // System.out.println("BEFORE reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
             newState = gameEngine.currentState.clone();
             Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
     
-            System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
-            reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
-            System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
+            // System.out.println("\n"+"Move " +currentPlayer.getColor().toLowerCase());
+            // reward = Reward.calculateReward(gameEngine, previuosState, currMove, newState, currentPlayer.getColor().toLowerCase());
+            // System.out.println("TOTAL REWARD = " + reward+" BOT color: "+currentPlayer.getColor());
     
             previuosState = gameEngine.currentState.clone();
     
@@ -1335,7 +1335,7 @@ public class MainApp extends Application {
             gameEngine.currentState.resetTurn();
             gameEngine.currentState.selectedChipVertex = -1;
             switchPlayer();
-            System.out.println("AFTER reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
+            // System.out.println("AFTER reset "+gameEngine.currentState.getCurrentColor()+" "+gameEngine.currentState.isWhiteTurn);
 
             chipsToRemove=5;
             updateStrengthIndicator();
@@ -1348,8 +1348,8 @@ public class MainApp extends Application {
 
             playerTurn();
         }else{
-            System.out.println(gameEngine.isInChipRemovalMode());
-            System.out.println(gameEngine.isInRingRemovalMode());
+            // System.out.println(gameEngine.isInChipRemovalMode());
+            // System.out.println(gameEngine.isInRingRemovalMode());
         }
         
     }
