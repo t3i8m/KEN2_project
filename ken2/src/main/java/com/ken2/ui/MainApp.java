@@ -124,7 +124,12 @@ public class MainApp extends Application {
     private List<Integer> winningChips = new ArrayList<>();
     private Direction direction;
     private int chipsToRemove = 5;
-
+    /**
+     * Sets up the game stage and initializes UI components.
+     *
+     * @param primaryStage The primary stage for this application.
+     * @throws Exception if an error occurs during initialization.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -415,7 +420,11 @@ public class MainApp extends Application {
 
         rulesAlert.showAndWait();
     }
-
+    /**
+     * Starts the game by initializing the game state and disabling controls.
+     *
+     * @param gcP The graphics context for drawing objects.
+     */
 
     private void startGame(GraphicsContext gcP) {
         this.isGameStarted = true;
@@ -436,7 +445,9 @@ public class MainApp extends Application {
 
         playerTurn();
     }
-
+    /**
+     * Handles the logic for each player's turn in the game.
+     */
     private void playerTurn() {
         if (isGameOver) {
             return;
@@ -462,12 +473,19 @@ public class MainApp extends Application {
         }
     }
 
-
+    /**
+     * Switches the current player's turn.
+     */
     private void switchPlayer() {
         gameEngine.currentState.isWhiteTurn = !gameEngine.currentState.isWhiteTurn;
         currentPlayerIndex = gameEngine.currentState.isWhiteTurn ? 0 : 1;
     }
-
+    /**
+     * Selects a player based on their color and type (human or bot).
+     *
+     * @param color The color of the player ("White" or "Black").
+     * @param selectedItem The type of player ("Human Player" or bot type).
+     */
 
     private void selectPlayer(String color, String selectedItem) {
         BotFactory botFactory = new BotFactory();
@@ -487,7 +505,12 @@ public class MainApp extends Application {
             }
         }
     }
-
+    /**
+     * Handles mouse click events on the game board.
+     *
+     * @param e The mouse event triggering the click.
+     * @param gc The graphics context for rendering changes.
+     */
 
     private void handleFieldClick(MouseEvent e, GraphicsContext gc) {
 
@@ -514,7 +537,12 @@ public class MainApp extends Application {
         updateOnscreenText();
     }
     List <Integer> nadoEtiChips  = new ArrayList<>();
-
+    /**
+     * Handles the logic for the winning case.
+     *
+     * @param vertex The vertex where the winning condition is triggered.
+     * @param gc The graphics context for drawing.
+     */
     public void WinningCase(int vertex, GraphicsContext gc){
         try{
             handleWinningRing(vertex, gc);
@@ -578,7 +606,12 @@ public class MainApp extends Application {
         }
         
     }
-
+    /**
+     * Handles the removal of a chip from the board.
+     *
+     * @param vertex The vertex where the chip is located.
+     * @param gc The graphics context for rendering updates.
+     */
     public void handleChipRemove(int vertex, GraphicsContext gc) {
         if (!gameEngine.getWinningChips().contains(vertex)) {
             return;
@@ -629,6 +662,12 @@ public class MainApp extends Application {
         } else {
         }
     }
+    /**
+     * Handles the removal of a winning ring from the board.
+     *
+     * @param vertex The vertex where the ring is located.
+     * @param gc The graphics context for rendering updates.
+     */
     public void handleWinningRing(int vertex, GraphicsContext gc) {
         Vertex v = gameEngine.currentState.gameBoard.getVertex(vertex);
         if (v != null && v.hasRing() && v.getRing().getColour().toLowerCase().equals(gameEngine.getWinningColor().toLowerCase())) {
@@ -652,12 +691,21 @@ public class MainApp extends Application {
         }
 
     }
-
+    /**
+     * Highlights removable rings on the board.
+     *
+     * @param removableRings A list of vertices where rings can be removed.
+     */
     private void highlightRemovableRings(List<Integer> removableRings) {
         for (Integer ringVertex : removableRings) {
             drawHighlighter(ringVertex, true); 
         }
     }
+    /**
+     * Retrieves a list of removable rings for the current player.
+     *
+     * @return A list of vertex indices of removable rings.
+     */
     private List<Integer> getRemovableRings() {
         List<Integer> removableRings = new ArrayList<>();
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
@@ -671,7 +719,11 @@ public class MainApp extends Application {
         }
         return removableRings;
     }
-
+    /**
+     * Moves the ring to the player's score panel and checks for a win condition.
+     *
+     * @param playerColor The color of the player ("white" or "black").
+     */
     private void moveRingToThePanel(String playerColor) {
         if (playerColor.equalsIgnoreCase("white")) {
             if (whiteScore < 3) {
@@ -705,7 +757,12 @@ public class MainApp extends Application {
             }
         }
     }
-
+    /**
+     * Places the starting ring on the board.
+     *
+     * @param vertex The vertex where the ring is placed.
+     * @param gc The graphics context for rendering.
+     */
     private void GUIplaceStartingRing(int vertex, GraphicsContext gc) {
         Player currentPlayer = (currentPlayerIndex == 0) ? whitePlayer : blackPlayer;
 
@@ -718,6 +775,11 @@ public class MainApp extends Application {
 
         }
     }
+    /**
+     * Highlights available places for starting rings.
+     *
+     * @param gc The graphics context for rendering.
+     */
     private void GUIavailablePlacesForStartRings(GraphicsContext gc) {
 
         ArrayList<Vertex> aVertices = gameEngine.availablePlacesForStartingRings();
@@ -728,6 +790,12 @@ public class MainApp extends Application {
             }
         }
     }
+    /**
+     * Handles chip and ring placement during gameplay.
+     *
+     * @param vertex The selected vertex on the board.
+     * @param gc The graphics context for rendering.
+     */
     private void handleChipAndRingPlacement(int vertex, GraphicsContext gc) {
         Vertex boardVertex = gameEngine.currentState.gameBoard.getVertex(vertex);
         // If the player clicks on their own ring
@@ -769,6 +837,11 @@ public class MainApp extends Application {
         }
 
     }
+    /**
+     * Highlights possible moves by drawing indicators on the board.
+     *
+     * @param possibleMoves The list of possible moves.
+     */
     private void highlightPossibleMoves(ArrayList<Move> possibleMoves) {
         highlightedVertices.clear();
         for (Move move : possibleMoves) {
@@ -779,15 +852,28 @@ public class MainApp extends Application {
             drawHighlighter(vertexNumber, true);
         }
     }
-
+    /**
+     * Highlights removable chips by drawing indicators on them.
+     *
+     * @param removableChips The list of removable chip vertices.
+     */
     private void highlightRemovableChips(List<Integer> removableChips) {
         removeCircleIndicators(); 
         for (Integer chipVertex : removableChips) {
             drawHighlighter(chipVertex, true); 
         }
     }
-    
 
+
+    /**
+     * Moves a ring from one vertex to another and updates the game state.
+     *
+     * @param fromVertex The starting vertex.
+     * @param toVertex The destination vertex.
+     * @param gc The graphics context for rendering.
+     * @param Move_Valid An array indicating if the move is valid.
+     * @param currentMove The current move being executed.
+     */
     private void moveRing(int fromVertex, int toVertex, GraphicsContext gc, int[] Move_Valid, Move currentMove) {
         try{
             if (gameEngine.isInChipRemovalMode()==false && gameEngine.isInRingRemovalMode()==false){
@@ -908,6 +994,11 @@ public class MainApp extends Application {
         }
         
         }
+    /**
+     * Draws a dashed line indicating the last move.
+     *
+     * @param gc The graphics context for rendering.
+     */
     private void drawDashedLine(GraphicsContext gc) {
         if (lastMoveStartVertex == null || lastMoveEndVertex == null) {
             return;
@@ -929,6 +1020,11 @@ public class MainApp extends Application {
         );
     }
 
+    /**
+     * Draws the game board with various lines connecting vertices and vertex numbers.
+     *
+     * @param gc The graphics context used for rendering.
+     */
     private void drawBoard(GraphicsContext gc) {
         //gc.drawImage(boardImage, 0, 0, fieldDimension, fieldDimension);
         gc.setStroke(Color.rgb(0, 70, 0));
@@ -1044,11 +1140,13 @@ public class MainApp extends Application {
             gc.fillText(""+i, vertexCoordinates[i][0] + 10 + pieceDimension/2, vertexCoordinates[i][1] + 5 + pieceDimension/2);
         }
     }
-
-    /* Method to draw rings and coins
-     * @param img image to draw
-     * @param vertex vertex to draw image at
-     * @param gc GraphicsContext
+    /**
+     * Draws rings and coins on the board.
+     *
+     * @param img The image to draw.
+     * @param vertex The vertex where the image is drawn.
+     * @param gc The graphics context used for rendering.
+     * @param resol Whether to apply resolution.
      */
     private void drawImage(Image img, int vertex, GraphicsContext gc, boolean resol) {
         int x = gameEngine.vertexCoordinates[vertex][0];
@@ -1057,7 +1155,12 @@ public class MainApp extends Application {
 
         gc.drawImage(img, x, y, pieceDimension, pieceDimension);
     }
-
+    /**
+     * Draws a highlighter circle around the specified vertex.
+     *
+     * @param vertex The vertex to highlight.
+     * @param availability Indicates if the vertex is available.
+     */
     public void drawHighlighter( int vertex, boolean availability){
         if (availability){highlightedVertices.add(vertex);}
         Color highLighterColor = (availability) ? Color.GREEN : Color.RED;
@@ -1068,9 +1171,17 @@ public class MainApp extends Application {
         availableCircle.setFill(highLighterColor);
         fieldPane.getChildren().add(availableCircle);
     }
+    /**
+     * Removes all circle indicators from the board.
+     */
     private void removeCircleIndicators(){
         fieldPane.getChildren().removeIf(node -> node instanceof Circle);
     }
+    /**
+     * Creates a score circle used for displaying player scores.
+     *
+     * @return A newly created score circle.
+     */
     private Circle makeScoreCircle() {
         Circle circle = new Circle(35);
         circle.setStroke(inactiveScoreRingColor);
@@ -1079,7 +1190,11 @@ public class MainApp extends Application {
 
         return circle;
     }
-
+    /**
+     * Handles the bot's turn by making a move and updating the game state.
+     *
+     * @param gc The graphics context for rendering.
+     */
     private void botTurn(GraphicsContext gc) {
         if (isGameOver) {
            // restartGame();
@@ -1148,6 +1263,12 @@ public class MainApp extends Application {
         }
         
         }
+    /**
+     * Updates the game board by rendering all rings and coins.
+     *
+     * @param game_Board The current state of the game board.
+     * @param gc The graphics context for rendering.
+     */
     private void updateGameBoard(Game_Board game_Board, GraphicsContext gc){
 
         //clear canvas
@@ -1191,6 +1312,9 @@ public class MainApp extends Application {
         }
 
     }
+    /**
+     * Resets the game turn and updates the UI.
+     */
 
     private void resetTurn(){
        
@@ -1238,6 +1362,9 @@ public class MainApp extends Application {
         }
         
     }
+    /**
+     * Updates the strength indicator visualization.
+     */
 
     private void updateStrengthIndicator() {
         GraphicsContext gc = strengthIndicator.getGraphicsContext2D();
@@ -1273,9 +1400,11 @@ public class MainApp extends Application {
         gc.setLineWidth(2);
         gc.strokeLine(width / 2, 0, width / 2, height);
     }
-    
 
 
+    /**
+     * Updates the on-screen text elements.
+     */
     private void updateOnscreenText(){
         chipsWhiteText.setText("Chips White on board: " + gameEngine.currentState.chipsWhite);
         chipsWhiteText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
@@ -1291,7 +1420,9 @@ public class MainApp extends Application {
         ringBlackRemainingText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 
     }
-
+      /**
+        * Displays game statistics, including total games played, wins, losses, and draws.
+        */
     private void displayGameStatistics() {
         StringBuilder stats = new StringBuilder();
     
@@ -1327,6 +1458,9 @@ public class MainApp extends Application {
     
         System.out.println(stats.toString());
     }
+    /**
+     * Restarts the game, resetting game state and UI elements.
+     */
     private void restartGame() {
         gamesPlayed++;
         updateGamesPlayedText();
@@ -1374,17 +1508,23 @@ public class MainApp extends Application {
 
         }
     }
-
+    /**
+     * Updates the number of games played in the UI.
+     */
     private void updateGamesPlayedText() {
         gamesPlayedText.setText("Games Played: " + gamesPlayed);
     }
-    
-    
+
+    /**
+     * Updates the number of wins for each player in the UI.
+     */
     private void updateWinsText() {
         whiteWinsText.setText("White Wins: " + whiteWins);
         blackWinsText.setText("Black Wins: " + blackWins);
     }
-
+    /**
+     * Shows an alert message when the game ends in a draw.
+     */
     private void showDrawAlert() {
         gamesPlayed++;  
         updateGamesPlayedText();

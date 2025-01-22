@@ -21,7 +21,11 @@ public class Game_Board {
         the_Board = new Vertex[19][11];     // Create the blank board
         fillBoard();
     }
-
+    /**
+     * Copy constructor to create a deep copy of another game board.
+     *
+     * @param other The game board to copy.
+     */
     public Game_Board(Game_Board other) {
         if (other.the_Board != null) {
             this.the_Board = new Vertex[other.the_Board.length][other.the_Board[0].length];
@@ -137,7 +141,12 @@ public class Game_Board {
         }
         return s;
     }
-
+    /**
+     * Gets the position of a vertex by its number.
+     *
+     * @param vertexNumber The vertex number to search for.
+     * @return An array with the x and y coordinates of the vertex.
+     */
     public int[] getVertexPositionByNumber(int vertexNumber){
         for(int i = 0; i<this.the_Board.length;i++){
             for(int j = 0; j<this.the_Board[j].length;j++){
@@ -150,7 +159,13 @@ public class Game_Board {
         }
         return null;
     }
-
+    /**
+     * Gets the vertex number from a given x and y position.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The vertex number, or -1 if not found.
+     */
     public int getVertexNumberFromPosition(int x, int y) {
         if (x >= 0 && x < the_Board.length && y >= 0 && y < the_Board[0].length) {
             Vertex vertex = the_Board[x][y];
@@ -161,6 +176,12 @@ public class Game_Board {
         return -1;
     }
 
+    /**
+     * Gets the vertex object by its number.
+     *
+     * @param vertexNumber The vertex number to retrieve.
+     * @return The vertex object, or null if not found.
+     */
     public Vertex getVertex(int vertexNumber) {
         for (int i = 0; i < this.the_Board.length; i++) {
             for (int j = 0; j < this.the_Board[i].length; j++) {
@@ -171,7 +192,12 @@ public class Game_Board {
         }
         return null;  // Return null if no vertex with that number exists
     }
-
+    /**
+     * Updates the play object at a given vertex number.
+     *
+     * @param vertexNumber The vertex number to update.
+     * @param playObject The play object to set at the vertex.
+     */
     public void updateBoard(int vertexNumber, PlayObj playObject) {
         Vertex vertex = getVertex(vertexNumber);
         if (vertex != null) {
@@ -180,7 +206,11 @@ public class Game_Board {
             // System.out.println("Vertex not found for vertex number: " + vertexNumber);
         }
     }
-
+    /**
+     * Retrieves all free vertices on the board.
+     *
+     * @return A list of vertices that do not contain a ring or a coin.
+     */
     public ArrayList<Vertex> getAllFreeVertexes(){
         ArrayList<Vertex> takenPositions = new ArrayList<Vertex>();
         for (int i = 0; i < this.the_Board.length; i++) {
@@ -192,7 +222,14 @@ public class Game_Board {
         }
         return takenPositions;
     }
-
+    /**
+     * Gets the adjacent vertex in a given direction.
+     *
+     * @param vertex The vertex number.
+     * @param deltaX The x-direction offset.
+     * @param deltaY The y-direction offset.
+     * @return The vertex number of the adjacent vertex, or -1 if not found.
+     */
     public int getAdjacentVertex(int vertex, int deltaX, int deltaY) {
         Vertex currentVertex = getVertex(vertex);
         if (currentVertex == null) {
@@ -221,7 +258,12 @@ public class Game_Board {
         return new Game_Board(this);
     }
 
-
+    /**
+     * Creates a new game state from the given game board.
+     *
+     * @param board1 The game board to create the state from.
+     * @return A new GameState object initialized with the given board.
+     */
     public  GameState createStatesFromBoards(Game_Board board1) {
         GameState state1 = new GameState();
         state1.gameBoard = board1.clone();
@@ -229,7 +271,12 @@ public class Game_Board {
 
         return state1;
     }
-
+    /**
+     * Updates the game state based on the provided game board.
+     *
+     * @param state The game state to be updated.
+     * @param board The game board to derive state information from.
+     */
 private  void updateStateFromBoard(GameState state, Game_Board board) {
     int ringsWhite = 0;
     int ringsBlack = 0;

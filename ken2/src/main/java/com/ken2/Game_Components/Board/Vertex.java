@@ -11,14 +11,23 @@ public class Vertex {
     private int xIndex;
     private int yIndex;
     private int vertexNumber;
-
+    /**
+     * Constructor to initialize a vertex with x and y indices.
+     *
+     * @param xIndex The x-coordinate index.
+     * @param yIndex The y-coordinate index.
+     */
     public Vertex(int xIndex, int yIndex){
         playObjects = new PlayObj[2];
         this.xIndex = xIndex;
         this.yIndex = yIndex;
         this.vertexNumber = -1;
     }
-
+    /**
+     * Copy constructor to create a new vertex as a copy of another.
+     *
+     * @param other The vertex to copy.
+     */
     public Vertex(Vertex other) {
         this.xIndex = other.xIndex;
         this.yIndex = other.yIndex;

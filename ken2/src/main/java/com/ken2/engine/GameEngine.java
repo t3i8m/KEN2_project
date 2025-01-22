@@ -28,7 +28,9 @@ public class GameEngine {
     private boolean isChipRemovalMode = false;
 
     public static List<Integer> winningChips = new ArrayList<>();
-
+    /**
+     * Constructor to initialize the game engine, setting up the board and game state.
+     */
     public GameEngine(){
         currentState=new GameState();
         gameSimulation=new GameSimulation();
@@ -37,15 +39,13 @@ public class GameEngine {
         this.gameBoard = new Game_Board();
         this.currentState.gameBoard = this.gameBoard;
     }
-
-    public void updateCurrentState(GameState newState) {
-        if (newState != null) {
-            this.currentState = newState;
-        } else {
-            // System.out.println("New state is null, cannot update current state.");
-        }
-    }
-
+    /**
+     * Places a starting ring at the given vertex if valid.
+     *
+     * @param vertex The vertex index to place the ring.
+     * @param ringColor The color of the ring.
+     * @return True if the ring was successfully placed, otherwise false.
+     */
     public boolean placeStartingRing(int vertex,String ringColor) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
         if (boardVertex != null && !boardVertex.hasRing()) {
@@ -65,11 +65,21 @@ public class GameEngine {
     }
 
 
+    /**
+     * Retrieves the available places for starting rings.
+     *
+     * @return A list of available vertex positions.
+     */
     public ArrayList<Vertex> availablePlacesForStartingRings() {
         Vertex[][] board = currentState.gameBoard.getBoard();
         return this.gameSimulation.getAllPossibleStartingRingPlaces(board);
     }
-
+    /**
+     * Gets all winning rings of a specified color.
+     *
+     * @param color The color of the rings to search for.
+     * @return A list of vertex numbers where winning rings are located.
+     */
     public ArrayList<Integer> getWinningRings(String color){
         ArrayList<Integer> winningRings = new ArrayList<>();
 
@@ -82,7 +92,12 @@ public class GameEngine {
         }
         return winningRings;
     }
-
+    /**
+     * Places a chip at the specified vertex if valid.
+     *
+     * @param vertex The vertex index to place the chip.
+     * @return True if the chip was successfully placed, otherwise false.
+     */
 
     public boolean placeChip(int vertex) {
         Vertex boardVertex = currentState.gameBoard.getVertex(vertex);
@@ -93,9 +108,7 @@ public class GameEngine {
 
             //condition for same ring colors
             if (!boardVertex.getRing().getColour().equalsIgnoreCase(chipColor)) {
-                // System.out.println("HERE");
-                // showAlert("Warning", "Cannot place a " + chipColor + " chip in a ring of a different color!");
-                return false;
+               return false;
             }
 
             Coin newChip = new Coin(chipColor.toLowerCase());
@@ -162,6 +175,12 @@ public class GameEngine {
 
         return this.currentState;
     }
+    /**
+     * Checks if the player has won by analyzing the flipped coins on the board.
+     *
+     * @param vertexesOfFlippedCoins The list of flipped coin vertices.
+     * @return True if a win condition is met, otherwise false.
+     */
     public boolean win(ArrayList<Vertex> vertexesOfFlippedCoins){
         boolean win = false;
         if(vertexesOfFlippedCoins==null){
@@ -210,6 +229,12 @@ public class GameEngine {
 
     }
 
+    /**
+     * Determines the winning color based on flipped coins on the board.
+     *
+     * @param vertexesOfFlippedCoins The list of flipped coin vertices.
+     * @return The color of the winning player, or null if no winner is found.
+     */
     public String winningColor(ArrayList<Vertex> vertexesOfFlippedCoins) {
         String color = getWinningColor();
         if (vertexesOfFlippedCoins == null) {
@@ -297,7 +322,15 @@ public class GameEngine {
 
 
 
-    //method for calculating 5 chips in a row
+    /**
+     * Counts the number of consecutive chips of the same color in a given direction.
+     *
+     * @param start The starting vertex number.
+     * @param chipColor The color of the chip.
+     * @param dx The x-direction step.
+     * @param dy The y-direction step.
+     * @return The count of consecutive chips in the specified direction.
+     */
     public int countChipsInOneDirection(int start, String chipColor, int dx, int dy){
         int k = 0;
         int x = currentState.gameBoard.getVertex(start).getXposition();
@@ -331,7 +364,15 @@ public class GameEngine {
         }
 
     }
-
+    /**
+     * Retrieves the chips in a given direction from a starting vertex.
+     *
+     * @param startVertex The starting vertex number.
+     * @param chipColor The color of the chip.
+     * @param dx The x-direction step.
+     * @param dy The y-direction step.
+     * @return A list of vertex numbers containing chips in the specified direction.
+     */
     public List<Integer> getChipsInDirection(int startVertex, String chipColor, int dx, int dy) {
         List<Integer> chips = new ArrayList<>();
         Vertex currentVertex = currentState.gameBoard.getVertex(startVertex);
@@ -373,7 +414,12 @@ public class GameEngine {
 
         return chips;
     }
-
+    /**
+     * Finds all winning chip sequences on the board for a given color.
+     *
+     * @param chipColor The color of the chips to check.
+     * @return A list of lists containing the winning chip sequences.
+     */
     public List<List<Integer>> findAllWinningChipsMOD(String chipColor) {
         List<List<Integer>> winningChips = new ArrayList<>();
         List<Vertex> allVertices = currentState.getVertexesOfFlippedCoins();
@@ -435,15 +481,21 @@ public class GameEngine {
         return winningChips;
     }
 
-
+    /**
+     * Finds and sets all winning chip sequences of a given color.
+     *
+     * @param chipColor The color of the chips to check.
+     */
     public void findAndSetAllWinningChips(String chipColor) {
-        // List<Integer> allWinningChips = findAllWinningChips(chipColor);
         List<List<Integer>> a = findAllWinningChipsMOD(chipColor); // a has all of the positions that we can remove
-        // System.out.println(a);
         setWinningChips(a.get(0));
-        // System.out.println("Global Winning Chips Set: " + getWinningChips());
     }
-
+    /**
+     * Gets the adjacent vertices of a given vertex.
+     *
+     * @param vertex The vertex to find adjacent vertices for.
+     * @return A list of adjacent vertex numbers.
+     */
     public List<Integer> getAdjacentVertices(int vertex) {
         List<Integer> adjacentVertices = new ArrayList<>();
         for (Direction direction : Direction.values()) {
@@ -516,7 +568,13 @@ public class GameEngine {
             index++;
         }
     }
-
+    /**
+     * Finds the closest vertex to the given coordinates.
+     *
+     * @param xCoordinate The x-coordinate of the click.
+     * @param yCoordinate The y-coordinate of the click.
+     * @return The index of the closest vertex, or -1 if no vertex is found within range.
+     */
 
     public int findClosestVertex(double xCoordinate, double yCoordinate){
 
@@ -530,7 +588,6 @@ public class GameEngine {
             double yDist = Math.abs(yCoordinate - vY);
 
             if(xDist<=10 && yDist <=10){
-                // System.out.println("Vertex Clicked: " + i);
                 return i;
             }
         }
@@ -544,13 +601,19 @@ public class GameEngine {
     public int[] getcoordinates(int vertex){
         return vertexCoordinates[vertex];
     }
-
+    /**
+     * Resets the game state and reinitializes vertex coordinates.
+     */
     public void resetGame(){
         currentState=new GameState();
         vertexCoordinates = new int[85][2];
         initialiseVertex();
     }
-
+    /**
+     * Clones the current game engine instance.
+     *
+     * @return A deep copy of the current GameEngine object.
+     */
     @Override
     public GameEngine clone() {
         try {

@@ -3,7 +3,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class GameAlerts {
-
+    /**
+     * Displays an alert with the specified title and message.
+     *
+     * @param title   The title of the alert window.
+     * @param message The content text to be displayed in the alert.
+     * @paramtype    The type of the alert (e.g., INFORMATION, WARNING, ERROR).
+     */
     public static void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);
