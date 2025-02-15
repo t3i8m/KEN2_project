@@ -2,7 +2,7 @@
 # Yinsh
 
 
-This project is a Yinsh board game implemented with JavaFX. Yinsh is an abstract strategy board game, released in 2003, it is an example of a variation on the classic Connection subcategory of board games. The ultimate goal is to form uninterrupted lines of their chips. This project includes a custom UI to represent the board and game pieces.
+This project is a Yinsh board game implemented with JavaFX. Yinsh is an abstract strategy board game, released in 2003, it is an example of a variation on the classic Connection subcategory of board games. The ultimate goal is to form uninterrupted lines of their chips. This project includes a custom UI to represent the board and game pieces. Paper - https://drive.google.com/file/d/12XkrWH93yCfSt37s_9MYXxEIDgTG2Tzj/view?usp=sharing
 
 ## Prerequisites
 This project requires;
